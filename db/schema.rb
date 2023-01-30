@@ -71,13 +71,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_06_050042) do
 
   create_table "rental_agreement_terms", force: :cascade do |t|
     t.integer "rental_agreement_id"
-    t.integer "terms_id"
+    t.integer "term_id"
     t.date "starts_at"
     t.date "ends_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["rental_agreement_id"], name: "index_rental_agreement_terms_on_rental_agreement_id"
-    t.index ["terms_id"], name: "index_rental_agreement_terms_on_terms_id"
+    t.index ["term_id"], name: "index_rental_agreement_terms_on_term_id"
   end
 
   create_table "rental_agreements", force: :cascade do |t|
@@ -126,8 +126,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_06_050042) do
   add_foreign_key "rental_agreement_payments", "rental_agreements"
   add_foreign_key "rental_agreement_term_values", "rental_agreement_terms"
   add_foreign_key "rental_agreement_terms", "rental_agreements"
-  add_foreign_key "rental_agreement_terms", "terms", column: "terms_id"
-  add_foreign_key "rental_agreements", "customer"
+  add_foreign_key "rental_agreement_terms", "terms"
+  add_foreign_key "rental_agreements", "customers"
   add_foreign_key "rental_agreements", "units"
   add_foreign_key "units", "properties"
   add_foreign_key "units", "properties", column: "address_id"

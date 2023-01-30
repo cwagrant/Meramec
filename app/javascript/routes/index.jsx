@@ -2,30 +2,23 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Site from "../components/Site";
 import Properties from "../components/properties";
-import Header from '../components/Header';
-import {Container, Row, Col} from 'react-bootstrap'
+import Units from "../components/units";
 
 export default (
-  <Router>
-    <Header/>
-    <Container>
-      <Row>
-        <Col md={3}>
-          <Properties.Nav />
-        </Col>
-        <Col>
-          <Routes>
-            <Route path="/" element={<Site />} />
-            <Route path="/properties" element={<Properties />}>
-              <Route index element={<Properties.Index />} />
-              <Route path=":id" element={<Properties.Show />} />
-              <Route path=":id/edit" element={<Properties.Edit />} />
-            </Route>
-          </Routes>
-        </Col>
-      </Row>
-    </Container>
-  </Router>
+  <Routes>
+    <Route path="/" element={<Site />} />
+    <Route path="/properties" element={<Properties />}>
+      <Route index element={<Properties.Index />} />
+      <Route path=":propertyId" element={<Properties.Show />}>
+        <Route index element={<Units.Index />} />
+        <Route path="edit" element={<Properties.Edit />} />
+        <Route path="units" element={<Units />}>
+          <Route path=":unitId" element={<Units.Show />} />
+          <Route path="new" element={<Units.NewUnit />} />
+        </Route>
+      </Route>
+    </Route>
+  </Routes>
 )
 
 // TODO

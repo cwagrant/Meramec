@@ -19,16 +19,12 @@ const navigation = () => {
   if (error) return <p>Error : {error.message}</p>;
 
   const records = data.properties.map(({id, name}) => (
-    <LinkContainer to={'/properties/' + id} key={id}>
-      <Nav.Link to={'/properties/' + id}>{name}</Nav.Link>
-    </LinkContainer>
+      <Nav.Link key={id} href={'/properties/' + id}>{name}</Nav.Link>
   ));
 
   return(
-    <Nav defaultActiveKey="/properties" className="flex-column">
-      <LinkContainer to ="/properties">
-        <Nav.Link href="/properties">All</Nav.Link>
-      </LinkContainer>
+    <Nav className="mt-2 property-nav flex-column">
+      <Nav.Link href="/properties">All</Nav.Link>
       { records }
     </Nav>
   )

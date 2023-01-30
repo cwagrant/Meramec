@@ -36,7 +36,7 @@ class InitialTableSetup < ActiveRecord::Migration[7.0]
 
     create_table :rental_agreements do |t|
       t.references :unit, foreign_key: { to_table: :units }
-      t.references :customer, foreign_key: { to_table: :customer }
+      t.references :customer, foreign_key: { to_table: :customers }
       t.integer :price_in_cents
     end
 
@@ -49,7 +49,7 @@ class InitialTableSetup < ActiveRecord::Migration[7.0]
 
     create_table :rental_agreement_terms do |t|
       t.references :rental_agreement, foreign_key: { to_table: :rental_agreements }
-      t.references :terms, foreign_key: { to_table: :terms }
+      t.references :term, foreign_key: { to_table: :terms }
       t.date :starts_at
       t.date :ends_at
       t.timestamps

@@ -88,3 +88,5 @@ gem "jsbundling-rails", "~> 1.1"
 gem "graphiql-rails", group: :development
 
 gem "rack-cors", "~> 1.1", :groups => [:development, :test]
+
+gem "faker", "~> 3.1"

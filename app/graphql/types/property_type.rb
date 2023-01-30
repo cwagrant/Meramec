@@ -7,5 +7,6 @@ module Types
     field :address_id, Integer
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
+    field :units, [Types::UnitType]
   end
 end
