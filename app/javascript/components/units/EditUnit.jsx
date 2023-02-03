@@ -5,9 +5,9 @@ import { useParams } from 'react-router-dom'
 import { dollarsToCents } from '../DataFormatHelpers'
 import UnitFormFields from './UnitFormFields'
 
-const ADD_UNIT = gql`
-  mutation AddUnit($attributes: UnitCreateInput!) {
-    unitCreate(input: $attributes) {
+const UPDATE_UNIT = gql`
+  mutation UpdateUnit($attributes: UnitUpdateInput!) {
+    unitUpdate(input: $attributes) {
       unit{
         id
         name
@@ -21,7 +21,7 @@ const ADD_UNIT = gql`
 
 const Unit = () => {
   const { propertyId } = useParams()
-  const [addUnit, {data, loading, error}] = useMutation(ADD_UNIT)
+  const [updateUnit, {data, loading, error}] = useMutation(UPDATE_UNIT)
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -38,13 +38,13 @@ const Unit = () => {
       }
     }
 
-    addUnit({variables: preparedData})
+    updateUnit({variables: preparedData})
   }
 
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{width: 1, maxWidth: 'sm', '& .MuiFormControl-root': { m: 1, maxWidth: 'sm' }}}>
-
-      <UnitFormFields />
+      
+      <UnitFormFields/>
 
       <Box sx={{display: 'flex', m: 1}}>
         <Button 

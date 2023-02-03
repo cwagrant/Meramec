@@ -7,14 +7,24 @@ import Units from "../components/units";
 export default (
   <Routes>
     <Route path="/" element={<Site />} />
+
     <Route path="/properties" element={<Properties />}>
+
       <Route index element={<Properties.Index />} />
       <Route path=":propertyId" element={<Properties.Show />}>
+
         <Route index element={<Units.Index />} />
         <Route path="edit" element={<Properties.Edit />} />
         <Route path="units" element={<Units />}>
-          <Route path=":unitId" element={<Units.Show />} />
+
+          <Route index element={<Units.Index />} />
           <Route path="new" element={<Units.NewUnit />} />
+          <Route path=":unitId" element={<Units />}>
+
+            <Route index element={<Units.Show />} />
+            <Route path="edit" element={<Units.Edit />}/>
+
+          </Route>
         </Route>
       </Route>
     </Route>

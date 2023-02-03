@@ -6,7 +6,7 @@ import { Box, Grid, Stack, Typography } from '@mui/material'
 
 const GetUnit = gql`
   query getUnit($unit: ID) {
-    unit(id: $unit) {
+    unit(attributes: {id: $unit}) {
       id
       name
       priceInCents
