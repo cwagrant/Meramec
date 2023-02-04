@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Site from "../components/Site";
 import Properties from "../components/properties";
 import Units from "../components/units";
@@ -9,21 +9,16 @@ export default (
     <Route path="/" element={<Site />} />
 
     <Route path="/properties" element={<Properties />}>
-
       <Route index element={<Properties.Index />} />
       <Route path=":propertyId" element={<Properties.Show />}>
-
         <Route index element={<Units.Index />} />
         <Route path="edit" element={<Properties.Edit />} />
         <Route path="units" element={<Units />}>
-
           <Route index element={<Units.Index />} />
-          <Route path="new" element={<Units.NewUnit />} />
+          <Route path="new" element={<Units.New />} />
           <Route path=":unitId" element={<Units />}>
-
             <Route index element={<Units.Show />} />
             <Route path="edit" element={<Units.Edit />}/>
-
           </Route>
         </Route>
       </Route>

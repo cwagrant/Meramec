@@ -31,7 +31,7 @@ const Unit = () => {
       "attributes": {
         "unitInput": {
           "name": formData.get('name'),
-          "typeOf": parseInt(formData.get('typeOf')),
+          "typeOf": formData.get('typeOf'),
           "priceInCents": dollarsToCents(formData.get('priceInCents')),
           "propertyId": propertyId
         }
@@ -39,12 +39,14 @@ const Unit = () => {
     }
 
     addUnit({variables: preparedData})
+
+    /* need to add error handling and redirecting user after creating new unit */
   }
 
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{width: 1, maxWidth: 'sm', '& .MuiFormControl-root': { m: 1, maxWidth: 'sm' }}}>
 
-      <UnitFormFields />
+      <UnitFormFields values={{}}/>
 
       <Box sx={{display: 'flex', m: 1}}>
         <Button 

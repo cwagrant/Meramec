@@ -2,13 +2,16 @@ import React from 'react'
 import { debounce } from 'lodash'
 import { useCallback, useEffect, useState } from 'react'
 import { useLazyQuery, useQuery, gql} from '@apollo/client'
-import { Link, useOutletContext, useParams } from 'react-router-dom'
-import { Box, Collapse, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Paper, TextField } from '@mui/material'
+import { Link as RouterLink, useOutletContext, useParams } from 'react-router-dom'
+import { Box, Collapse, IconButton, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Paper, TextField } from '@mui/material'
 
+import LaunchIcon from '@mui/icons-material/Launch';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 
-import Unit from  './unit'
+import Unit from  './ShowUnit'
 
 const GET_UNITS = gql`
   query allUnits($property_id: ID, $unit_name: String) {
@@ -42,6 +45,19 @@ const Row = (props) => {
         <TableCell>
           {row.typeOf}
         </TableCell>
+        <TableCell>
+          <Box sx={{display: 'flex', justifyContent: 'space-evenly'}}>
+            <Link component={RouterLink} to={"./units/"+row.id}>
+              <LaunchIcon />
+            </Link>
+            <Link component={RouterLink} to={"./units/"+row.id+"/edit"}>
+              <EditIcon />
+            </Link>
+            <Link component={RouterLink} to={"./units/"+row.id} >
+              <DeleteIcon />
+            </Link>
+          </Box>
+        </TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0}} colSpan={6}>
@@ -67,6 +83,7 @@ const Units = () => {
   const [ query, setQuery ] = useState("")
   const [ searchUnits, { data }] = useLazyQuery(GET_UNITS)
   const { propertyId } = useParams()
+  const { setCurrentUnit } = useOutletContext()
 
   const changeHandler = event => {
     setQuery(event.target.value) 
@@ -82,23 +99,27 @@ const Units = () => {
     []
   )
 
+  useEffect( () => {
+  })
+
   return (
     <>
       <TextField
-        sx={{ mb: 2, width: 1, maxWidth: 'sm' }}
+        sx={{ mb: 2, width: 1, maxWidth: 'md' }}
         id="property-search"
         label="Search for units by name..."
         variant="filled"
         onChange={debouncedChangeHandler}
         type="text"
       />
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} sx={{maxWidth: 'md'}}>
         <Table aria-label="units listing">
           <TableHead>
             <TableRow>
-              <TableCell />
+              <TableCell sx={{width: 32}} />
               <TableCell>Name</TableCell>
               <TableCell>Type</TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

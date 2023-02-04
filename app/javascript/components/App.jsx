@@ -119,9 +119,12 @@ const darkTheme = createTheme({
   },
 })
 
+const NavigationContext = React.createContext();
+
 export default function MiniDrawer() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [navigation, setNavigation] = React.useState([])
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -133,6 +136,7 @@ export default function MiniDrawer() {
 
   return (
     <ThemeProvider theme={darkTheme}>
+    <NavigationContext.Provider value={{navigation, setNavigation}}>
     <Router>
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -219,6 +223,7 @@ export default function MiniDrawer() {
       </Box>
     </Box>
     </Router>
+    </NavigationContext.Provider>
     </ThemeProvider>
   );
 }

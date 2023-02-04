@@ -24,6 +24,7 @@ const Show = () => {
 
   const setProperty = (data) => {
     setCurrentProperty(data.property)
+    setCurrentUnit(null)
   }
 
   const { loading, error, data } = useQuery(GetProperty, 

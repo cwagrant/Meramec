@@ -1,7 +1,7 @@
 import React from 'react'
-import { useMutation, gql } from '@apollo/client'
+import { useMutation, useQuery, gql } from '@apollo/client'
 import { Box, Button, FormControl, OutlinedInput, Input, InputLabel, InputAdornment, MenuItem,  Select, TextField} from '@mui/material'
-import { useParams } from 'react-router-dom'
+import { useOutletContext, useParams } from 'react-router-dom'
 import { dollarsToCents } from '../DataFormatHelpers'
 import UnitFormFields from './UnitFormFields'
 
@@ -20,7 +20,8 @@ const UPDATE_UNIT = gql`
 `
 
 const Unit = () => {
-  const { propertyId } = useParams()
+  const { propertyId, unitId } = useParams()
+  const { currentUnit } = useOutletContext()
   const [updateUnit, {data, loading, error}] = useMutation(UPDATE_UNIT)
 
   const handleSubmit = (event) => {
@@ -29,9 +30,10 @@ const Unit = () => {
 
     let preparedData = {
       "attributes": {
+        "id": unitId,
         "unitInput": {
           "name": formData.get('name'),
-          "typeOf": parseInt(formData.get('typeOf')),
+          "typeOf": formData.get('typeOf'),
           "priceInCents": dollarsToCents(formData.get('priceInCents')),
           "propertyId": propertyId
         }
@@ -44,7 +46,7 @@ const Unit = () => {
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{width: 1, maxWidth: 'sm', '& .MuiFormControl-root': { m: 1, maxWidth: 'sm' }}}>
       
-      <UnitFormFields/>
+      <UnitFormFields values={currentUnit}/>
 
       <Box sx={{display: 'flex', m: 1}}>
         <Button 

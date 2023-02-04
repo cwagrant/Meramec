@@ -4,16 +4,19 @@ import { centsToDollars } from '../DataFormatHelpers'
 
 const UnitFormFields = (props) => {
 
-  const values = props.values || {}
-  const typesOf = ["", "apartment", "storage", "parking"]
-
-  const defaultUnitType = values.typeOf ? typesOf.indexOf(values.typeOf) : 0
-
-  const [unitType, setUnitType] = React.useState(defaultUnitType)
+  const [unitType, setUnitType] = React.useState('')
+  const [unitName, setUnitName] = React.useState('')
+  const [unitPrice, setUnitPrice] = React.useState(0)
 
   const handleChange = (event) => {
     setUnitType(event.target.value)
   }
+
+  React.useEffect( () => {
+    setUnitType(props.values?.typeOf || '')
+    setUnitName(props.values?.name || '')
+    setUnitPrice(centsToDollars(props.values?.priceInCents || 0))
+  }, [props.values])
 
   return (
     <>
@@ -24,7 +27,8 @@ const UnitFormFields = (props) => {
           name="name"
           placeholder="Name"
           sx={{width: 1}}
-          value={ values?.name }
+          value={unitName}
+          onChange={(event) => {setUnitName(event.target.value)}}
         />
       </Box>
 
@@ -39,12 +43,12 @@ const UnitFormFields = (props) => {
             value={unitType}
             onChange={handleChange}
             >
-            <MenuItem value={0}>
+            <MenuItem value=''>
               <em>None</em>
             </MenuItem>
-            <MenuItem value={1}>Apartment</MenuItem>
-            <MenuItem value={2}>Storage</MenuItem>
-            <MenuItem value={3}>Parking</MenuItem>
+            <MenuItem value='apartment'>Apartment</MenuItem>
+            <MenuItem value='storage'>Storage</MenuItem>
+            <MenuItem value='parking'>Parking</MenuItem>
           </Select>
         </FormControl>
 
@@ -54,8 +58,9 @@ const UnitFormFields = (props) => {
             name="priceInCents"
             id="standard-adornment-amount"
             label="Amount"
-            value={
-              values.priceInCents ? centsToDollars(values.priceInCents) : ''}
+            type="number"
+            value={unitPrice}
+            onChange={(event) => {setUnitPrice(event.target.value)}}
             startAdornment={
               <InputAdornment position="start">$</InputAdornment>
             }

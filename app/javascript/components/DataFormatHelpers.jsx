@@ -7,7 +7,7 @@ export function centsToDollars(cents) {
 }
 
 export function dollarsToCents(dollars) {
-  dollars = parseInt(dollars) || 0
+  dollars = parseFloat(dollars) || 0
 
-  return dollars * 100
+  return parseInt(dollars * 100)
 }

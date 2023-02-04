@@ -14,12 +14,11 @@ const Properties = ({ children }) => {
 
   const [currentProperty, setCurrentProperty] = React.useState({})
   const [currentUnit, setCurrentUnit] = React.useState({})
-
+  
   return (
     <div className="property">
-
+      <Breadcrumbs currentProperty={currentProperty} currentUnit={currentUnit} />
       {children}
-      <Breadcrumbs currentProperty={currentProperty} currentUnit={currentUnit}/>
 
       <Outlet context={{
         currentProperty, setCurrentProperty,
