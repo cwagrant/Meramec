@@ -1,19 +1,54 @@
-// export * from './properties'
-// export { default } from './properties'
-
 import React from "react";
-import {default as Index} from './properties'
-import Show from './show'
+import {default as Index} from './Properties'
+import Show from './ShowProperty'
+import New from './NewProperty'
 import Edit from './edit'
 import Nav from './navigation'
 import { Outlet, useParams } from "react-router-dom"
+import { gql, useLazyQuery } from '@apollo/client'
 import Breadcrumbs from './breadcrumbs'
+
+const GET_PROPERTY = gql`
+  query getProperty($property: ID) { 
+    property(attributes: {id: $property}) {
+      id
+      name
+      units {
+        id
+        name
+        typeOf
+        priceInCents
+      }
+    }
+  }
+`;
 
 const Properties = ({ children }) => {
   const { propertyId, unitId } = useParams()
 
   const [currentProperty, setCurrentProperty] = React.useState({})
   const [currentUnit, setCurrentUnit] = React.useState({})
+
+  const [ loadProperty, { data }] = useLazyQuery(GET_PROPERTY)
+
+  const setProperty = (data) => {
+    setCurrentProperty(data.property)
+  }
+
+  React.useEffect(() => {
+    return () => {
+      setCurrentProperty(null)
+    }
+  }, [])
+
+  React.useEffect(() => {
+    if (propertyId) {
+      loadProperty({
+        variables: { property: propertyId },
+        onCompleted: setProperty
+      })
+    }
+  }, [propertyId])
   
   return (
     <div className="property">
@@ -32,6 +67,7 @@ Properties.Index = Index
 Properties.Show = Show
 Properties.Edit = Edit
 Properties.Nav = Nav
+Properties.New = New
 
 export default Properties
 

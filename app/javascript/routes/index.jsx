@@ -10,6 +10,7 @@ export default (
 
     <Route path="/properties" element={<Properties />}>
       <Route index element={<Properties.Index />} />
+      <Route path="new" element={<Properties.New />} />
       <Route path=":propertyId" element={<Properties.Show />}>
         <Route index element={<Units.Index />} />
         <Route path="edit" element={<Properties.Edit />} />
