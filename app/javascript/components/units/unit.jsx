@@ -1,15 +1,7 @@
 import React from 'react'
 import { useQuery, gql } from '@apollo/client'
 import { Box, Grid, Stack, Typography } from '@mui/material'
-
-const capitalizeFirstLetter = (word) => {
-  return word.charAt(0).toUpperCase() + word.slice(1)
-}
-
-const centsToDollars = (cents) => {
-  return parseFloat(cents/100).toFixed(2) 
-
-}
+import { capitalizeFirstLetter, centsToDollars } from '../DataFormatHelpers'
 
 const GetUnit = gql`
   query getUnit($unit: ID) {

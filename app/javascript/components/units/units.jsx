@@ -3,13 +3,14 @@ import { debounce } from 'lodash'
 import { useCallback, useEffect, useState } from 'react'
 import { useLazyQuery, useQuery, gql} from '@apollo/client'
 import { Link as RouterLink, useOutletContext, useParams } from 'react-router-dom'
-import { Box, Collapse, IconButton, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Paper, TextField } from '@mui/material'
+import { Box, Button, Collapse, IconButton, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Paper, TextField } from '@mui/material'
 
 import LaunchIcon from '@mui/icons-material/Launch';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import AddBoxIcon from '@mui/icons-material/AddBox' 
 
 import Unit from  './ShowUnit'
 
@@ -112,6 +113,18 @@ const Units = () => {
         onChange={debouncedChangeHandler}
         type="text"
       />
+      <Box 
+        sx={{
+          my: 1, 
+          display: 'flex',
+          justifyContent: 'flex-end',
+          width: 1,
+          maxWidth: 'md'
+        }}>
+        <Button component={RouterLink} to={"./units/new"} variant="outlined" startIcon={<AddBoxIcon />}>
+          New
+        </Button>
+      </Box>
       <TableContainer component={Paper} sx={{maxWidth: 'md'}}>
         <Table aria-label="units listing">
           <TableHead>

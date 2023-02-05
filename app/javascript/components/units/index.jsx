@@ -44,11 +44,12 @@ const Units = ({ children }) => {
 
 
   React.useEffect(() => {
-    loadUnit({
-      variables: { unit: unitId },
-      onCompleted: setUnit
-    })
-
+    if(unitId) {
+      loadUnit({
+        variables: { unit: unitId },
+        onCompleted: setUnit
+      })
+    }
   }, [unitId])
 
 

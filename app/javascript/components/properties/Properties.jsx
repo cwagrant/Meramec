@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState, useCallback, useEffect} from 'react'
 import { useLazyQuery, gql } from '@apollo/client'
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, useLoaderData } from 'react-router-dom'
 import { debounce } from 'lodash'
 import { Box, Button, Link, TableContainer, Table, TableRow, TableHead, TableBody, TableCell, TextField, Paper } from '@mui/material'
 import AddBoxIcon from '@mui/icons-material/AddBox' 
@@ -51,8 +51,7 @@ const Properties = () => {
         onChange={debouncedChangeHandler}
         type="text"
       />
-      <Box sx={{my: 1, display: 'flex', justifyContent: 'flex-end', width: 1, maxWidth: 'md'}}>
-        <Box>
+      <Box sx={{my: 1, display: 'flex', justifyContent: 'flex-end', width: 1, maxWidth: 'md'}}> <Box>
           <Button component={RouterLink} to={"./new"} variant="outlined" startIcon={<AddBoxIcon />}>
             New
           </Button>
