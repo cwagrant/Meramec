@@ -5,6 +5,9 @@ import { Link as RouterLink, useLoaderData } from 'react-router-dom'
 import { debounce } from 'lodash'
 import { Box, Button, Link, TableContainer, Table, TableRow, TableHead, TableBody, TableCell, TextField, Paper } from '@mui/material'
 import AddBoxIcon from '@mui/icons-material/AddBox' 
+import LaunchIcon from '@mui/icons-material/Launch';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const GET_PROPERTIES = gql`
   query allProperties($name: String) { 
@@ -19,7 +22,24 @@ const Records = ({properties}) => {
   return properties.map(({id, name}) => (
     <TableRow key={id}>
       <TableCell>{id}</TableCell>
-      <TableCell><Link component={RouterLink} to={"/properties/"+id}>{name}</Link></TableCell>
+      <TableCell>
+        <Link component={RouterLink} to={"/properties/"+id}>
+          {name}
+        </Link>
+      </TableCell>
+      <TableCell>
+        <Box sx={{display: 'flex', justifyContent: 'space-evenly'}}>
+          <Link component={RouterLink} to={"/properties/"+id}>
+            <LaunchIcon />
+          </Link>
+          <Link component={RouterLink} to={"/properties/"+id+"/edit"}>
+            <EditIcon />
+          </Link>
+          <Link component={RouterLink} to={"/properties/"+id} >
+            <DeleteIcon />
+          </Link>
+        </Box>
+      </TableCell>
     </TableRow>
   ));
 }
@@ -63,6 +83,7 @@ const Properties = () => {
             <TableRow>
               <TableCell>ID</TableCell>
               <TableCell>Name</TableCell>
+              <TableCell />
             </TableRow>
           </TableHead>
           <TableBody>

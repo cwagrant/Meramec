@@ -1,55 +1,13 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
 import Root from "../components/Root";
 import Properties from "../components/properties";
 import Units from "../components/units";
-import { Link as RouterLink } from 'react-router-dom'
-import { Link } from '@mui/material'
-import LoadProperty from '../components/loaders/property'
 
 import { 
   createBrowserRouter,
   createRoutesFromElements,
-  RouterProvider
+  Route
 } from 'react-router-dom';
-
-const rewrite = createBrowserRouter([
-  {
-    path: "/",
-    element: <Root />,
-    children: [
-      {
-        path: "properties",
-        element: <Properties />,
-        children: [
-          {
-            path: "new",
-            element: <Properties.New />
-          },
-          {
-            path: ":propertyId",
-            element: <Properties.Show />,
-            children: [
-              {
-                path: "edit",
-                element: <Properties.Edit />
-              },
-              {
-                path: ''
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }
-])
-
-const Breadcrumb = (props) => (
-  <Link component={RouterLink} underline="hover" color="inherit" to={props.to}>
-    {props.name}
-  </Link>
-)
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -73,7 +31,7 @@ const router = createBrowserRouter(
             <Route path="edit" element={<Properties.Edit />} />
             <Route path="units" element={<Units />}>
               <Route index element={<Units.Index />} />
-              <Route path="new" element={<Units.New />} />
+              <Route path="new" element={<Units.New />} handle={{ crumb: { name: "New" }}} />
               <Route 
                 path=":unitId"
                 element={<Units />}

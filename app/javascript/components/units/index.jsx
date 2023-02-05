@@ -4,8 +4,9 @@ import Show from './ShowUnit'
 import NewUnit from './NewUnit'
 import EditUnit from './EditUnit'
 // import Nav from './navigation'
-import { useLocation, Outlet, useOutletContext, useParams } from "react-router-dom"
+import { useNavigate, Outlet, useOutletContext, useParams } from "react-router-dom"
 import {useLazyQuery, gql} from '@apollo/client'
+
 
 /* Manages Unit components for display and their shared state.
  *
@@ -30,6 +31,7 @@ const Units = ({ children }) => {
   const { unitId } = useParams()
   const {currentUnit, setCurrentUnit} = useOutletContext()
   const [ loadUnit, { data }] = useLazyQuery(GET_UNIT)
+  const navigate = useNavigate()
 
   const setUnit = (data) => {
     setCurrentUnit(data.unit)
@@ -47,7 +49,11 @@ const Units = ({ children }) => {
     if(unitId) {
       loadUnit({
         variables: { unit: unitId },
-        onCompleted: setUnit
+        onCompleted: (data) => { setCurrentUnit(data.unit) },
+        onError: () => {
+          navigate('..', { state: [{error: 'Unable to find unit with id ' + unitId}]})
+        }
+
       })
     }
   }, [unitId])

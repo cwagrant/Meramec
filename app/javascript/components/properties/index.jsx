@@ -2,11 +2,15 @@ import React from "react";
 import {default as Index} from './Properties'
 import Show from './ShowProperty'
 import New from './NewProperty'
-import Edit from './edit'
+import Edit from './EditProperty'
 import Nav from './navigation'
-import { Outlet, useParams } from "react-router-dom"
+import { Outlet, useParams, useNavigate, useLocation } from "react-router-dom"
 import { gql, useLazyQuery } from '@apollo/client'
-import Breadcrumbs from './breadcrumbs'
+import Breadcrumbs from '../Breadcrumbs'
+import { Alert } from '@mui/material'
+import { ErrorContext } from './ErrorContext'
+// probably make the ErrorContext into some kind of sitewide alert system 
+// a-la flash in Rails
 
 const GET_PROPERTY = gql`
   query getProperty($property: ID) { 
@@ -28,12 +32,11 @@ const Properties = ({ children }) => {
 
   const [currentProperty, setCurrentProperty] = React.useState({})
   const [currentUnit, setCurrentUnit] = React.useState({})
+  const [error, setError] = React.useState({severity: '', message: ''})
+  const navigate = useNavigate()
+  const location = useLocation()
 
   const [ loadProperty, { data }] = useLazyQuery(GET_PROPERTY)
-
-  const setProperty = (data) => {
-    setCurrentProperty(data.property)
-  }
 
   React.useEffect(() => {
     return () => {
@@ -45,20 +48,39 @@ const Properties = ({ children }) => {
     if (propertyId) {
       loadProperty({
         variables: { property: propertyId },
-        onCompleted: setProperty
+        onCompleted: (data) => { setCurrentProperty(data.property) },
+        onError: () => {
+          navigate('/properties', { state: [{error: 'Unable to load property with id ' + propertyId }]})
+        }
       })
     }
   }, [propertyId])
   
   return (
     <div className="property">
-      <Breadcrumbs currentProperty={currentProperty} currentUnit={currentUnit} />
-      {children}
+      <ErrorContext.Provider value={{error: error, setError: setError}}>
+        <Breadcrumbs currentProperty={currentProperty} currentUnit={currentUnit} />
+        {children}
 
-      <Outlet context={{
-        currentProperty, setCurrentProperty,
-        currentUnit, setCurrentUnit
-      }}/>
+        <ErrorContext.Consumer>
+          { ({error}) => {
+            let {severity, message} = error
+
+            return (severity.length > 0 && <Alert severity={severity}>{message}</Alert>)}
+          }
+        </ErrorContext.Consumer>
+        { location?.state && location.state.map((data, index) => {
+          const key = Object.keys(data)[0]
+
+          return (
+            <Alert sx={{maxWidth: 'md', my: 2}} key={index} severity={key}>{data[key]}</Alert>
+          )
+        })}
+        <Outlet context={{
+          currentProperty, setCurrentProperty,
+          currentUnit, setCurrentUnit
+        }}/>
+      </ErrorContext.Provider>
     </div>
   )
 }
@@ -71,13 +93,3 @@ Properties.New = New
 
 export default Properties
 
-
-// Properties.Index needs to have an add-property page added to it. 
-// Can we reuse the Edit page for Add? Or do we need separate Add and Edit
-// components?
-//
-
-// what about doing navigation as breadcrumbs
-//
-// e.g. Properties / { Property Name } / Units
-// or Properties / { Property Name } / Units / { Child }

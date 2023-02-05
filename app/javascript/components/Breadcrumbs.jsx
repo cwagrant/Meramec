@@ -20,8 +20,6 @@ const Crumbs = ({currentProperty, currentUnit}) => {
   const crumbs = matches
     .filter((match) => Boolean(match.handle?.crumb))
 
-  console.log(matches)
-
   const dynamicNames = {
     "{property}": currentProperty?.name,
     "{unit}": currentUnit?.name

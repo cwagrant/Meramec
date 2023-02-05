@@ -48,13 +48,13 @@ const Row = (props) => {
         </TableCell>
         <TableCell>
           <Box sx={{display: 'flex', justifyContent: 'space-evenly'}}>
-            <Link component={RouterLink} to={"./units/"+row.id}>
+            <Link component={RouterLink} to={"./"+row.id}>
               <LaunchIcon />
             </Link>
-            <Link component={RouterLink} to={"./units/"+row.id+"/edit"}>
+            <Link component={RouterLink} to={"./"+row.id+"/edit"}>
               <EditIcon />
             </Link>
-            <Link component={RouterLink} to={"./units/"+row.id} >
+            <Link component={RouterLink} to={"./"+row.id} >
               <DeleteIcon />
             </Link>
           </Box>
