@@ -2,7 +2,7 @@ import React from 'react'
 import { debounce } from 'lodash'
 import { useCallback, useEffect, useState } from 'react'
 import { useLazyQuery, useQuery, gql} from '@apollo/client'
-import { Link as RouterLink, useOutletContext, useParams } from 'react-router-dom'
+import { Link as RouterLink, useOutletContext, useParams, useNavigate} from 'react-router-dom'
 import { Box, Button, Collapse, IconButton, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Paper, TextField } from '@mui/material'
 
 import LaunchIcon from '@mui/icons-material/Launch';
@@ -27,6 +27,7 @@ const GET_UNITS = gql`
 const Row = (props) => {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
+  const navigate = useNavigate()
 
   return (
     <React.Fragment>
@@ -43,18 +44,23 @@ const Row = (props) => {
         <TableCell component="th" scope="row">
           {row.name}
         </TableCell>
-        <TableCell>
-          {row.typeOf}
+        <TableCell 
+          onClick={ () => {
+            navigate('units/'+row.id)
+          }}
+          sx={{cursor: 'pointer'}}
+        >
+            {row.typeOf}
         </TableCell>
         <TableCell>
           <Box sx={{display: 'flex', justifyContent: 'space-evenly'}}>
-            <Link component={RouterLink} to={"./"+row.id}>
+            <Link component={RouterLink} to={"./units/"+row.id}>
               <LaunchIcon />
             </Link>
-            <Link component={RouterLink} to={"./"+row.id+"/edit"}>
+            <Link component={RouterLink} to={"./units/"+row.id+"/edit"}>
               <EditIcon />
             </Link>
-            <Link component={RouterLink} to={"./"+row.id} >
+            <Link component={RouterLink} to={"./units/"+row.id} >
               <DeleteIcon />
             </Link>
           </Box>

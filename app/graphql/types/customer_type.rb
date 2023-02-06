@@ -3,6 +3,7 @@
 module Types
   class CustomerType < Types::BaseObject
     field :id, ID, null: false
+    field :name, String
     field :first_name, String
     field :last_name, String
     field :email, String

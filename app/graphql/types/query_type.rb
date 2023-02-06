@@ -109,12 +109,27 @@ module Types
 
     def customers(attributes: nil)
       return Customer.all if attributes.blank?
+      attr_hash = attributes.to_hash
+      name = attr_hash.delete(:name)
+      customers = Customer.where(attr_hash)
 
-      Customer.where(**attributes)
+      if name.present?
+        customers = name.split(' ').reduce(customers) do |scope, value|
+          newScope = scope
+            .where('first_name like ?', "%#{value}%")
+            .or(scope.where(
+              'last_name like ?', "%#{value}%"))
+          
+          newScope
+        end
+      end
+
+      customers
     end
 
     def customer(attributes:)
-      Customer.where(**attributes)
+      attr_hash = attributes.to_hash
+      Customer.find_by(attr_hash)
     end
 
     def payments(attributes: nil)

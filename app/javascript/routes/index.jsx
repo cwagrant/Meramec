@@ -2,11 +2,14 @@ import React from "react";
 import Root from "../components/Root";
 import Properties from "../components/properties";
 import Units from "../components/units";
+import RentalAgreements from '../components/RentalAgreements'
+import Customers from '../components/Customers'
 
 import { 
   createBrowserRouter,
   createRoutesFromElements,
-  Route
+  Route,
+  Navigate
 } from 'react-router-dom';
 
 const router = createBrowserRouter(
@@ -30,7 +33,7 @@ const router = createBrowserRouter(
             <Route index element={<Units.Index />} />
             <Route path="edit" element={<Properties.Edit />} />
             <Route path="units" element={<Units />}>
-              <Route index element={<Units.Index />} />
+              <Route index element={<Navigate replace to=".." />} />
               <Route path="new" element={<Units.New />} handle={{ crumb: { name: "New" }}} />
               <Route 
                 path=":unitId"
@@ -41,6 +44,15 @@ const router = createBrowserRouter(
                 <Route path="edit" element={<Units.Edit />}/>
               </Route>
             </Route>
+          </Route>
+        </Route>
+        <Route path="agreements" element={<RentalAgreements />}>
+        </Route>
+        <Route path="customers" element={<Customers />}>
+          <Route index element={<Customers.Index />} />
+          <Route path=":customerId" element={<Customers />}>
+            <Route index element={<Customers.Show />}/>
+            <Route path="edit" element={<Customers.Edit />}/>
           </Route>
         </Route>
       </Route>

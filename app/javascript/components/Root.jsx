@@ -23,6 +23,7 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import ApartmentIcon from '@mui/icons-material/Apartment';
+import PeopleIcon from '@mui/icons-material/People';
 import { Link } from 'react-router-dom'
 
 const drawerWidth = 240;
@@ -92,9 +93,9 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-const ListLink = ({open}) => {
+const ListLink = ({open, to, name, icon}) => {
   return (
-    <ListItem key="Properties" component={Link} to="/properties" disablePadding sx={{ display: 'block' }}>
+    <ListItem key={name} component={Link} to={to} disablePadding sx={{ display: 'block' }}>
       <ListItemButton 
         sx={{
           minHeight: 48,
@@ -105,9 +106,9 @@ const ListLink = ({open}) => {
         <ListItemIcon
           sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center'}}
         >
-          <ApartmentIcon />
+          {icon}
         </ListItemIcon>
-        <ListItemText primary='Properties' sx={{ opacity: open ? 1 : 0 }} />
+        <ListItemText primary={name} sx={{ opacity: open ? 1 : 0 }} />
       </ListItemButton>
     </ListItem>
   )
@@ -164,8 +165,9 @@ export default function MiniDrawer() {
         </DrawerHeader>
         <Divider />
         <List>
-          <ListLink open={open} />
-          {['Properties', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+          <ListLink open={open} to="/properties" name="Properties" icon={<ApartmentIcon />} />
+          <ListLink open={open} to="/customers" name="Customers" icon={<PeopleIcon />} />
+          {['Test', 'Drafts'].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 sx={{
