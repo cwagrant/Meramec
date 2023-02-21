@@ -4,9 +4,9 @@ import { Box, Button } from "@mui/material";
 import { useOutletContext, useParams } from "react-router-dom";
 import FormFields from "./FormFields";
 
-const UPDATE_CUSTOMER = gql`
-  mutation UpdateCustomer($attributes: CustomerUpdateInput!) {
-    customerUpdate(input: $attributes) {
+const ADD_CUSTOMER = gql`
+  mutation AddCustomer($attributes: CustomerCreateInput!) {
+    customerCreate(input: $attributes) {
       customer{
         id
         firstName
@@ -17,10 +17,8 @@ const UPDATE_CUSTOMER = gql`
 `;
 
 const Edit = () => {
-  const { customerId } = useParams();
-  const { customer } = useOutletContext();
-  const [updateCustomer, { data, loading, error }] = useMutation(
-    UPDATE_CUSTOMER,
+  const [addCustomer, { data, loading, error }] = useMutation(
+    ADD_CUSTOMER,
   );
 
   const handleSubmit = (event) => {
@@ -29,7 +27,6 @@ const Edit = () => {
 
     let preparedData = {
       "attributes": {
-        "id": customerId,
         "customerInput": {
           "firstName": formData.get("firstName"),
           "lastName": formData.get("lastName"),
@@ -37,7 +34,7 @@ const Edit = () => {
       },
     };
 
-    updateCustomer({ variables: preparedData });
+    addCustomer({ variables: preparedData });
   };
 
   return (
@@ -50,7 +47,7 @@ const Edit = () => {
         "& .MuiFormControl-root": { m: 1, maxWidth: "sm" },
       }}
     >
-      <FormFields values={customer} />
+      <FormFields values={{}} />
 
       <Box sx={{ display: "flex", m: 1 }}>
         <Button

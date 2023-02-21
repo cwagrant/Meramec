@@ -1,26 +1,34 @@
 import React from "react";
 import { gql, useMutation } from "@apollo/client";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Paper } from "@mui/material";
 import { useOutletContext, useParams } from "react-router-dom";
 import FormFields from "./FormFields";
 
-const UPDATE_CUSTOMER = gql`
-  mutation UpdateCustomer($attributes: CustomerUpdateInput!) {
-    customerUpdate(input: $attributes) {
-      customer{
+const UPDATE_RENTAL_AGREEMENT = gql`
+  mutation UpdateRentalAgreement($attributes: RentalAgreementUpdateInput!) {
+    rentalAgreementUpdate(input: $attributes) {
+      rentalAgreement{
         id
-        firstName
-        lastName
+        customer {
+          id
+          firstName
+          lastName
+          formalName
+        }
+        unit {
+          id
+          name
+        }
       }
     }
   }
 `;
 
 const Edit = () => {
-  const { customerId } = useParams();
-  const { customer } = useOutletContext();
-  const [updateCustomer, { data, loading, error }] = useMutation(
-    UPDATE_CUSTOMER,
+  const { rentalAgreementId } = useParams();
+  const { rentalAgreement } = useOutletContext();
+  const [updateRentalAgreement, { data, loading, error }] = useMutation(
+    UPDATE_RENTAL_AGREEMENT,
   );
 
   const handleSubmit = (event) => {
@@ -29,15 +37,15 @@ const Edit = () => {
 
     let preparedData = {
       "attributes": {
-        "id": customerId,
-        "customerInput": {
+        "id": rentalAgreementId,
+        "rentalAgreementInput": {
           "firstName": formData.get("firstName"),
           "lastName": formData.get("lastName"),
         },
       },
     };
 
-    updateCustomer({ variables: preparedData });
+    updateRentalAgreement({ variables: preparedData });
   };
 
   return (
@@ -50,16 +58,18 @@ const Edit = () => {
         "& .MuiFormControl-root": { m: 1, maxWidth: "sm" },
       }}
     >
-      <FormFields values={customer} />
+      <Paper sx={{ p: 1 }}>
+        <FormFields values={rentalAgreement} />
 
-      <Box sx={{ display: "flex", m: 1 }}>
-        <Button
-          variant="outlined"
-          type="submit"
-        >
-          Submit
-        </Button>
-      </Box>
+        <Box sx={{ display: "flex", m: 1 }}>
+          <Button
+            variant="outlined"
+            type="submit"
+          >
+            Submit
+          </Button>
+        </Box>
+      </Paper>
     </Box>
   );
 };

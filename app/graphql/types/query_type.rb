@@ -167,14 +167,27 @@ module Types
       Property.where(attr_hash).first
     end
 
-    def rental_agreements(attributes:)
+    def rental_agreements(attributes: nil)
       return RentalAgreement.all if attributes.blank?
 
-      RentalAgreement.where(**attributes)
+      attr_hash = attributes.to_hash
+      search = attr_hash.delete(:search)
+      agreements = RentalAgreement.joins(:unit, :customer).where(attr_hash)
+
+      if search.present?
+        agreements = agreements.where(Unit.arel_table[:name].matches("%#{search}%"))
+          .or(agreements.where(Customer.arel_table[:first_name].matches("%#{search}")))
+          .or(agreements.where(Customer.arel_table[:last_name].matches("%#{search}")))
+      end
+
+      agreements
     end
 
     def rental_agreement(attributes:)
-      RentalAgreement.where(**attributes)
+      attr_hash = attributes.to_hash
+      name = attr_hash.delete(:name)
+
+      RentalAgreement.where(attr_hash).first
     end
 
     def rental_agreement_payments(attributes:)

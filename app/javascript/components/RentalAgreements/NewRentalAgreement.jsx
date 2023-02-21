@@ -4,10 +4,10 @@ import { Box, Button } from "@mui/material";
 import { useOutletContext, useParams } from "react-router-dom";
 import FormFields from "./FormFields";
 
-const UPDATE_CUSTOMER = gql`
-  mutation UpdateCustomer($attributes: CustomerUpdateInput!) {
-    customerUpdate(input: $attributes) {
-      customer{
+const ADD_RENTAL_AGREEMENT = gql`
+  mutation AddRentalAgreement($attributes: RentalAgreementCreateInput!) {
+    rentalAgreementCreate(input: $attributes) {
+      rentalAgreement{
         id
         firstName
         lastName
@@ -17,10 +17,8 @@ const UPDATE_CUSTOMER = gql`
 `;
 
 const Edit = () => {
-  const { customerId } = useParams();
-  const { customer } = useOutletContext();
-  const [updateCustomer, { data, loading, error }] = useMutation(
-    UPDATE_CUSTOMER,
+  const [addRentalAgreement, { data, loading, error }] = useMutation(
+    ADD_RENTAL_AGREEMENT,
   );
 
   const handleSubmit = (event) => {
@@ -29,15 +27,14 @@ const Edit = () => {
 
     let preparedData = {
       "attributes": {
-        "id": customerId,
-        "customerInput": {
+        "rentalAgreementInput": {
           "firstName": formData.get("firstName"),
           "lastName": formData.get("lastName"),
         },
       },
     };
 
-    updateCustomer({ variables: preparedData });
+    addRentalAgreement({ variables: preparedData });
   };
 
   return (
@@ -46,11 +43,11 @@ const Edit = () => {
       onSubmit={handleSubmit}
       sx={{
         width: 1,
-        maxWidth: "sm",
+        maxWidth: "md",
         "& .MuiFormControl-root": { m: 1, maxWidth: "sm" },
       }}
     >
-      <FormFields values={customer} />
+      <FormFields values={{}} />
 
       <Box sx={{ display: "flex", m: 1 }}>
         <Button
@@ -72,3 +69,13 @@ export default Edit;
 // about them or such.
 //
 // Possibly even doing an inline form but I think not.
+//
+// 2023-2-15 I think we'll do like we did with the units autocomplete dropdown
+// for Customers
+//
+// Then we can also have it be that you can select an option for "Add Customer..." and that
+// will render the fields for the UserForm so you can put in the user's information.
+//
+// Finally we'll need to add the basic terms logic to add a rental term with a start and end
+// date
+//

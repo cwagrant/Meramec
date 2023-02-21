@@ -1,9 +1,10 @@
-import React from "react"
-import { Outlet, useParams } from "react-router-dom"
-import { gql, useLazyQuery } from '@apollo/client'
-import { default as Index } from './Customers'
-import Show from './ShowCustomer'
-import Edit from './EditCustomer'
+import React from "react";
+import { Outlet, useParams } from "react-router-dom";
+import { gql, useLazyQuery } from "@apollo/client";
+import { default as Index } from "./Customers";
+import Show from "./ShowCustomer";
+import Edit from "./EditCustomer";
+import New from "./NewCustomer";
 
 const GET_CUSTOMER = gql`
   query getCustomer($id: ID) {
@@ -16,32 +17,34 @@ const GET_CUSTOMER = gql`
       gateCode
     }
   }
-`
-const Customers = ({children }) => {
-
-  const { customerId } = useParams()
-  const [ customer, setCustomer ] = React.useState()
-  const [ loadCustomer, { customerData }] = useLazyQuery(GET_CUSTOMER)
+`;
+const Customers = ({ children }) => {
+  const { customerId } = useParams();
+  const [customer, setCustomer] = React.useState();
+  const [loadCustomer, { customerData }] = useLazyQuery(GET_CUSTOMER);
 
   React.useEffect(() => {
-    if(customerId) {
+    if (customerId) {
       loadCustomer({
         variables: { id: customerId },
-        onCompleted: (data) => { setCustomer(data.customer) }
-      })
+        onCompleted: (data) => {
+          setCustomer(data.customer);
+        },
+      });
     }
-  },[customerId])
+  }, [customerId]);
 
   return (
     <>
       {children}
-      <Outlet context={{customer, setCustomer}}/>
+      <Outlet context={{ customer, setCustomer }} />
     </>
-  )
-}
+  );
+};
 
-Customers.Index = Index
-Customers.Show = Show
-Customers.Edit = Edit
+Customers.Index = Index;
+Customers.Show = Show;
+Customers.Edit = Edit;
+Customers.New = New;
 
-export default Customers
+export default Customers;
