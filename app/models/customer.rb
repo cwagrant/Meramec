@@ -1,4 +1,5 @@
 class Customer < ApplicationRecord
+  include Searchable
   belongs_to :address, optional: true
   has_many :payments
 
@@ -8,5 +9,9 @@ class Customer < ApplicationRecord
 
   def formal_name
     "#{last_name}, #{first_name}"
+  end
+
+  def self.searchable_attributes
+    %w(first_name last_name)
   end
 end

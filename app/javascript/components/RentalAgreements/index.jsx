@@ -38,7 +38,6 @@ const RentalAgreements = ({ children }) => {
           setRentalAgreement(data.rentalAgreement);
         },
       });
-      console.log("RentalAgreement", rentalAgreement);
     }
   }, [agreementId]);
 

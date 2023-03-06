@@ -6,8 +6,10 @@ module Types
     argument :unit, Types::UnitInputType, required: false
     argument :customer, Types::CustomerInputType, required: false
     argument :search, String, required: false
-    argument :unit_id, Integer, required: false
-    argument :customer_id, Integer, required: false
+    argument :unit_id, ID, required: false
+    argument :customer_id, ID, required: false
     argument :price_in_cents, Integer, required: false
+    argument :start_date, GraphQL::Types::ISO8601Date, required: false
+    argument :end_date, GraphQL::Types::ISO8601Date, required: false
   end
 end

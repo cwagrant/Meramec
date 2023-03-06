@@ -3,6 +3,7 @@ import {
   Autocomplete,
   Box,
   FormControlLabel,
+  Input,
   Paper,
   Switch,
   TextField,
@@ -14,6 +15,10 @@ const GET_CUSTOMERS = gql`
   query allCustomers {
     customers {
       id
+      firstName
+      lastName
+      gateCode
+      email
       formalName
     }
   }
@@ -23,22 +28,44 @@ const SelectCustomer = (props) => {
   const { loading, error, data } = useQuery(GET_CUSTOMERS);
   const [options, setOptions] = React.useState([]);
   const [newCustomer, setNewCustomer] = React.useState(false);
-  const [customer, setCustomer] = React.useState({ label: "", id: "" });
+  const [customer, setCustomer] = React.useState(null);
 
   React.useEffect(() => {
-    // setFirstName(props.values?.firstName || "");
-    // setLastName(props.values?.lastName || "");
-    // setEmail(props.value?.email || "");
-    // setGateCode(props.value?.gateCode || "");
-    setCustomer({ label: props.values?.formalName, id: props.values?.id });
-  }, [props.values]);
+    if (!loading && props.rentalAgreement?.customer) {
+      const optionCustomer = options.find((element) =>
+        element.id == props.rentalAgreement?.customer.id
+      );
+
+      setCustomer(optionCustomer);
+    }
+    // if (props.values?.id) {
+    //   setCustomer({
+    //     label: props.values?.formalName,
+    //     id: props.values?.id,
+    //   });
+    // } else {
+    //   setCustomer(null);
+    // }
+  }, [props.rentalAgreement, options]);
+
+  React.useEffect(() => {
+    if (customer) {
+      let { label, ...customerInfo } = customer;
+      props.setRentalAgreement({
+        ...props.rentalAgreement,
+        customer: customerInfo,
+      });
+    }
+  }, [customer]);
 
   React.useEffect(() => {
     const customers = data?.customers.map((customer) => {
-      return {
-        "label": customer.formalName || "",
-        "id": customer.id || "",
-      };
+      if (customer?.id) {
+        return {
+          ...customer,
+          "label": customer.formalName,
+        };
+      }
     });
 
     setOptions(customers || []);
@@ -51,6 +78,7 @@ const SelectCustomer = (props) => {
           sx={{ m: 1 }}
           control={
             <Switch
+              id="newCustomer"
               value={newCustomer}
               onChange={() => {
                 setNewCustomer(!newCustomer);
@@ -60,16 +88,22 @@ const SelectCustomer = (props) => {
           label="New Customer"
         />
       </Box>
-      {newCustomer ? <FormFields /> : (
+      {newCustomer ? <FormFields setCustomer={setCustomer} /> : (
         <Autocomplete
           disablePortal
           id="customer"
-          // value={customer}
+          value={customer}
           options={options}
+          onChange={(event, newValue) => {
+            props.setRentalAgreement({
+              ...props.rentalAgreement,
+              customer: newValue,
+            });
+          }}
           sx={{ width: 1, pr: 2 }}
           renderInput={(params) => <TextField {...params} label="Customer" />}
           isOptionEqualToValue={(option, value) => {
-            option?.id === value?.id;
+            return option.id === value.id;
           }}
         />
       )}

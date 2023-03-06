@@ -11,7 +11,23 @@ module Mutations
 
     def resolve(id:, rental_agreement_input:)
       rental_agreement = ::RentalAgreement.find(id)
-      raise GraphQL::ExecutionError.new "Error updating rental_agreement", extensions: rental_agreement.errors.to_hash unless rental_agreement.update(**rental_agreement_input)
+
+      # if rental_agreement_input.dig(:customer, :id)
+      #   ::Customer.find_or_create_by(id: rental_agreement_input.customer&.id) do |customer|
+      #
+      # attributes = {
+      #   unit_id: rental_agreement_input.unit.id,
+      #   customer_id: 
+      # }
+
+      input = rental_agreement_input.to_h
+
+      if(input.key?(:customer))
+        input[:customer_attributes] = input.delete(:customer)
+      end
+
+
+      raise GraphQL::ExecutionError.new "Error updating rental_agreement", extensions: rental_agreement.errors.to_hash unless rental_agreement.update(**input)
 
       { rental_agreement: rental_agreement }
     end

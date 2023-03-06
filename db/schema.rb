@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_06_050042) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_04_232744) do
   create_table "addresses", force: :cascade do |t|
     t.text "address_1"
     t.text "address_2"
@@ -84,6 +84,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_06_050042) do
     t.integer "unit_id"
     t.integer "customer_id"
     t.integer "price_in_cents"
+    t.date "start_date"
+    t.date "end_date"
     t.index ["customer_id"], name: "index_rental_agreements_on_customer_id"
     t.index ["unit_id"], name: "index_rental_agreements_on_unit_id"
   end

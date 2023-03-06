@@ -25,33 +25,50 @@ const UPDATE_RENTAL_AGREEMENT = gql`
 `;
 
 const Edit = () => {
-  const { rentalAgreementId } = useParams();
-  const { rentalAgreement } = useOutletContext();
+  const { agreementId } = useParams();
+  const { rentalAgreement, setRentalAgreement } = useOutletContext();
   const [updateRentalAgreement, { data, loading, error }] = useMutation(
     UPDATE_RENTAL_AGREEMENT,
   );
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    let formData = new FormData(event.target);
+    if (rentalAgreement.customer && rentalAgreement.unit) {
+      let { __typename: _0, formalName: _, ...customer } =
+        rentalAgreement.customer;
+      let { __typename: _1, ...unit } = rentalAgreement.unit;
+      let newCustomer = document.getElementById("newCustomer")?.value;
 
-    let preparedData = {
-      "attributes": {
-        "id": rentalAgreementId,
-        "rentalAgreementInput": {
-          "firstName": formData.get("firstName"),
-          "lastName": formData.get("lastName"),
+      let preparedData = {
+        "attributes": {
+          "id": agreementId,
+          "rentalAgreementInput": {
+            "unitId": unit.id,
+          },
         },
-      },
-    };
+      };
 
-    updateRentalAgreement({ variables: preparedData });
+      if (document.getElementById("newCustomer").value === "true") {
+        preparedData.attributes.rentalAgreementInput = {
+          ...preparedData.attributes.rentalAgreementInput,
+          customer: customer,
+        };
+      } else {
+        preparedData.attributes.rentalAgreementInput = {
+          ...preparedData.attributes.rentalAgreementInput,
+          customerId: customer.id,
+        };
+      }
+
+      updateRentalAgreement({ variables: preparedData });
+    }
   };
 
   return (
     <Box
       component="form"
       onSubmit={handleSubmit}
+      id="raform"
       sx={{
         width: 1,
         maxWidth: "sm",
@@ -59,7 +76,10 @@ const Edit = () => {
       }}
     >
       <Paper sx={{ p: 1 }}>
-        <FormFields values={rentalAgreement} />
+        <FormFields
+          rentalAgreement={rentalAgreement}
+          setRentalAgreement={setRentalAgreement}
+        />
 
         <Box sx={{ display: "flex", m: 1 }}>
           <Button

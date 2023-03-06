@@ -6,6 +6,12 @@ const FormFields = (props) => {
   const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [gateCode, setGateCode] = React.useState("");
+  const [customer, setCustomer] = React.useState({
+    firstName: "",
+    lastName: "",
+    gateCode: "",
+    email: "",
+  });
 
   React.useEffect(() => {
     setFirstName(props.values?.firstName || "");
@@ -13,6 +19,18 @@ const FormFields = (props) => {
     setEmail(props.value?.email || "");
     setGateCode(props.value?.gateCode || "");
   }, [props.values]);
+
+  React.useEffect(() => {
+    // TODO: Debounce this effect
+    if (props.setCustomer) {
+      props.setCustomer({
+        firstName: firstName,
+        lastName: lastName,
+        gateCode: gateCode,
+        email: email,
+      });
+    }
+  }, [firstName, lastName, email, gateCode]);
 
   return (
     <>

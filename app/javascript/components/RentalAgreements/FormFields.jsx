@@ -33,28 +33,33 @@ const FormFields = (props) => {
   const { loading, error, data } = useQuery(GET_UNITS);
   const [unitOptions, setUnitOptions] = React.useState([]);
   const [includeOccupiedUnits, setIncludeOccupiedUnits] = React.useState(true);
-  const [unit, setUnit] = React.useState({ label: "", id: "" });
+  const [unit, setUnit] = React.useState(null);
 
   React.useEffect(() => {
-    // setFirstName(props.values?.firstName || "");
-    // setLastName(props.values?.lastName || "");
-    // setEmail(props.value?.email || "");
-    // setGateCode(props.value?.gateCode || "");
-
-    if (!loading) {
+    if (!loading && props.rentalAgreement?.unit) {
       const optionUnit = unitOptions.find((element) =>
-        element.id == props?.values?.unit.id
+        element.id == props.rentalAgreement?.unit.id
       );
 
-      setUnit(optionUnit || { label: "", id: "" });
+      setUnit(optionUnit);
     }
-  }, [props.values, unitOptions]);
+  }, [props.rentalAgreement, unitOptions]);
+
+  React.useEffect(() => {
+    if (unit) {
+      let { label, ...selectedUnit } = unit;
+      props.setRentalAgreement({
+        ...props.rentalAgreement,
+        unit: selectedUnit,
+      });
+    }
+  }, [unit]);
 
   React.useEffect(() => {
     const options = data?.units.map((unit) => {
       return {
+        ...unit,
         "label": unit.name,
-        "id": unit.id,
       };
     });
 
@@ -72,8 +77,10 @@ const FormFields = (props) => {
         options={unitOptions}
         value={unit}
         onChange={(event, newValue) => {
-          console.log("newValue", newValue);
-          setUnit(newValue);
+          props.setRentalAgreement({
+            ...props.rentalAgreement,
+            unit: newValue,
+          });
         }}
         sx={{ width: 1, pr: 2 }}
         renderInput={(params) => <TextField {...params} label="Unit" />}
@@ -83,7 +90,10 @@ const FormFields = (props) => {
       />
 
       <Divider>Customer</Divider>
-      <SelectCustomer values={props?.values?.customer} />
+      <SelectCustomer
+        rentalAgreement={props.rentalAgreement}
+        setRentalAgreement={props.setRentalAgreement}
+      />
     </>
   );
 };
