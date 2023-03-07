@@ -45,12 +45,8 @@ module Searchable
 
   class_methods do
     def searchable_attributes
-      if self.method_defined?(:searchable_attributes)
-        self.send(:searchable_attributes)
-      else
-        warn("#{self.to_s} must implement a searchable_attributes Class method.")
-        []
-      end
+      warn("warning: #{self.to_s} should implement a searchable_attributes Class method.")
+      []
     end
   end
 end

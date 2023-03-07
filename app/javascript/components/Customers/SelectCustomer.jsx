@@ -3,10 +3,10 @@ import {
   Autocomplete,
   Box,
   FormControlLabel,
-  Input,
-  Paper,
+  ListItem,
   Switch,
   TextField,
+  Typography,
 } from "@mui/material";
 import { gql, useQuery } from "@apollo/client";
 import FormFields from "./FormFields";
@@ -36,16 +36,10 @@ const SelectCustomer = (props) => {
         element.id == props.rentalAgreement?.customer.id
       );
 
-      setCustomer(optionCustomer);
+      if (optionCustomer) {
+        setCustomer(optionCustomer);
+      }
     }
-    // if (props.values?.id) {
-    //   setCustomer({
-    //     label: props.values?.formalName,
-    //     id: props.values?.id,
-    //   });
-    // } else {
-    //   setCustomer(null);
-    // }
   }, [props.rentalAgreement, options]);
 
   React.useEffect(() => {
@@ -59,13 +53,12 @@ const SelectCustomer = (props) => {
   }, [customer]);
 
   React.useEffect(() => {
-    const customers = data?.customers.map((customer) => {
-      if (customer?.id) {
-        return {
-          ...customer,
-          "label": customer.formalName,
-        };
+    const customers = data?.customers.slice().sort((a, b) => {
+      if (a.formalName === b.formalName) {
+        return 0;
       }
+
+      return a.formalName < b.formalName ? -1 : 1;
     });
 
     setOptions(customers || []);
@@ -81,6 +74,9 @@ const SelectCustomer = (props) => {
               id="newCustomer"
               value={newCustomer}
               onChange={() => {
+                if (newCustomer) {
+                  setCustomer(null);
+                }
                 setNewCustomer(!newCustomer);
               }}
             />
@@ -92,15 +88,38 @@ const SelectCustomer = (props) => {
         <Autocomplete
           disablePortal
           id="customer"
-          value={customer}
+          value={customer || null}
           options={options}
+          getOptionLabel={(option) => option.formalName}
+          renderOption={(props, option, state) => {
+            return (
+              <ListItem
+                {...props}
+                component="li"
+                key={`${option.formalName} ${option.id}`}
+                sx={{ justifyContent: "space-between!important" }}
+              >
+                <span>{option.formalName}</span>
+                <Typography variant="overline" sx={{ color: "#444" }}>
+                  (ID: {option.id})
+                </Typography>
+              </ListItem>
+            );
+          }}
           onChange={(event, newValue) => {
             props.setRentalAgreement({
               ...props.rentalAgreement,
               customer: newValue,
             });
           }}
-          sx={{ width: 1, pr: 2 }}
+          sx={{
+            width: 1,
+            pr: 2,
+            "& .MuiAutocomplete-option": {
+              display: "flex",
+              justifyContent: "space-between",
+            },
+          }}
           renderInput={(params) => <TextField {...params} label="Customer" />}
           isOptionEqualToValue={(option, value) => {
             return option.id === value.id;

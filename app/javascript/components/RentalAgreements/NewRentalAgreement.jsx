@@ -1,7 +1,6 @@
 import React from "react";
 import { gql, useMutation } from "@apollo/client";
-import { Box, Button } from "@mui/material";
-import { useOutletContext, useParams } from "react-router-dom";
+import { Box, Button, Paper } from "@mui/material";
 import FormFields from "./FormFields";
 
 const ADD_RENTAL_AGREEMENT = gql`
@@ -9,59 +8,90 @@ const ADD_RENTAL_AGREEMENT = gql`
     rentalAgreementCreate(input: $attributes) {
       rentalAgreement{
         id
-        firstName
-        lastName
+        customer {
+          id
+          firstName
+          lastName
+          formalName
+        }
+        unit {
+          id
+          name
+        }
       }
     }
   }
 `;
 
-const Edit = () => {
+const New = () => {
+  const [rentalAgreement, setRentalAgreement] = React.useState(null);
   const [addRentalAgreement, { data, loading, error }] = useMutation(
     ADD_RENTAL_AGREEMENT,
   );
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    let formData = new FormData(event.target);
+    if (rentalAgreement.customer && rentalAgreement.unit) {
+      let { __typename: _0, formalName: _, ...customer } =
+        rentalAgreement.customer;
+      let { __typename: _1, ...unit } = rentalAgreement.unit;
+      let newCustomer = document.getElementById("newCustomer")?.value;
 
-    let preparedData = {
-      "attributes": {
-        "rentalAgreementInput": {
-          "firstName": formData.get("firstName"),
-          "lastName": formData.get("lastName"),
+      let preparedData = {
+        "attributes": {
+          "rentalAgreementInput": {
+            "unitId": unit.id,
+          },
         },
-      },
-    };
+      };
 
-    addRentalAgreement({ variables: preparedData });
+      if (document.getElementById("newCustomer").value === "true") {
+        preparedData.attributes.rentalAgreementInput = {
+          ...preparedData.attributes.rentalAgreementInput,
+          customer: customer,
+        };
+      } else {
+        preparedData.attributes.rentalAgreementInput = {
+          ...preparedData.attributes.rentalAgreementInput,
+          customerId: customer.id,
+        };
+      }
+
+      addRentalAgreement({ variables: preparedData });
+    }
   };
 
   return (
     <Box
       component="form"
       onSubmit={handleSubmit}
+      id="raform"
       sx={{
         width: 1,
-        maxWidth: "md",
+        maxWidth: "sm",
         "& .MuiFormControl-root": { m: 1, maxWidth: "sm" },
       }}
     >
-      <FormFields values={{}} />
+      <Paper sx={{ p: 1 }}>
+        <FormFields
+          rentalAgreement={rentalAgreement}
+          setRentalAgreement={setRentalAgreement}
+        />
 
-      <Box sx={{ display: "flex", m: 1 }}>
-        <Button
-          variant="outlined"
-          type="submit"
-        >
-          Submit
-        </Button>
-      </Box>
+        <Box sx={{ display: "flex", m: 1 }}>
+          <Button
+            variant="outlined"
+            type="submit"
+          >
+            Submit
+          </Button>
+        </Box>
+      </Paper>
     </Box>
   );
 };
 
-export default Edit;
+export default New;
 
 //TODO we want to show something that gives us th name of the unit,
 // the type of unit, the price, the address, additional details, and

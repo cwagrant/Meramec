@@ -5,6 +5,7 @@ import { gql, useLazyQuery } from "@apollo/client";
 import { default as Index } from "./RentalAgreements";
 import Edit from "./EditRentalAgreement";
 import Show from "./ShowRentalAgreement";
+import New from "./NewRentalAgreement";
 
 const GET_AGREEMENT = gql`
   query getRentalAgreement($id: ID) {
@@ -44,6 +45,7 @@ const RentalAgreements = ({ children }) => {
   return <Outlet context={{ rentalAgreement, setRentalAgreement }} />;
 };
 
+RentalAgreements.New = New;
 RentalAgreements.Index = Index;
 RentalAgreements.Edit = Edit;
 RentalAgreements.Show = Show;

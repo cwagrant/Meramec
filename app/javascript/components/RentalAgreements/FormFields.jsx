@@ -9,6 +9,7 @@ const GET_UNITS = gql`
       id
       name
       typeOf
+      occupied
     }
   }
 `;
@@ -41,7 +42,9 @@ const FormFields = (props) => {
         element.id == props.rentalAgreement?.unit.id
       );
 
-      setUnit(optionUnit);
+      if (optionUnit) {
+        setUnit(optionUnit);
+      }
     }
   }, [props.rentalAgreement, unitOptions]);
 
@@ -56,14 +59,21 @@ const FormFields = (props) => {
   }, [unit]);
 
   React.useEffect(() => {
-    const options = data?.units.map((unit) => {
-      return {
-        ...unit,
-        "label": unit.name,
-      };
+    const units = data?.units.slice().sort((a, b) => {
+      let x = a.occupied - b.occupied;
+
+      if (x !== 0) {
+        return x;
+      }
+
+      if (a.name === b.name) {
+        return 0;
+      }
+
+      return a.name < b.name ? -1 : 1;
     });
 
-    setUnitOptions(options || []);
+    setUnitOptions(units || []);
   }, [data]);
 
   return (
@@ -75,6 +85,8 @@ const FormFields = (props) => {
         disableCloseOnSelect
         id="unit"
         options={unitOptions}
+        groupBy={(option) => option.occupied ? "Taken" : "Available"}
+        getOptionLabel={(option) => option.name}
         value={unit}
         onChange={(event, newValue) => {
           props.setRentalAgreement({

@@ -9,4 +9,8 @@ class Unit < ApplicationRecord
   def self.searchable_attributes
     %w(name type_of)
   end
+
+  def occupied
+    rental_agreements.where(end_date: nil).any?
+  end
 end
