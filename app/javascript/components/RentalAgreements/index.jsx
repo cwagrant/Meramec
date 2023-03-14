@@ -11,9 +11,13 @@ const GET_AGREEMENT = gql`
   query getRentalAgreement($id: ID) {
     rentalAgreement(attributes: {id: $id}) {
       id
+      startDate
+      endDate
       unit {
         id
         name
+        typeOf
+        priceInCents
       }
       customer {
         id

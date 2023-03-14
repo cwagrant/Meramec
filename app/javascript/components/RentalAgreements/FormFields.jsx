@@ -1,7 +1,16 @@
 import React from "react";
-import { Autocomplete, Divider, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  Divider,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { gql, useQuery } from "@apollo/client";
 import SelectCustomer from "../Customers/SelectCustomer";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
 const GET_UNITS = gql`
   query allUnits {
@@ -33,8 +42,10 @@ const GET_UNITS = gql`
 const FormFields = (props) => {
   const { loading, error, data } = useQuery(GET_UNITS);
   const [unitOptions, setUnitOptions] = React.useState([]);
-  const [includeOccupiedUnits, setIncludeOccupiedUnits] = React.useState(true);
+  // const [includeOccupiedUnits, setIncludeOccupiedUnits] = React.useState(true);
   const [unit, setUnit] = React.useState(null);
+  const [startDate, setStartDate] = React.useState("");
+  const [endDate, setEndDate] = React.useState("");
 
   React.useEffect(() => {
     if (!loading && props.rentalAgreement?.unit) {
@@ -46,6 +57,11 @@ const FormFields = (props) => {
         setUnit(optionUnit);
       }
     }
+
+    if (!loading && props.rentalAgreement) {
+      setStartDate(dayjs(props.rentalAgreement.startDate));
+      setEndDate(dayjs(props.rentalAgreement.endDate));
+    }
   }, [props.rentalAgreement, unitOptions]);
 
   React.useEffect(() => {
@@ -54,9 +70,11 @@ const FormFields = (props) => {
       props.setRentalAgreement({
         ...props.rentalAgreement,
         unit: selectedUnit,
+        startDate: startDate,
+        endDate: endDate,
       });
     }
-  }, [unit]);
+  }, [unit, endDate, startDate]);
 
   React.useEffect(() => {
     const units = data?.units.slice().sort((a, b) => {
@@ -78,11 +96,39 @@ const FormFields = (props) => {
 
   return (
     <>
-      <Divider>Unit</Divider>
+      <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+        <Typography variant="h4">
+          Rental Agreement #{props.rentalAgreement?.id}
+        </Typography>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            required
+            id="startDate"
+            name="startDate"
+            label="Start Date"
+            sx={{ width: 1, m: 1, maxWidth: "sm" }}
+            value={startDate}
+            onChange={(newValue) => {
+              setStartDate(newValue);
+            }}
+          />
+          <DatePicker
+            required
+            id="endDate"
+            name="endDate"
+            label="End Date"
+            sx={{ width: 1, m: 1, maxWidth: "sm" }}
+            value={endDate}
+            onChange={(newValue) => {
+              setEndDate(newValue);
+            }}
+          />
+        </LocalizationProvider>
+      </Box>
 
+      <Divider>Unit</Divider>
       <Autocomplete
         disablePortal
-        disableCloseOnSelect
         id="unit"
         options={unitOptions}
         groupBy={(option) => option.occupied ? "Taken" : "Available"}

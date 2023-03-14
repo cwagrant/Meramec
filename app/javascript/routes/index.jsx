@@ -4,6 +4,7 @@ import Properties from "../components/properties";
 import Units from "../components/units";
 import RentalAgreements from "../components/RentalAgreements";
 import Customers from "../components/Customers";
+import Payments from "../components/Payments";
 
 import {
   createBrowserRouter,
@@ -61,6 +62,18 @@ const router = createBrowserRouter(
         <Route path=":agreementId" element={<RentalAgreements />}>
           <Route index element={<RentalAgreements.Show />} />
           <Route path="edit" element={<RentalAgreements.Edit />} />
+        </Route>
+      </Route>
+      <Route path="payments" element={<Payments />}>
+        <Route index element={<Payments.Index />} />
+        <Route
+          path="new"
+          element={<Payments.New />}
+          handle={{ crumb: { name: "New" } }}
+        />
+        <Route path=":paymentId" element={<Payments />}>
+          <Route index element={<Payments.Show />} />
+          <Route path="edit" element={<Payments.Edit />} />
         </Route>
       </Route>
       <Route path="customers" element={<Customers />}>

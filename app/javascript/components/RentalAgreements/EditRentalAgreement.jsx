@@ -3,12 +3,16 @@ import { gql, useMutation } from "@apollo/client";
 import { Box, Button, Paper } from "@mui/material";
 import { useOutletContext, useParams } from "react-router-dom";
 import FormFields from "./FormFields";
+import { coerceToNull } from "../DataFormatHelpers";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 const UPDATE_RENTAL_AGREEMENT = gql`
   mutation UpdateRentalAgreement($attributes: RentalAgreementUpdateInput!) {
     rentalAgreementUpdate(input: $attributes) {
       rentalAgreement{
         id
+        startDate
+        endDate
         customer {
           id
           firstName
@@ -37,21 +41,29 @@ const Edit = () => {
       let { __typename: _0, formalName: _, ...customer } =
         rentalAgreement.customer;
       let { __typename: _1, ...unit } = rentalAgreement.unit;
+
       let newCustomer = document.getElementById("newCustomer")?.value;
 
       let preparedData = {
         "attributes": {
           "id": agreementId,
           "rentalAgreementInput": {
+            "startDate": rentalAgreement.startDate === ""
+              ? null
+              : rentalAgreement.startDate,
+            "endDate": rentalAgreement.endDate === ""
+              ? null
+              : rentalAgreement.endDate,
             "unitId": unit.id,
           },
         },
       };
 
-      if (document.getElementById("newCustomer").value === "true") {
+      if (rentalAgreement.newCustomer) {
+        console.log(rentalAgreement);
         preparedData.attributes.rentalAgreementInput = {
           ...preparedData.attributes.rentalAgreementInput,
-          customer: customer,
+          customer: rentalAgreement.newCustomerAttr,
         };
       } else {
         preparedData.attributes.rentalAgreementInput = {
@@ -60,7 +72,8 @@ const Edit = () => {
         };
       }
 
-      updateRentalAgreement({ variables: preparedData });
+      // updateRentalAgreement({ variables: preparedData });
+      console.log(preparedData);
     }
   };
 

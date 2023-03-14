@@ -16,6 +16,14 @@ def create_rat(ra, term)
   )
 end
 
+def getDates()
+  startDate = Date.today - rand(10000)
+  date = Date.today - rand(10000)
+  closeDate = startDate >= date ? nil : date
+
+  {open: startDate, close: closeDate}
+end
+
 ActiveRecord::Base.transaction do 
 
   late_fee = Term.create(
@@ -83,9 +91,13 @@ ActiveRecord::Base.transaction do
     unit = Unit.where.not(id: used_ids).sample
     used_ids << unit.id
 
+    dates = getDates
+
     ra = RentalAgreement.create(
       unit: unit,
-      customer: Customer.all.sample
+      customer: Customer.all.sample,
+      startDate: dates[:open]
+      endDate: dates[:close]
     )
 
     terms = Term.all.sample(SecureRandom.rand(3))

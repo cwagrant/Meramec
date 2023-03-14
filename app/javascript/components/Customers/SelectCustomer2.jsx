@@ -24,16 +24,16 @@ const GET_CUSTOMERS = gql`
   }
 `;
 
-const SelectCustomer = ({ rentalAgreement, setRentalAgreement }) => {
+const SelectCustomer = ({ customer, onChange, allowNew }) => {
   const { loading, error, data } = useQuery(GET_CUSTOMERS);
   const [options, setOptions] = React.useState([]);
   const [newCustomer, setNewCustomer] = React.useState(false);
   const [newCustomerAttr, setNewCustomerAttr] = React.useState(null);
 
   React.useEffect(() => {
-    if (!loading && rentalAgreement?.customer) {
+    if (!loading && customer) {
       const optionCustomer = options.find((element) =>
-        element.id == rentalAgreement?.customer.id
+        element.id == customer.id
       );
     }
   }, [options]);
@@ -50,34 +50,49 @@ const SelectCustomer = ({ rentalAgreement, setRentalAgreement }) => {
     setOptions(customers || []);
   }, [data]);
 
+  const changeHandler = (newCustomerValue) => {
+    if (onChange) {
+      if (newCustomerValue) {
+        onChange({
+          ...newCustomerValue,
+          newCustomer: newCustomer,
+        });
+      } else {
+        onChange(null);
+      }
+    }
+  };
+
   return (
     <>
-      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <FormControlLabel
-          sx={{ m: 1 }}
-          control={
-            <Switch
-              id="newCustomer"
-              value={newCustomer}
-              onChange={() => {
-                setNewCustomer(!newCustomer);
-              }}
+      {allowNew &&
+        (
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <FormControlLabel
+              sx={{ m: 1 }}
+              control={
+                <Switch
+                  id="newCustomer"
+                  value={newCustomer}
+                  onChange={() => {
+                    if (newCustomer) {
+                      changeHandler(null);
+                    }
+                    setNewCustomer(!newCustomer);
+                  }}
+                />
+              }
+              label="New Customer"
             />
-          }
-          label="New Customer"
-        />
-      </Box>
+          </Box>
+        )}
       {newCustomer
         ? (
           <FormFields
             values={newCustomerAttr}
             onChange={(newValue) => {
               setNewCustomerAttr(newValue);
-              setRentalAgreement({
-                ...rentalAgreement,
-                newCustomer: newCustomer,
-                newCustomerAttr: newCustomerAttr,
-              });
+              changeHandler(newValue);
             }}
           />
         )
@@ -85,7 +100,7 @@ const SelectCustomer = ({ rentalAgreement, setRentalAgreement }) => {
           <Autocomplete
             disablePortal
             id="customer"
-            value={rentalAgreement?.customer || null}
+            value={customer || null}
             options={options}
             getOptionLabel={(option) => option.formalName}
             renderOption={(props, option, state) => {
@@ -104,10 +119,7 @@ const SelectCustomer = ({ rentalAgreement, setRentalAgreement }) => {
               );
             }}
             onChange={(event, newValue) => {
-              setRentalAgreement({
-                ...rentalAgreement,
-                customer: newValue,
-              });
+              changeHandler(newValue);
             }}
             sx={{
               width: 1,

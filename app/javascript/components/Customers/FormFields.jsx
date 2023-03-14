@@ -1,36 +1,26 @@
 import React from "react";
 import { Box, TextField } from "@mui/material";
+import { styled } from "@mui/material/styles";
 
-const FormFields = (props) => {
-  const [firstName, setFirstName] = React.useState("");
-  const [lastName, setLastName] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [gateCode, setGateCode] = React.useState("");
+const StyledInput = styled(TextField)(({ theme }) => ({
+  width: "100%",
+  margin: theme.spacing(1),
+  maxWidth: theme.breakpoints.sm,
+}));
+
+const FormFields = ({ values, onChange, readOnly }) => {
   const [customer, setCustomer] = React.useState({
-    firstName: "",
-    lastName: "",
-    gateCode: "",
-    email: "",
+    firstName: values?.firstName || "",
+    lastName: values?.lastName || "",
+    gateCode: values?.gateCode || "",
+    email: values?.email || "",
   });
 
   React.useEffect(() => {
-    setFirstName(props.values?.firstName || "");
-    setLastName(props.values?.lastName || "");
-    setEmail(props.value?.email || "");
-    setGateCode(props.value?.gateCode || "");
-  }, [props.values]);
-
-  React.useEffect(() => {
-    // TODO: Debounce this effect
-    if (props.setCustomer) {
-      props.setCustomer({
-        firstName: firstName,
-        lastName: lastName,
-        gateCode: gateCode,
-        email: email,
-      });
+    if (onChange) {
+      onChange(customer);
     }
-  }, [firstName, lastName, email, gateCode]);
+  }, [customer]);
 
   return (
     <>
@@ -41,28 +31,38 @@ const FormFields = (props) => {
           justifyContent: "space-between",
         }}
       >
-        <TextField
+        <StyledInput
           required
           id="firstName"
           label="First Name"
           name="firstName"
           placeholder="First Name"
-          sx={{ width: 1 }}
-          value={firstName}
+          value={customer.firstName}
           onChange={(event) => {
-            setFirstName(event.target.value);
+            setCustomer({
+              ...customer,
+              firstName: event.target.value,
+            });
+          }}
+          InputProps={{
+            readOnly: readOnly,
           }}
         />
-        <TextField
+        <StyledInput
           required
           id="lastName"
           label="Last Name"
           name="lastName"
           placeholder="Last Name"
-          sx={{ width: 1 }}
-          value={lastName}
+          value={customer.lastName}
           onChange={(event) => {
-            setLastName(event.target.value);
+            setCustomer({
+              ...customer,
+              lastName: event.target.value,
+            });
+          }}
+          InputProps={{
+            readOnly: readOnly,
           }}
         />
       </Box>
@@ -73,28 +73,38 @@ const FormFields = (props) => {
           justifyContent: "space-between",
         }}
       >
-        <TextField
+        <StyledInput
           required
           id="email"
           label="Email"
           name="email"
           placeholder="Email"
-          sx={{ width: 1 }}
-          value={email}
+          value={customer.email}
           onChange={(event) => {
-            setEmail(event.target.value);
+            setCustomer({
+              ...customer,
+              email: event.target.value,
+            });
+          }}
+          InputProps={{
+            readOnly: readOnly,
           }}
         />
-        <TextField
+        <StyledInput
           required
           id="gateCode"
           label="Gate Code"
           name="gateCode"
           placeholder="Gate Code"
-          sx={{ width: 1 }}
-          value={gateCode}
+          value={customer.gateCode}
           onChange={(event) => {
-            setGateCode(event.target.value);
+            setCustomer({
+              ...customer,
+              gateCode: event.target.value,
+            });
+          }}
+          InputProps={{
+            readOnly: readOnly,
           }}
         />
       </Box>

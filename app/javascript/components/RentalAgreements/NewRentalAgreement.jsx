@@ -2,6 +2,7 @@ import React from "react";
 import { gql, useMutation } from "@apollo/client";
 import { Box, Button, Paper } from "@mui/material";
 import FormFields from "./FormFields";
+import { useNavigate } from "react-router-dom";
 
 const ADD_RENTAL_AGREEMENT = gql`
   mutation AddRentalAgreement($attributes: RentalAgreementCreateInput!) {
@@ -25,6 +26,7 @@ const ADD_RENTAL_AGREEMENT = gql`
 
 const New = () => {
   const [rentalAgreement, setRentalAgreement] = React.useState(null);
+  const navigate = useNavigate();
   const [addRentalAgreement, { data, loading, error }] = useMutation(
     ADD_RENTAL_AGREEMENT,
   );
@@ -57,7 +59,13 @@ const New = () => {
         };
       }
 
-      addRentalAgreement({ variables: preparedData });
+      addRentalAgreement({
+        variables: preparedData,
+        onCompleted: (data) => {
+          const id = data.rentalAgreementCreate.rentalAgreement.id;
+          navigate("/agreements/" + id);
+        },
+      });
     }
   };
 

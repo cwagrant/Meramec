@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_04_232744) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_12_003900) do
   create_table "addresses", force: :cascade do |t|
     t.text "address_1"
     t.text "address_2"
@@ -56,6 +56,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_04_232744) do
     t.integer "payment_id"
     t.integer "paid_months"
     t.date "paid_until"
+    t.integer "amount_in_cents", default: 0
+    t.text "note", default: ""
     t.index ["payment_id"], name: "index_rental_agreement_payments_on_payment_id"
     t.index ["rental_agreement_id"], name: "index_rental_agreement_payments_on_rental_agreement_id"
   end
@@ -86,6 +88,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_04_232744) do
     t.integer "price_in_cents"
     t.date "start_date"
     t.date "end_date"
+    t.integer "cost_in_cents", default: 0
     t.index ["customer_id"], name: "index_rental_agreements_on_customer_id"
     t.index ["unit_id"], name: "index_rental_agreements_on_unit_id"
   end
