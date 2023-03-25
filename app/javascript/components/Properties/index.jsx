@@ -9,8 +9,6 @@ import { Alert } from "@mui/material";
 import { ErrorContext } from "./ErrorContext";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
-// probably make the ErrorContext into some kind of sitewide alert system
-// a-la flash in Rails
 
 const GET_PROPERTY_URL = "/api/properties/";
 

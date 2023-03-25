@@ -56,10 +56,3 @@ const Edit = () => {
 };
 
 export default Edit;
-
-//TODO we want to show something that gives us th name of the unit,
-// the type of unit, the price, the address, additional details, and
-// eventually the current renter and possibly even additional details
-// about them or such.
-//
-// Possibly even doing an inline form but I think not.

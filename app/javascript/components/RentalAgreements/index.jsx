@@ -7,12 +7,19 @@ import { default as Index } from "./RentalAgreements";
 import Edit from "./EditRentalAgreement";
 import Show from "./RentalAgreement";
 import New from "./NewRentalAgreement";
+import Breadcrumbs from "../Breadcrumbs";
 
 const RentalAgreements = ({ children }) => {
   const { agreementId } = useParams();
-  const [rentalAgreement, setRentalAgreement] = React.useState();
+  const [rentalAgreement, setRentalAgreement] = React.useState({});
   const axios = useAxios();
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    return () => {
+      setRentalAgreement(null);
+    };
+  }, []);
 
   React.useEffect(() => {
     if (agreementId) {
@@ -32,7 +39,17 @@ const RentalAgreements = ({ children }) => {
     }
   }, [agreementId]);
 
-  return <Outlet context={{ rentalAgreement, setRentalAgreement }} />;
+  return (
+    <>
+      <Breadcrumbs
+        key="crumbs"
+        rentalAgreement={rentalAgreement}
+      />
+
+      {children}
+      <Outlet context={{ rentalAgreement, setRentalAgreement }} />
+    </>
+  );
 };
 
 RentalAgreements.New = New;

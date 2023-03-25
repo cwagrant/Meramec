@@ -6,6 +6,32 @@ import { dollarsToCents } from "../DataFormatHelpers";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
 
+/* TODO: Let's look at creating an overall error context that all of the
+ * individual components can report to. We'll have the Alerts component
+ * that actually displays alerts and will be the 'consumer' of the context.
+ * If we put it in Root then basically everything will be able to use it
+ * and we can just have a call to useContext(AlertContext) which will
+ * be a destructurable object that will contain { alerts, addAlert }
+ *
+ * The goal being we'll be able to pretty easily call addAlert anywhere
+ * for different types of alerts (successes, failures, etc).
+ *
+ * Additionally we'll want to look at adding validations to different form
+ * fields (required, etc.) as well as in models to try to preserve data
+ * integerity as much as possible.
+ *
+ * Finally we'll need to look at data again as there may be a few extra fields
+ * we need.
+ *
+ * LedgerEntry: Need a basic form for adding Account Adjustments.
+ * Breadcrumbs: Payments
+ * Buttons: Probably need to cleanup show page and add some links to edit
+ *  something in it's show page.
+ *
+ * After that the true last stage will be figuring out how to set up a docker
+ * container that I can then run this on on the homelab box.
+ */
+
 const New = () => {
   const axios = useAxios();
   const [payment, setPayment] = React.useState({
@@ -19,7 +45,6 @@ const New = () => {
     axios
       .post(paths.API.PAYMENTS(), document.querySelector("#paymentForm"))
       .then((res) => {
-        console.log(res);
       })
       .catch((error) => console.log(error.response.data));
   };
@@ -55,10 +80,3 @@ const New = () => {
 };
 
 export default New;
-
-//TODO we want to show something that gives us th name of the unit,
-// the type of unit, the price, the address, additional details, and
-// eventually the current renter and possibly even additional details
-// about them or such.
-//
-// Possibly even doing an inline form but I think not.

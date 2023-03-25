@@ -26,4 +26,14 @@ class RentalAgreement < ApplicationRecord
 
     update(next_due_date: Date.today + 1.month)
   end
+
+  private
+
+  def update_unit_occupancy
+    if end_date.present?
+      unit.update(occupied: false)
+    else
+      unit.update(occupied: true)
+    end
+  end
 end

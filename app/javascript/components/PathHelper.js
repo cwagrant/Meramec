@@ -42,4 +42,9 @@ export const API = {
   CUSTOMERS: pathHelper("/api/customers"),
   RENTAL_AGREEMENTS: pathHelper("/api/rental_agreements"),
   PAYMENTS: pathHelper("/api/payments"),
+  USER: {
+    LOGIN: pathHelper("/api/login"),
+    LOGOUT: pathHelper("/api/logout"),
+    REGISTER: pathHelper("/api/signup"),
+  },
 };

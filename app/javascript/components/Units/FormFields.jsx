@@ -21,9 +21,9 @@ const FormFields = ({ unit, readOnly }) => {
   };
 
   React.useEffect(() => {
-    setUnitType(unit.type_of || "");
-    setUnitName(unit.name || "");
-    setUnitPrice(centsToDollars(unit.price_in_cents) || "");
+    setUnitType(unit?.type_of || "");
+    setUnitName(unit?.name || "");
+    setUnitPrice(centsToDollars(unit?.price_in_cents) || "");
   }, [unit]);
 
   return (

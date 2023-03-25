@@ -183,16 +183,3 @@ const Units = () => {
 };
 
 export default Units;
-
-// Todo set this up so that the Accordion.Body instead lists all the units
-// for a property
-// This will require a units component of some kind, likely set up similar to how
-// we've set up properties (e.g. Units.Index, Units.Edit)
-// We'll also need some kind of Payment portal for entering payments for units.
-//
-// Additionally might instead of doing the accordion just go back to a table of
-// properties that can be clicked to go to the unit listing
-//
-// Or possibly do a vertical nav for the properties and lcicking them will display
-// units index for that property. The you can click on each of those to see the unit
-// and do whatever needs done to it

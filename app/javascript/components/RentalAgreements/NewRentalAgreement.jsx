@@ -56,20 +56,3 @@ const New = () => {
 };
 
 export default New;
-
-//TODO we want to show something that gives us th name of the unit,
-// the type of unit, the price, the address, additional details, and
-// eventually the current renter and possibly even additional details
-// about them or such.
-//
-// Possibly even doing an inline form but I think not.
-//
-// 2023-2-15 I think we'll do like we did with the units autocomplete dropdown
-// for Customers
-//
-// Then we can also have it be that you can select an option for "Add Customer..." and that
-// will render the fields for the UserForm so you can put in the user's information.
-//
-// Finally we'll need to add the basic terms logic to add a rental term with a start and end
-// date
-//

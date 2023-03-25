@@ -92,3 +92,7 @@ gem "rack-cors", "~> 1.1", :groups => [:development, :test]
 gem "faker", "~> 3.1"
 
 gem "sidekiq", "~> 7.0"
+
+gem "devise-jwt", "~> 0.10.0"
+
+gem "fast_jsonapi", "~> 1.5"

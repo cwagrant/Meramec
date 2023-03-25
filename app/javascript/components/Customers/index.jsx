@@ -4,6 +4,7 @@ import { default as Index } from "./Customers";
 import Show from "./Customer";
 import Edit from "./EditCustomer";
 import New from "./NewCustomer";
+import Breadcrumbs from "../Breadcrumbs";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
 
@@ -31,6 +32,10 @@ const Customers = ({ children }) => {
 
   return (
     <>
+      <Breadcrumbs
+        key="crumbs"
+        customer={customer}
+      />
       {children}
       <Outlet context={{ customer, setCustomer }} />
     </>

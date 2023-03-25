@@ -15,14 +15,6 @@ class Unit < ApplicationRecord
     %w(name type_of)
   end
 
-  def occupied
-    rental_agreements.where(end_date: nil).any?
-  end
-
-  def as_json(args)
-    super({methods: [:occupied] }.merge(args))
-  end
-
   private
 
   def set_price_in_cents

@@ -13,10 +13,15 @@ module Meramec
 
     config.middleware.insert_before 0, Rack::Cors do
       allow do
-        origins '*'
-        resource '*', headers: :any, methods: [:get, :post, :patch, :put, :delete]
+        origins 'http://localhost:3000'
+        resource '*', 
+          headers: :any, 
+          expose: ['access-token', 'expiry', 'token-type', 'Authorization'],
+          methods: [:get, :post, :patch, :put, :delete]
       end
     end
+
+    config.session_store :disabled
 
     # Configuration for the application, engines, and railties goes here.
     #

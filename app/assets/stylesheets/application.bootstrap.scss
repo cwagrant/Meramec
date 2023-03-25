@@ -7,6 +7,12 @@
   height: 50vh;
 }
 
+.hideAlert { 
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 2s, opacity 2s linear;
+}
+
 
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,

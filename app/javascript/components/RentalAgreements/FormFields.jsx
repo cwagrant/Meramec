@@ -18,6 +18,7 @@ const FormFields = ({ rentalAgreement, setRentalAgreement }) => {
   const [unit, setUnit] = React.useState(null);
   const [startDate, setStartDate] = React.useState("");
   const [endDate, setEndDate] = React.useState("");
+  const [nextDueDate, setNextDueDate] = React.useState("");
   const [customer, setCustomer] = React.useState();
   const [data, setData] = React.useState();
   const axios = useAxios();
@@ -49,6 +50,7 @@ const FormFields = ({ rentalAgreement, setRentalAgreement }) => {
     if (rentalAgreement) {
       setStartDate(dayjs(rentalAgreement.start_date));
       setEndDate(dayjs(rentalAgreement.end_date));
+      setNextDueDate(dayjs(rentalAgreement.next_due_date));
     }
   }, [rentalAgreement, unitOptions]);
 
@@ -76,6 +78,24 @@ const FormFields = ({ rentalAgreement, setRentalAgreement }) => {
         <Typography variant="h4">
           Rental Agreement #{rentalAgreement?.id}
         </Typography>
+        <input
+          type="hidden"
+          id="rental_agreement_start_date"
+          name="rental_agreement[start_date]"
+          value={dayjs(startDate).format("YYYY-MM-DD")}
+        />
+        <input
+          type="hidden"
+          id="rental_agreement_end_date"
+          name="rental_agreement[end_date]"
+          value={dayjs(endDate).format("YYYY-MM-DD")}
+        />
+        <input
+          type="hidden"
+          id="rental_agreement_next_due_date"
+          name="rental_agreement[next_due_date]"
+          value={dayjs(nextDueDate).format("YYYY-MM-DD")}
+        />
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
             required
@@ -97,6 +117,17 @@ const FormFields = ({ rentalAgreement, setRentalAgreement }) => {
             value={endDate}
             onChange={(newValue) => {
               setEndDate(newValue);
+            }}
+          />
+          <DatePicker
+            required
+            id="rental_agreement_next_due_date"
+            name="rental_agreement[next_due_date]"
+            label="Next Due Date"
+            sx={{ width: 1, m: 1, maxWidth: "sm" }}
+            value={nextDueDate}
+            onChange={(newValue) => {
+              setNextDueDate(newValue);
             }}
           />
         </LocalizationProvider>

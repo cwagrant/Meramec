@@ -33,6 +33,12 @@ const Unit = () => {
         "& .MuiFormControl-root": { m: 1, maxWidth: "sm" },
       }}
     >
+      <input
+        type="hidden"
+        name="unit[property_id]"
+        id="unit_property_id"
+        value={propertyId}
+      />
       <UnitFormFields values={{}} />
 
       <Box sx={{ display: "flex", m: 1 }}>
