@@ -120,20 +120,3 @@ const router = createBrowserRouter(
 );
 
 export default router;
-//TODO 23-02-05
-// change the properties and units index managers into loaders from react
-// router. Then use those in place of the currentUnit and currentProperty
-// states
-//
-// Update:
-// While it would be nice to use the loader, it does not work with hooks,
-// specifically apollo client useQuery hooks. While we could do a direct
-// .query it apparently means that it won't interact properly with the cache
-// so that we'll essentially be managing things like we already do.
-//
-// This appears to be a still relatively new issue so likely I'll need to
-// either create my own solution or wait for the Apollo team and ReactRouter
-// teams to figure out how the loader should work with Apollo.
-//
-// Once that is figured out we should be able to use the loader and then
-// make use of the data from the loader to better generate breadcrumbs.

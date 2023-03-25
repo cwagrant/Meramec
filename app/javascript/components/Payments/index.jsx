@@ -1,6 +1,5 @@
 import React from "react";
 import { Outlet, useParams } from "react-router-dom";
-import { gql, useLazyQuery } from "@apollo/client";
 
 import { default as Index } from "./Payments";
 // import Edit from "./EditRentalAgreement";
