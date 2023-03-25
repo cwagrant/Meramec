@@ -10,7 +10,7 @@ const StyledInput = styled(TextField)(({ theme }) => ({
 
 const FormFields = ({ customer, onChange, readOnly }) => {
   const [localCustomer, setLocalCustomer] = React.useState({
-    first_name: customer?.firs_name || "",
+    first_name: customer?.first_name || "",
     last_name: customer?.last_name || "",
     gate_code: customer?.gate_code || "",
     email: customer?.email || "",

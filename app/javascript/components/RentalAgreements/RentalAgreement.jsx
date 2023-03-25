@@ -24,7 +24,7 @@ const Show = () => {
       >
         <TextField
           label="Start Date"
-          value={rentalAgreement.start_date}
+          value={rentalAgreement.start_date || "Missing"}
           readOnly={true}
         />
         <TextField
@@ -34,7 +34,7 @@ const Show = () => {
         />
         <TextField
           label="Next Due Date"
-          value={rentalAgreement.next_due_date}
+          value={rentalAgreement.next_due_date || "Missing"}
           readOnly={true}
         />
       </Box>

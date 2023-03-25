@@ -9,9 +9,9 @@ class RentalAgreementsController < ApplicationController
   end
 
   def create
-    full_params = rental_agreement_params.to_h
-    if full_params.key?(:customer)
-      full_params.merge!({customer_attributes: full_params.delete(:customer)})
+    full_params = rental_agreement_params.to_h.stringify_keys
+    if full_params.key?('customer')
+      full_params["customer_attributes"] = full_params.delete('customer'))
     end
 
     rental_agreement = RentalAgreement.new(full_params)
@@ -26,7 +26,14 @@ class RentalAgreementsController < ApplicationController
   def update
     rental_agreement = RentalAgreement.find(params[:id])
 
-    rental_agreement.update(rental_agreement_params)
+    full_params = rental_agreement_params.to_h.stringify_keys
+    if full_params.key?('customer')
+      full_params["customer_attributes"] = full_params.delete('customer'))
+    end
+
+    binding.pry
+
+    rental_agreement.update(full_params)
 
     if rental_agreement.errors.none?
       render json: rental_agreement
@@ -48,6 +55,10 @@ class RentalAgreementsController < ApplicationController
   private
 
   def rental_agreement_params
-    params.require(:rental_agreement).permit(:start_date, :end_date, :next_due_date, :unit_id, :customer_id, customer: [:first_name, :last_name, :email, :gate_code])
+
+
+    rental_params = params.require(:rental_agreement).permit(:start_date, :end_date, :next_due_date, :unit_id, :customer_id, customer: [:first_name, :last_name, :email, :gate_code])
+
+    rental_params.to_h.merge(params.permit(customer: {}))
   end
 end

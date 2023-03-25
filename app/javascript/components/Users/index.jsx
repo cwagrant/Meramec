@@ -12,7 +12,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { createTheme, ThemeProvider, useTheme } from "@mui/material/styles";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const darkTheme = createTheme({
   palette: {
@@ -25,6 +25,8 @@ export const Login = () => {
   const theme = useTheme();
   const axios = useAxios();
   const navigate = useNavigate();
+  let urlParams = new URLSearchParams(window.location.search);
+  let redirect_to = urlParams.get("redirect_to");
 
   const loginSubmit = (event) => {
     event.preventDefault();
@@ -42,7 +44,11 @@ export const Login = () => {
             }),
           );
 
-          navigate("..");
+          if (redirect_to) {
+            window.location = redirect_to;
+          } else {
+            navigate("..");
+          }
         }
 
         return response.data;

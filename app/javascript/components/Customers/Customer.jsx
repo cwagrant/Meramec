@@ -1,6 +1,9 @@
 import React from "react";
 import { useOutletContext } from "react-router-dom";
-import { Box, Grid, Paper, Stack, Typography } from "@mui/material";
+import { Box, Button, Paper } from "@mui/material";
+import FormFields from "./FormFields";
+import { Link as RouterLink } from "react-router-dom";
+import EditIcon from "@mui/icons-material/Edit";
 
 const Customer = ({ customer }) => {
   const { customer: contextCustomer } = useOutletContext();
@@ -9,34 +12,19 @@ const Customer = ({ customer }) => {
   if (!useCustomer) return "Customer not found...";
 
   return (
-    <Paper>
-      <Box sx={{ p: 2, display: "flex" }}>
-        <Grid container spacing={2}>
-          <Grid item xs={2}>
-            <Stack spacing={0.5}>
-              <Typography variant="subtitle2">name</Typography>
-              <Typography>
-                {useCustomer.last_name}, {useCustomer.first_name}
-              </Typography>
-            </Stack>
-          </Grid>
-          <Grid item xs={2}>
-            <Stack spacing={0.5}>
-              <Typography variant="caption">email</Typography>
-              <Typography variant="body1">
-                {useCustomer.email}
-              </Typography>
-            </Stack>
-          </Grid>
-          <Grid item xs={2}>
-            <Stack spacing={0.5}>
-              <Typography variant="caption">gate code</Typography>
-              <Typography variant="body1">
-                {useCustomer.gate_code}
-              </Typography>
-            </Stack>
-          </Grid>
-        </Grid>
+    <Paper
+      sx={{ display: "flex", flexDirection: "column", maxWidth: "sm", p: 1 }}
+    >
+      <FormFields customer={useCustomer} readOnly={true} />
+      <Box sx={{ display: "flex", m: 1 }}>
+        <Button
+          component={RouterLink}
+          to={"./edit"}
+          variant="outlined"
+          startIcon={<EditIcon />}
+        >
+          Edit
+        </Button>
       </Box>
     </Paper>
   );
