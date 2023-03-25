@@ -1,48 +1,36 @@
 import React from "react";
-import { gql, useMutation } from "@apollo/client";
 import { Box, Button } from "@mui/material";
-import { useOutletContext, useParams } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import FormFields from "./FormFields";
-
-const UPDATE_CUSTOMER = gql`
-  mutation UpdateCustomer($attributes: CustomerUpdateInput!) {
-    customerUpdate(input: $attributes) {
-      customer{
-        id
-        firstName
-        lastName
-      }
-    }
-  }
-`;
+import useAxios from "../useAxios";
+import * as paths from "../PathHelper";
 
 const Edit = () => {
   const { customerId } = useParams();
-  const { customer } = useOutletContext();
-  const [updateCustomer, { data, loading, error }] = useMutation(
-    UPDATE_CUSTOMER,
-  );
+  const { customer, setCustomer } = useOutletContext();
+  const axios = useAxios();
+  const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    let formData = new FormData(event.target);
 
-    let preparedData = {
-      "attributes": {
-        "id": customerId,
-        "customerInput": {
-          "firstName": formData.get("firstName"),
-          "lastName": formData.get("lastName"),
-        },
-      },
-    };
-
-    updateCustomer({ variables: preparedData });
+    axios
+      .put(
+        paths.API.CUSTOMERS(customerId),
+        document.querySelector("#customerForm"),
+      )
+      .then((res) => {
+        const id = res.data.id;
+        setCustomer(res.data);
+        navigate("/customers/" + id);
+      })
+      .catch((error) => console.log(error));
   };
 
   return (
     <Box
       component="form"
+      id="customerForm"
       onSubmit={handleSubmit}
       sx={{
         width: 1,
@@ -50,7 +38,10 @@ const Edit = () => {
         "& .MuiFormControl-root": { m: 1, maxWidth: "sm" },
       }}
     >
-      <FormFields values={customer} />
+      <FormFields
+        customer={customer}
+        onChange={(newValue) => setCustomer(newValue)}
+      />
 
       <Box sx={{ display: "flex", m: 1 }}>
         <Button

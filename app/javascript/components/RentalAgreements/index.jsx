@@ -1,48 +1,34 @@
 import React from "react";
-import { Outlet, useParams } from "react-router-dom";
-import { gql, useLazyQuery } from "@apollo/client";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
+import useAxios from "../useAxios";
+import * as paths from "../PathHelper";
 
 import { default as Index } from "./RentalAgreements";
 import Edit from "./EditRentalAgreement";
-import Show from "./ShowRentalAgreement";
+import Show from "./RentalAgreement";
 import New from "./NewRentalAgreement";
 
-const GET_AGREEMENT = gql`
-  query getRentalAgreement($id: ID) {
-    rentalAgreement(attributes: {id: $id}) {
-      id
-      startDate
-      endDate
-      unit {
-        id
-        name
-        typeOf
-        priceInCents
-      }
-      customer {
-        id
-        lastName
-        firstName
-        gateCode
-        email
-        formalName
-      }
-    }
-  }
-`;
 const RentalAgreements = ({ children }) => {
   const { agreementId } = useParams();
   const [rentalAgreement, setRentalAgreement] = React.useState();
-  const [loadAgreement, { agreementData }] = useLazyQuery(GET_AGREEMENT);
+  const axios = useAxios();
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     if (agreementId) {
-      loadAgreement({
-        variables: { id: agreementId },
-        onCompleted: (data) => {
-          setRentalAgreement(data.rentalAgreement);
-        },
-      });
+      axios
+        .get(paths.API.RENTAL_AGREEMENTS(agreementId))
+        .then((res) => {
+          setRentalAgreement(res.data);
+        })
+        .catch((error) => {
+          console.log(error);
+          navigate("..", {
+            state: [{
+              error: "Unable to find Rental Agreement with id " + agreementId,
+            }],
+          });
+        });
     }
   }, [agreementId]);
 

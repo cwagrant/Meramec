@@ -1,28 +1,36 @@
-import React from 'react'
-import { useOutletContext } from 'react-router-dom'
-import { Box, Grid, Paper, Stack, Typography } from '@mui/material'
-import { capitalizeFirstLetter, centsToDollars } from '../DataFormatHelpers'
+import React from "react";
+import { useOutletContext } from "react-router-dom";
+import { Box, Grid, Paper, Stack, Typography } from "@mui/material";
+import { capitalizeFirstLetter, centsToDollars } from "../DataFormatHelpers";
 
-const Show = () => { 
-  const { currentUnit } = useOutletContext()
+const Show = ({ unit }) => {
+  const { currentUnit } = useOutletContext();
 
-  if (!currentUnit) return 'Loading...'
+  let useUnit = null;
 
-  return ( 
+  if (unit) {
+    useUnit = unit;
+  } else {
+    useUnit = currentUnit;
+  }
+
+  if (!useUnit) return "Unit not found...";
+
+  return (
     <Paper>
-      <Box sx={{ p: 2, display: 'flex'}}>
+      <Box sx={{ p: 2, display: "flex" }}>
         <Grid container spacing={2}>
           <Grid item xs={2}>
             <Stack spacing={0.5}>
               <Typography variant="subtitle2">unit name</Typography>
-              <Typography>{ currentUnit.name }</Typography>
+              <Typography>{useUnit.name}</Typography>
             </Stack>
           </Grid>
           <Grid item xs={2}>
             <Stack spacing={0.5}>
               <Typography variant="caption">unit type</Typography>
               <Typography variant="body1">
-                { capitalizeFirstLetter(currentUnit.typeOf) }
+                {capitalizeFirstLetter(useUnit.type_of)}
               </Typography>
             </Stack>
           </Grid>
@@ -30,17 +38,17 @@ const Show = () => {
             <Stack spacing={0.5}>
               <Typography variant="caption">cost</Typography>
               <Typography variant="body1">
-                ${ centsToDollars(currentUnit.priceInCents) }
+                ${centsToDollars(useUnit.price_in_cents)}
               </Typography>
             </Stack>
           </Grid>
         </Grid>
       </Box>
     </Paper>
-  )
-}
+  );
+};
 
-export default Show
+export default Show;
 
 //
 //What about a show is something card like where we'll have a
@@ -56,6 +64,5 @@ export default Show
 //Name (dot) TypeOf (dot) Cost
 //Address (or Property address)
 //
-//Created: 
-//Updated: 
-
+//Created:
+//Updated:

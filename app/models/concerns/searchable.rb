@@ -3,13 +3,14 @@ module Searchable
 
   included do
     scope :search, ->(search_terms, models: [self]) do
+      return self if search_terms.blank?
       models = [models] if !models.is_a?(Array)
 
       queries = models.reduce([]) do |query_acc, model|
         arel_table = model.arel_table
 
         query_acc << search_terms.downcase.split(' ').reduce([]) do |acc, term|
-          model.searchable_attributes.each do |attr|
+          model.searchable_attributes.map(&:to_s).each do |attr|
             next unless model.column_names.include?(attr)
 
             acc << arel_table[attr.to_sym()].lower().matches("%#{term}%")
@@ -20,7 +21,7 @@ module Searchable
       end
 
       associations = models.reduce([]) do |search, model|
-        if model != self.model
+        if model.name != self.model.name
           association = self.reflect_on_all_associations.find do |assoc|
             assoc.class_name == model.to_s
           end

@@ -7,12 +7,9 @@ import { default as Index } from "./Payments";
 // import Show from "./ShowRentalAgreement";
 import New from "./NewPayment";
 
-// const GET_PAYMENT = gql`
-// `;
 const Payments = ({ children }) => {
   const { paymentId } = useParams();
   const [payment, setPayment] = React.useState();
-  // const [loadAgreement, { agreementData }] = useLazyQuery(GET_AGREEMENT);
 
   // React.useEffect(() => {
   //   if (agreementId) {

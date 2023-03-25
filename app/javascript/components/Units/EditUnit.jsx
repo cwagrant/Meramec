@@ -1,46 +1,43 @@
 import React from "react";
 import { Box, Button } from "@mui/material";
-import { useOutletContext, useParams } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import FormFields from "./FormFields";
-import { dollarsToCents } from "../DataFormatHelpers";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
 
-const New = () => {
+const Unit = () => {
+  const { propertyId, unitId } = useParams();
+  const { currentUnit, setCurrentUnit } = useOutletContext();
+  const navigate = useNavigate();
   const axios = useAxios();
-  const [payment, setPayment] = React.useState({
-    date: null,
-    customer: null,
-  });
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
     axios
-      .post(paths.API.PAYMENTS(), document.querySelector("#paymentForm"))
+      .put(paths.API.UNITS(unitId), document.querySelector("#unitForm"))
       .then((res) => {
-        console.log(res);
+        const id = res.data.id;
+        setCurrentUnit(res.data);
+        navigate("/properties/" + id);
       })
-      .catch((error) => console.log(error.response.data));
+      .catch((error) => console.log(error));
   };
 
   return (
     <Box
-      id="paymentForm"
       component="form"
+      id="unitForm"
       onSubmit={handleSubmit}
-      sx={{
-        width: 1,
-        maxWidth: "md",
-        "& .MuiFormControl-root": { m: 1, maxWidth: "md" },
-      }}
+      sx={{ width: 1, maxWidth: "sm" }}
     >
-      <FormFields
-        payment={payment}
-        onChange={(newValue) => {
-          setPayment(newValue);
-        }}
+      <input
+        type="hidden"
+        id="unit_property_id"
+        name="unit[property_id]"
+        value={propertyId}
       />
+      <FormFields unit={currentUnit} />
 
       <Box sx={{ display: "flex", m: 1 }}>
         <Button
@@ -54,7 +51,7 @@ const New = () => {
   );
 };
 
-export default New;
+export default Unit;
 
 //TODO we want to show something that gives us th name of the unit,
 // the type of unit, the price, the address, additional details, and

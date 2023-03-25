@@ -6,78 +6,54 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { gql, useQuery } from "@apollo/client";
 import SelectCustomer from "../Customers/SelectCustomer";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import useAxios from "../useAxios";
+import * as paths from "../PathHelper";
 
-const GET_UNITS = gql`
-  query allUnits {
-    units {
-      id
-      name
-      typeOf
-      occupied
-    }
-  }
-`;
-
-/* Probably going to do this where we'll have a
- * property drop down of all properties - maybe
- * have a checkbox to filter it down to only open properties (or vice versa)
- *
- * Then we'll have another dropdown for Customer which
- * will be accompanied by a button to create a customer that
- * will load the user fields into the form. If you use that
- * we'll pass it in to the input to create the user when we
- * create the agreement.
- *
- * Eventually we'll need terms and other things but for now this
- * should suffice.
- *
- * Probably make the selects individual components in their respective folders?
- * */
-
-const FormFields = (props) => {
-  const { loading, error, data } = useQuery(GET_UNITS);
+const FormFields = ({ rentalAgreement, setRentalAgreement }) => {
   const [unitOptions, setUnitOptions] = React.useState([]);
-  // const [includeOccupiedUnits, setIncludeOccupiedUnits] = React.useState(true);
   const [unit, setUnit] = React.useState(null);
   const [startDate, setStartDate] = React.useState("");
   const [endDate, setEndDate] = React.useState("");
+  const [customer, setCustomer] = React.useState();
+  const [data, setData] = React.useState();
+  const axios = useAxios();
 
   React.useEffect(() => {
-    if (!loading && props.rentalAgreement?.unit) {
+    axios
+      .get(paths.API.UNITS())
+      .then((res) => {
+        setData(res.data);
+      })
+      .catch((error) => console.log(error));
+  }, []);
+
+  React.useEffect(() => {
+    if (data && rentalAgreement?.unit) {
       const optionUnit = unitOptions.find((element) =>
-        element.id == props.rentalAgreement?.unit.id
+        element.id == rentalAgreement?.unit.id
       );
 
       if (optionUnit) {
         setUnit(optionUnit);
       }
+
+      if (rentalAgreement?.customer) {
+        setCustomer(rentalAgreement.customer);
+      }
     }
 
-    if (!loading && props.rentalAgreement) {
-      setStartDate(dayjs(props.rentalAgreement.startDate));
-      setEndDate(dayjs(props.rentalAgreement.endDate));
+    if (rentalAgreement) {
+      setStartDate(dayjs(rentalAgreement.start_date));
+      setEndDate(dayjs(rentalAgreement.end_date));
     }
-  }, [props.rentalAgreement, unitOptions]);
-
-  React.useEffect(() => {
-    if (unit) {
-      let { label, ...selectedUnit } = unit;
-      props.setRentalAgreement({
-        ...props.rentalAgreement,
-        unit: selectedUnit,
-        startDate: startDate,
-        endDate: endDate,
-      });
-    }
-  }, [unit, endDate, startDate]);
+  }, [rentalAgreement, unitOptions]);
 
   React.useEffect(() => {
-    const units = data?.units.slice().sort((a, b) => {
+    const units = data?.slice().sort((a, b) => {
       let x = a.occupied - b.occupied;
 
       if (x !== 0) {
@@ -98,13 +74,13 @@ const FormFields = (props) => {
     <>
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
         <Typography variant="h4">
-          Rental Agreement #{props.rentalAgreement?.id}
+          Rental Agreement #{rentalAgreement?.id}
         </Typography>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
             required
-            id="startDate"
-            name="startDate"
+            id="rental_agreement_start_date"
+            name="rental_agreement[start_date]"
             label="Start Date"
             sx={{ width: 1, m: 1, maxWidth: "sm" }}
             value={startDate}
@@ -114,8 +90,8 @@ const FormFields = (props) => {
           />
           <DatePicker
             required
-            id="endDate"
-            name="endDate"
+            id="rental_agreement_end_date"
+            name="rental_agreement[end_date]"
             label="End Date"
             sx={{ width: 1, m: 1, maxWidth: "sm" }}
             value={endDate}
@@ -127,18 +103,25 @@ const FormFields = (props) => {
       </Box>
 
       <Divider>Unit</Divider>
+      {unit && unit?.id &&
+        (
+          <input
+            type="hidden"
+            id="rental_agreement_unit_id"
+            name="rental_agreement[unit_id]"
+            value={unit?.id || 0}
+          />
+        )}
       <Autocomplete
         disablePortal
-        id="unit"
+        id="unit_id"
+        name="unit_id"
         options={unitOptions}
         groupBy={(option) => option.occupied ? "Taken" : "Available"}
         getOptionLabel={(option) => option.name}
         value={unit}
         onChange={(event, newValue) => {
-          props.setRentalAgreement({
-            ...props.rentalAgreement,
-            unit: newValue,
-          });
+          setUnit(newValue);
         }}
         sx={{ width: 1, pr: 2 }}
         renderInput={(params) => <TextField {...params} label="Unit" />}
@@ -148,9 +131,21 @@ const FormFields = (props) => {
       />
 
       <Divider>Customer</Divider>
+      {customer && customer?.id &&
+        (
+          <input
+            type="hidden"
+            id="rental_agreement_customer_id"
+            name="rental_agreement[customer_id]"
+            value={customer?.id || 0}
+          />
+        )}
       <SelectCustomer
-        rentalAgreement={props.rentalAgreement}
-        setRentalAgreement={props.setRentalAgreement}
+        customer={customer}
+        onChange={(newValue) => {
+          setCustomer(newValue);
+        }}
+        allowNew={true}
       />
     </>
   );

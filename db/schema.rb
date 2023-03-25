@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_12_003900) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_24_183925) do
   create_table "addresses", force: :cascade do |t|
     t.text "address_1"
     t.text "address_2"
@@ -31,6 +31,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_12_003900) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["address_id"], name: "index_customers_on_address_id"
+  end
+
+  create_table "ledger_entries", force: :cascade do |t|
+    t.integer "rental_agreement_id"
+    t.string "source_type"
+    t.integer "source_id"
+    t.integer "amount_in_cents", default: 0
+    t.index ["rental_agreement_id"], name: "index_ledger_entries_on_rental_agreement_id"
+    t.index ["source_type", "source_id"], name: "index_ledger_entries_on_source"
   end
 
   create_table "payments", force: :cascade do |t|
@@ -88,7 +97,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_12_003900) do
     t.integer "price_in_cents"
     t.date "start_date"
     t.date "end_date"
-    t.integer "cost_in_cents", default: 0
+    t.date "next_due_date"
     t.index ["customer_id"], name: "index_rental_agreements_on_customer_id"
     t.index ["unit_id"], name: "index_rental_agreements_on_unit_id"
   end
@@ -126,6 +135,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_12_003900) do
   end
 
   add_foreign_key "customers", "addresses"
+  add_foreign_key "ledger_entries", "rental_agreements"
   add_foreign_key "payments", "customers"
   add_foreign_key "properties", "addresses"
   add_foreign_key "rental_agreement_payments", "rental_agreements"

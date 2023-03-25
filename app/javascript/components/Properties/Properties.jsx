@@ -1,8 +1,6 @@
 import React from "react";
 import { useCallback, useEffect, useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
-import useAxios from "../useAxios";
-import * as paths from "../PathHelper";
+import { Link as RouterLink, useLoaderData } from "react-router-dom";
 import { debounce } from "lodash";
 import {
   Box,
@@ -21,26 +19,33 @@ import AddBoxIcon from "@mui/icons-material/AddBox";
 import LaunchIcon from "@mui/icons-material/Launch";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import useAxios from "../useAxios";
 
-const Records = ({ payments }) => {
-  return payments.map(({ id, customer, date }) => (
+const SEARCH_PROPERTIES_URL = "/api/properties";
+
+const Records = ({ properties, deleteCallback }) => {
+  return properties.map(({ id, name }) => (
     <TableRow key={id}>
       <TableCell>{id}</TableCell>
       <TableCell>
-        <Link component={RouterLink} to={"/payments/" + id}>
-          {customer.formal_name}
+        <Link component={RouterLink} to={"/properties/" + id}>
+          {name}
         </Link>
       </TableCell>
-      <TableCell>{date}</TableCell>
       <TableCell>
         <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
-          <Link component={RouterLink} to={"/agreements/" + id}>
+          <Link component={RouterLink} to={"/properties/" + id}>
             <LaunchIcon />
           </Link>
-          <Link component={RouterLink} to={"/agreements/" + id + "/edit"}>
+          <Link component={RouterLink} to={"/properties/" + id + "/edit"}>
             <EditIcon />
           </Link>
-          <Link component={RouterLink} to={"/agreements/" + id}>
+          <Link
+            onClick={(event) => {
+              event.preventDefault();
+              deleteCallback(id);
+            }}
+          >
             <DeleteIcon />
           </Link>
         </Box>
@@ -49,7 +54,7 @@ const Records = ({ payments }) => {
   ));
 };
 
-const Payments = () => {
+const Properties = () => {
   const [query, setQuery] = useState("");
   const [data, setData] = useState();
   const axios = useAxios();
@@ -59,7 +64,7 @@ const Payments = () => {
   };
 
   useEffect(() => {
-    queryPayments();
+    queryProperties();
   }, [query]);
 
   const debouncedChangeHandler = useCallback(
@@ -67,23 +72,34 @@ const Payments = () => {
     [],
   );
 
-  const queryPayments = () => {
+  const deleteProperty = (id) => {
     axios
-      .get(paths.API.PAYMENTS(), {
-        params: { search: query },
+      .delete(`api/properties/${id}`)
+      .then((res) => {
+        // requery the properties as we've just deleted one
+        queryProperties();
       })
+      .catch((error) => {
+        console.log(error);
+        // display an error? Might be able to use the ErrorContext to shoot it up to the top.
+      });
+  };
+
+  const queryProperties = () => {
+    axios
+      .get(SEARCH_PROPERTIES_URL, { params: { search: query } })
       .then((res) => {
         setData(res.data);
       })
-      .catch((error) => console.log(error.response.data));
+      .catch((error) => console.log(error));
   };
 
   return (
-    <div key="paymentsList">
+    <div key="propertiesList">
       <TextField
         sx={{ width: 1, maxWidth: "md" }}
-        id="payment-search"
-        label="Search for payments by name..."
+        id="property-search"
+        label="Search for properties by name..."
         variant="filled"
         onChange={debouncedChangeHandler}
         type="text"
@@ -113,7 +129,7 @@ const Payments = () => {
         sx={{ maxWidth: "md" }}
         key="propertiesListTable"
       >
-        <Table aria-label="payments listing">
+        <Table aria-label="properties listing">
           <TableHead>
             <TableRow>
               <TableCell>ID</TableCell>
@@ -125,8 +141,9 @@ const Payments = () => {
             {data &&
               (
                 <Records
-                  key="paymentsListItems"
-                  payments={data}
+                  key="propertiesListItems"
+                  properties={data}
+                  deleteCallback={deleteProperty}
                 />
               )}
           </TableBody>
@@ -136,4 +153,4 @@ const Payments = () => {
   );
 };
 
-export default Payments;
+export default Properties;

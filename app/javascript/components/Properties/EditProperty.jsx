@@ -1,14 +1,14 @@
 import React from "react";
-import { Box, Button, Paper } from "@mui/material";
-import { useOutletContext, useParams } from "react-router-dom";
+import { Box, Button } from "@mui/material";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import FormFields from "./FormFields";
-import { useNavigate } from "react-router-dom";
 import useAxios from "../useAxios";
-import * as paths from "../PathHelper";
+
+const UPDATE_PROPERTY_URL = "/api/properties/";
 
 const Edit = () => {
-  const { agreementId } = useParams();
-  const { rentalAgreement, setRentalAgreement } = useOutletContext();
+  const { propertyId } = useParams();
+  const { currentProperty, setCurrentProperty } = useOutletContext();
   const navigate = useNavigate();
   const axios = useAxios();
 
@@ -17,43 +17,40 @@ const Edit = () => {
 
     axios
       .put(
-        paths.API.RENTAL_AGREEMENTS(agreementId),
-        document.querySelector("#rentalAgreementForm"),
+        `${UPDATE_PROPERTY_URL}${propertyId}`,
+        document.querySelector("#propertyForm"),
       )
       .then((res) => {
         const id = res.data.id;
-        navigate(`/agreements/${id}`);
-        setRentalAgreement(res.data);
+
+        setCurrentProperty(res.data);
+        navigate("/properties/" + id);
       })
       .catch((error) => console.log(error));
   };
 
+  console.log("getprop", currentProperty);
   return (
     <Box
       component="form"
+      id="propertyForm"
       onSubmit={handleSubmit}
-      id="rentalAgreementForm"
       sx={{
         width: 1,
         maxWidth: "sm",
         "& .MuiFormControl-root": { m: 1, maxWidth: "sm" },
       }}
     >
-      <Paper sx={{ p: 1 }}>
-        <FormFields
-          rentalAgreement={rentalAgreement}
-          setRentalAgreement={setRentalAgreement}
-        />
+      <FormFields values={currentProperty} />
 
-        <Box sx={{ display: "flex", m: 1 }}>
-          <Button
-            variant="outlined"
-            type="submit"
-          >
-            Submit
-          </Button>
-        </Box>
-      </Paper>
+      <Box sx={{ display: "flex", m: 1 }}>
+        <Button
+          variant="outlined"
+          type="submit"
+        >
+          Submit
+        </Button>
+      </Box>
     </Box>
   );
 };

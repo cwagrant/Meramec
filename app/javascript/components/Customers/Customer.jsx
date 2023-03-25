@@ -1,21 +1,22 @@
-import React from 'react'
-import { useOutletContext } from 'react-router-dom'
-import { Box, Grid, Paper, Stack, Typography } from '@mui/material'
+import React from "react";
+import { useOutletContext } from "react-router-dom";
+import { Box, Grid, Paper, Stack, Typography } from "@mui/material";
 
-const Show = () => { 
-  const { customer, setCustomer } = useOutletContext()
+const Customer = ({ customer }) => {
+  const { customer: contextCustomer } = useOutletContext();
+  let useCustomer = customer ? customer : contextCustomer;
 
-  if(!customer) return 'Loading...'
+  if (!useCustomer) return "Customer not found...";
 
-  return ( 
+  return (
     <Paper>
-      <Box sx={{ p: 2, display: 'flex'}}>
+      <Box sx={{ p: 2, display: "flex" }}>
         <Grid container spacing={2}>
           <Grid item xs={2}>
             <Stack spacing={0.5}>
               <Typography variant="subtitle2">name</Typography>
               <Typography>
-                {customer.name}
+                {useCustomer.last_name}, {useCustomer.first_name}
               </Typography>
             </Stack>
           </Grid>
@@ -23,7 +24,7 @@ const Show = () => {
             <Stack spacing={0.5}>
               <Typography variant="caption">email</Typography>
               <Typography variant="body1">
-                {customer.email}
+                {useCustomer.email}
               </Typography>
             </Stack>
           </Grid>
@@ -31,16 +32,14 @@ const Show = () => {
             <Stack spacing={0.5}>
               <Typography variant="caption">gate code</Typography>
               <Typography variant="body1">
-                {customer.gateCode}
+                {useCustomer.gate_code}
               </Typography>
             </Stack>
           </Grid>
         </Grid>
       </Box>
     </Paper>
-  )
+  );
+};
 
-
-}
-
-export default Show
+export default Customer;

@@ -1,36 +1,31 @@
 import React from "react";
 import { Outlet, useParams } from "react-router-dom";
-import { gql, useLazyQuery } from "@apollo/client";
 import { default as Index } from "./Customers";
-import Show from "./ShowCustomer";
+import Show from "./Customer";
 import Edit from "./EditCustomer";
 import New from "./NewCustomer";
+import useAxios from "../useAxios";
+import * as paths from "../PathHelper";
 
-const GET_CUSTOMER = gql`
-  query getCustomer($id: ID) {
-    customer(attributes: {id: $id}) {
-      id
-      name
-      firstName
-      lastName
-      email
-      gateCode
-    }
-  }
-`;
 const Customers = ({ children }) => {
   const { customerId } = useParams();
   const [customer, setCustomer] = React.useState();
-  const [loadCustomer, { customerData }] = useLazyQuery(GET_CUSTOMER);
+  const axios = useAxios();
 
   React.useEffect(() => {
     if (customerId) {
-      loadCustomer({
-        variables: { id: customerId },
-        onCompleted: (data) => {
-          setCustomer(data.customer);
-        },
-      });
+      axios
+        .get(paths.API.CUSTOMERS(customerId))
+        .then((res) => {
+          setCustomer(res.data);
+        })
+        .catch((error) => {
+          navigate("/customers", {
+            state: [{
+              error: "Unable to load property with id " + customerId,
+            }],
+          });
+        });
     }
   }, [customerId]);
 

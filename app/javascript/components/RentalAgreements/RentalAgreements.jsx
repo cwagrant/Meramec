@@ -1,8 +1,10 @@
 import React from "react";
 import { useCallback, useEffect, useState } from "react";
-import { gql, useLazyQuery } from "@apollo/client";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useParams } from "react-router-dom";
+import useAxios from "../useAxios";
+import * as paths from "../PathHelper";
 import { debounce } from "lodash";
+
 import {
   Box,
   Button,
@@ -21,30 +23,13 @@ import LaunchIcon from "@mui/icons-material/Launch";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const GET_RENTAL_AGREEMENTS = gql`
-  query allRentalAgreements($input: RentalAgreementInput) { 
-    rentalAgreements(attributes: $input) {
-      id
-      customer{
-        id
-        firstName
-        lastName
-      }
-      unit{
-        id
-        name
-      }
-    }
-  }
-`;
-
 const Records = ({ rentalAgreements }) => {
-  return rentalAgreements.map(({ id, customer, property }) => (
+  return rentalAgreements.map(({ id, customer, unit }) => (
     <TableRow key={id}>
-      <TableCell>{id}</TableCell>
+      <TableCell>{unit.name}</TableCell>
       <TableCell>
         <Link component={RouterLink} to={"/rentalAgreements/" + id}>
-          {customer.firstName} {customer.lastName}
+          {customer.formal_name}
         </Link>
       </TableCell>
       <TableCell>
@@ -66,17 +51,27 @@ const Records = ({ rentalAgreements }) => {
 
 const RentalAgreements = () => {
   const [query, setQuery] = useState("");
-  const [searchRentalAgreements, { data }] = useLazyQuery(
-    GET_RENTAL_AGREEMENTS,
-  );
+  const [data, setData] = useState();
+  const axios = useAxios();
 
   const changeHandler = (event) => {
     setQuery(event.target.value);
   };
 
   useEffect(() => {
-    searchRentalAgreements({ variables: { input: { search: query } } });
-  }, [data, query]);
+    queryRentalAgreements();
+  }, [query]);
+
+  const queryRentalAgreements = () => {
+    axios
+      .get(paths.API.RENTAL_AGREEMENTS(), {
+        params: { search: query },
+      })
+      .then((res) => {
+        setData(res.data);
+      })
+      .catch((error) => console.log(error.response.data));
+  };
 
   const debouncedChangeHandler = useCallback(
     debounce(changeHandler, 300),
@@ -121,8 +116,8 @@ const RentalAgreements = () => {
         <Table aria-label="rentalAgreements listing">
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>Name</TableCell>
+              <TableCell>Unit</TableCell>
+              <TableCell>Customer</TableCell>
               <TableCell />
             </TableRow>
           </TableHead>
@@ -131,7 +126,7 @@ const RentalAgreements = () => {
               (
                 <Records
                   key="rentalAgreementsListItems"
-                  rentalAgreements={data.rentalAgreements}
+                  rentalAgreements={data}
                 />
               )}
           </TableBody>

@@ -1,22 +1,23 @@
 import React from "react";
 import { Box, Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import FormFields from "./FormFields";
+import { useNavigate } from "react-router-dom";
 import useAxios from "../useAxios";
-import * as paths from "../PathHelper";
 
-const Edit = () => {
-  const axios = useAxios();
+const ADD_PROPERTY_URL = "/api/properties";
+
+const Property = () => {
   const navigate = useNavigate();
+  const axios = useAxios();
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
     axios
-      .post(paths.API.CUSTOMERS(), document.querySelector("#customerForm"))
+      .post(ADD_PROPERTY_URL, document.querySelector("#propertyForm"))
       .then((res) => {
         const id = res.data.id;
-        navigate(`/customers/${id}`);
+        navigate("/properties/" + id);
       })
       .catch((error) => console.log(error));
   };
@@ -24,8 +25,8 @@ const Edit = () => {
   return (
     <Box
       component="form"
-      id="customerForm"
       onSubmit={handleSubmit}
+      id="propertyForm"
       sx={{
         width: 1,
         maxWidth: "sm",
@@ -46,4 +47,11 @@ const Edit = () => {
   );
 };
 
-export default Edit;
+export default Property;
+
+//TODO we want to show something that gives us th name of the unit,
+// the type of unit, the price, the address, additional details, and
+// eventually the current renter and possibly even additional details
+// about them or such.
+//
+// Possibly even doing an inline form but I think not.

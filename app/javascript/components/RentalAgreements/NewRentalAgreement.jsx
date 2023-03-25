@@ -1,79 +1,35 @@
 import React from "react";
-import { gql, useMutation } from "@apollo/client";
 import { Box, Button, Paper } from "@mui/material";
 import FormFields from "./FormFields";
 import { useNavigate } from "react-router-dom";
-
-const ADD_RENTAL_AGREEMENT = gql`
-  mutation AddRentalAgreement($attributes: RentalAgreementCreateInput!) {
-    rentalAgreementCreate(input: $attributes) {
-      rentalAgreement{
-        id
-        customer {
-          id
-          firstName
-          lastName
-          formalName
-        }
-        unit {
-          id
-          name
-        }
-      }
-    }
-  }
-`;
+import useAxios from "../useAxios";
+import * as paths from "../PathHelper";
 
 const New = () => {
   const [rentalAgreement, setRentalAgreement] = React.useState(null);
   const navigate = useNavigate();
-  const [addRentalAgreement, { data, loading, error }] = useMutation(
-    ADD_RENTAL_AGREEMENT,
-  );
+  const axios = useAxios();
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (rentalAgreement.customer && rentalAgreement.unit) {
-      let { __typename: _0, formalName: _, ...customer } =
-        rentalAgreement.customer;
-      let { __typename: _1, ...unit } = rentalAgreement.unit;
-      let newCustomer = document.getElementById("newCustomer")?.value;
 
-      let preparedData = {
-        "attributes": {
-          "rentalAgreementInput": {
-            "unitId": unit.id,
-          },
-        },
-      };
-
-      if (document.getElementById("newCustomer").value === "true") {
-        preparedData.attributes.rentalAgreementInput = {
-          ...preparedData.attributes.rentalAgreementInput,
-          customer: customer,
-        };
-      } else {
-        preparedData.attributes.rentalAgreementInput = {
-          ...preparedData.attributes.rentalAgreementInput,
-          customerId: customer.id,
-        };
-      }
-
-      addRentalAgreement({
-        variables: preparedData,
-        onCompleted: (data) => {
-          const id = data.rentalAgreementCreate.rentalAgreement.id;
-          navigate("/agreements/" + id);
-        },
-      });
-    }
+    axios
+      .post(
+        paths.API.RENTAL_AGREEMENTS(),
+        document.querySelector("#rentalAgreementForm"),
+      )
+      .then((res) => {
+        const id = res.data.id;
+        navigate(`/agreements/${id}`);
+      })
+      .catch((error) => console.log(error));
   };
 
   return (
     <Box
       component="form"
       onSubmit={handleSubmit}
-      id="raform"
+      id="rentalAgreementForm"
       sx={{
         width: 1,
         maxWidth: "sm",

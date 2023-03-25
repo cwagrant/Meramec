@@ -8,19 +8,25 @@ const StyledInput = styled(TextField)(({ theme }) => ({
   maxWidth: theme.breakpoints.sm,
 }));
 
-const FormFields = ({ values, onChange, readOnly }) => {
-  const [customer, setCustomer] = React.useState({
-    firstName: values?.firstName || "",
-    lastName: values?.lastName || "",
-    gateCode: values?.gateCode || "",
-    email: values?.email || "",
+const FormFields = ({ customer, onChange, readOnly }) => {
+  const [localCustomer, setLocalCustomer] = React.useState({
+    first_name: customer?.firs_name || "",
+    last_name: customer?.last_name || "",
+    gate_code: customer?.gate_code || "",
+    email: customer?.email || "",
   });
 
   React.useEffect(() => {
-    if (onChange) {
-      onChange(customer);
+    if (customer) {
+      setLocalCustomer(customer);
     }
   }, [customer]);
+
+  React.useEffect(() => {
+    if (onChange) {
+      onChange(localCustomer);
+    }
+  }, [localCustomer]);
 
   return (
     <>
@@ -33,15 +39,15 @@ const FormFields = ({ values, onChange, readOnly }) => {
       >
         <StyledInput
           required
-          id="firstName"
+          id="first_name"
           label="First Name"
-          name="firstName"
+          name="customer[first_name]"
           placeholder="First Name"
-          value={customer.firstName}
+          value={localCustomer.first_name}
           onChange={(event) => {
-            setCustomer({
-              ...customer,
-              firstName: event.target.value,
+            setLocalCustomer({
+              ...localCustomer,
+              first_name: event.target.value,
             });
           }}
           InputProps={{
@@ -50,15 +56,15 @@ const FormFields = ({ values, onChange, readOnly }) => {
         />
         <StyledInput
           required
-          id="lastName"
+          id="last_name"
           label="Last Name"
-          name="lastName"
+          name="customer[last_name]"
           placeholder="Last Name"
-          value={customer.lastName}
+          value={localCustomer.last_name}
           onChange={(event) => {
-            setCustomer({
-              ...customer,
-              lastName: event.target.value,
+            setLocalCustomer({
+              ...localCustomer,
+              last_name: event.target.value,
             });
           }}
           InputProps={{
@@ -75,14 +81,14 @@ const FormFields = ({ values, onChange, readOnly }) => {
       >
         <StyledInput
           required
-          id="email"
+          id="customer_email"
           label="Email"
-          name="email"
+          name="customer[email]"
           placeholder="Email"
-          value={customer.email}
+          value={localCustomer.email}
           onChange={(event) => {
-            setCustomer({
-              ...customer,
+            setLocalCustomer({
+              ...localCustomer,
               email: event.target.value,
             });
           }}
@@ -92,15 +98,15 @@ const FormFields = ({ values, onChange, readOnly }) => {
         />
         <StyledInput
           required
-          id="gateCode"
+          id="gate_code"
           label="Gate Code"
-          name="gateCode"
+          name="customer[gate_code]"
           placeholder="Gate Code"
-          value={customer.gateCode}
+          value={localCustomer.gate_code}
           onChange={(event) => {
-            setCustomer({
-              ...customer,
-              gateCode: event.target.value,
+            setLocalCustomer({
+              ...localCustomer,
+              gate_code: event.target.value,
             });
           }}
           InputProps={{

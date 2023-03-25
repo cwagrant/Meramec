@@ -1,11 +1,12 @@
 import React from "react";
 import { Box, Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import FormFields from "./FormFields";
+import { useNavigate, useParams } from "react-router-dom";
+import UnitFormFields from "./FormFields";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
 
-const Edit = () => {
+const Unit = () => {
+  const { propertyId } = useParams();
   const axios = useAxios();
   const navigate = useNavigate();
 
@@ -13,10 +14,10 @@ const Edit = () => {
     event.preventDefault();
 
     axios
-      .post(paths.API.CUSTOMERS(), document.querySelector("#customerForm"))
+      .post(paths.API.UNITS(), document.querySelector("#unitForm"))
       .then((res) => {
         const id = res.data.id;
-        navigate(`/customers/${id}`);
+        navigate(`/properties/${propertyId}/units/${id}`);
       })
       .catch((error) => console.log(error));
   };
@@ -24,7 +25,7 @@ const Edit = () => {
   return (
     <Box
       component="form"
-      id="customerForm"
+      id="unitForm"
       onSubmit={handleSubmit}
       sx={{
         width: 1,
@@ -32,7 +33,7 @@ const Edit = () => {
         "& .MuiFormControl-root": { m: 1, maxWidth: "sm" },
       }}
     >
-      <FormFields values={{}} />
+      <UnitFormFields values={{}} />
 
       <Box sx={{ display: "flex", m: 1 }}>
         <Button
@@ -46,4 +47,4 @@ const Edit = () => {
   );
 };
 
-export default Edit;
+export default Unit;

@@ -1,87 +1,27 @@
 import React from "react";
-import {
-  Autocomplete,
-  Box,
-  Divider,
-  Paper,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { Box, Divider, Paper } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import { gql, useLazyQuery } from "@apollo/client";
 
 import { default as RentalAgreementPayment } from "../RentalAgreementPayments/FormFields";
 
-import SelectCustomer from "../Customers/SelectCustomer2";
-
-const StyledInput = styled(TextField)(({ theme }) => ({
-  width: "100%",
-  margin: theme.spacing(1),
-  maxWidth: theme.breakpoints.sm,
-}));
-
-const FIND_CUSTOMER_AGREEMENTS = gql`
-  query findCustomerAgreements($customer: CustomerInput) {
-    rentalAgreements(attributes: { customer: $customer}) {
-      id
-      unit {
-        id
-        name
-      }
-      priceInCents
-    }
-  }
-`;
-
-const RAPS = ({ rentalAgreements, payment, onChange }) => {
-  let { rentalAgreementPayments, ...rest } = payment;
-
-  return rentalAgreements.map((rentalAgreement) => {
-    let rap = rentalAgreementPayments[rentalAgreement.id];
-
-    if (!rap) {
-      rap = {
-        amount: "",
-        paidMonths: "",
-        note: "",
-        rentalAgreement: rentalAgreement,
-      };
-    }
-
-    return (
-      <Paper key={rentalAgreement?.id} elevation={3} sx={{ mb: 1 }}>
-        <RentalAgreementPayment
-          rentalAgreementPayment={rap}
-          onChange={(value) => {
-            onChange(value);
-          }}
-        />
-      </Paper>
-    );
-  });
-};
+import SelectCustomer from "../Customers/SelectCustomer";
+import useAxios from "../useAxios";
+import * as paths from "../PathHelper";
 
 const FormFields = ({ payment, onChange, readOnly }) => {
   const [value, setValue] = React.useState({
     date: null,
     customer: null,
-    rentalAgreementPayments: [],
   });
+  const [data, setData] = React.useState();
+  const axios = useAxios();
   const [customerId, setCustomerId] = React.useState(null);
   const [paymentDate, setPaymentDate] = React.useState("");
-  const [findAgreements, { data, error }] = useLazyQuery(
-    FIND_CUSTOMER_AGREEMENTS,
-  );
-
-  let loading = false;
 
   React.useEffect(() => {
-    if (!loading) {
-      setPaymentDate(payment?.date ? dayjs(payment?.date) : dayjs());
-    }
+    setPaymentDate(payment?.date ? dayjs(payment?.date) : dayjs());
   }, []);
 
   React.useEffect(() => {
@@ -92,21 +32,20 @@ const FormFields = ({ payment, onChange, readOnly }) => {
   }, [paymentDate]);
 
   React.useEffect(() => {
-    findAgreements({ variables: { customer: { id: customerId } } });
+    if (customerId) {
+      findAgreements();
+    }
   }, [customerId]);
 
-  const addRentalAgreementPayment = (rap) => {
-    let { rentalAgreementPayments, ...wholePayment } = payment;
+  const findAgreements = () => {
+    axios
+      .get(paths.API.CUSTOMERS(customerId))
+      .then((res) => {
+        setData(res.data);
+      })
+      .catch((error) => console.log(error));
 
-    let raps = { ...rentalAgreementPayments };
-    raps[rap.rentalAgreement.id] = rap;
-
-    onChange({
-      ...payment,
-      rentalAgreementPayments: {
-        ...raps,
-      },
-    });
+    setPaymentDate(payment?.date ? dayjs(payment?.date) : dayjs());
   };
 
   return (
@@ -118,6 +57,18 @@ const FormFields = ({ payment, onChange, readOnly }) => {
           justifyContent: "space-between",
         }}
       >
+        <input
+          type="hidden"
+          name="payment[customer_id]"
+          id="payment_customer_id]"
+          value={customerId}
+        />
+        <input
+          type="hidden"
+          name="payment[date]"
+          id="payment_date"
+          value={dayjs(paymentDate).format("YYYY-MM-DD")}
+        />
         <SelectCustomer
           customer={payment.customer}
           onChange={(newValue) => {
@@ -131,8 +82,8 @@ const FormFields = ({ payment, onChange, readOnly }) => {
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
             required
-            id="date"
-            name="date"
+            id="payment_date"
+            name="payment[date]"
             label="Date"
             sx={{ width: 1, m: 1, maxWidth: "sm" }}
             value={paymentDate}
@@ -146,13 +97,14 @@ const FormFields = ({ payment, onChange, readOnly }) => {
         <Box sx={{ width: 1 }}>
           <Divider>Rental Agreements</Divider>
           {data && (
-            <RAPS
-              rentalAgreements={data.rentalAgreements}
-              payment={payment}
-              onChange={(rap) => {
-                addRentalAgreementPayment(rap);
-              }}
-            />
+            data.rental_agreements.map((agreement) => {
+              return (
+                <RentalAgreementPayment
+                  key={agreement.id}
+                  rentalAgreement={agreement}
+                />
+              );
+            })
           )}
         </Box>
       </Paper>
@@ -161,18 +113,3 @@ const FormFields = ({ payment, onChange, readOnly }) => {
 };
 
 export default FormFields;
-//TODO
-//What's next?
-//We need the ability to select a rentalagreement for the given customer and then enter
-//the rentalagreementpayment fields (amount, paid_months)
-//probably need to backtrack and add a cost_in_cents field to RentalAgreements
-//
-// Probably need a amount_in_cents field on RentalAgreementPayment to so that she can type
-// in a value to go towards a payment (e.g. $500) and it would auto divide the amount
-// by RA cost to determine how many months the person has paid for. Will be a dumb guess (won't
-// take into account lateness, etc) but will at least give a number to make life a bit easier.
-//
-// Need to allow multiple RAPayments per Payment (prepopulate all existing? Or select from dropdown)
-//
-// Add notes field to RAPayments for information
-// Need a way to determine if the person is late or not when paying. If late how many months late?

@@ -8,76 +8,89 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { gql, useQuery } from "@apollo/client";
 import FormFields from "./FormFields";
+import useAxios from "../useAxios";
+import * as paths from "../PathHelper";
 
-const GET_CUSTOMERS = gql`
-  query allCustomers {
-    customers {
-      id
-      firstName
-      lastName
-      gateCode
-      email
-      formalName
-    }
-  }
-`;
-
-const SelectCustomer = ({ rentalAgreement, setRentalAgreement }) => {
-  const { loading, error, data } = useQuery(GET_CUSTOMERS);
+const SelectCustomer = ({ customer, onChange, allowNew }) => {
   const [options, setOptions] = React.useState([]);
   const [newCustomer, setNewCustomer] = React.useState(false);
   const [newCustomerAttr, setNewCustomerAttr] = React.useState(null);
+  const [data, setData] = React.useState();
+  const axios = useAxios();
 
   React.useEffect(() => {
-    if (!loading && rentalAgreement?.customer) {
+    axios
+      .get(paths.API.CUSTOMERS())
+      .then((res) => {
+        setData(res.data);
+      })
+      .catch((error) => console.log(error));
+  }, []);
+
+  React.useEffect(() => {
+    if (data && customer) {
       const optionCustomer = options.find((element) =>
-        element.id == rentalAgreement?.customer.id
+        element.id == customer.id
       );
     }
   }, [options]);
 
   React.useEffect(() => {
-    const customers = data?.customers.slice().sort((a, b) => {
-      if (a.formalName === b.formalName) {
+    const customers = data?.slice().sort((a, b) => {
+      if (a.formal_name === b.formal_name) {
         return 0;
       }
 
-      return a.formalName < b.formalName ? -1 : 1;
+      return a.formal_name < b.formal_name ? -1 : 1;
     });
 
     setOptions(customers || []);
   }, [data]);
 
+  const changeHandler = (newCustomerValue) => {
+    if (onChange) {
+      if (newCustomerValue) {
+        onChange({
+          ...newCustomerValue,
+          newCustomer: newCustomer,
+        });
+      } else {
+        onChange(null);
+      }
+    }
+  };
+
   return (
     <>
-      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <FormControlLabel
-          sx={{ m: 1 }}
-          control={
-            <Switch
-              id="newCustomer"
-              value={newCustomer}
-              onChange={() => {
-                setNewCustomer(!newCustomer);
-              }}
+      {allowNew &&
+        (
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <FormControlLabel
+              sx={{ m: 1 }}
+              control={
+                <Switch
+                  id="newCustomer"
+                  value={newCustomer}
+                  onChange={() => {
+                    if (newCustomer) {
+                      changeHandler(null);
+                    }
+                    setNewCustomer(!newCustomer);
+                  }}
+                />
+              }
+              label="New Customer"
             />
-          }
-          label="New Customer"
-        />
-      </Box>
+          </Box>
+        )}
       {newCustomer
         ? (
           <FormFields
             values={newCustomerAttr}
             onChange={(newValue) => {
               setNewCustomerAttr(newValue);
-              setRentalAgreement({
-                ...rentalAgreement,
-                newCustomer: newCustomer,
-                newCustomerAttr: newCustomerAttr,
-              });
+              changeHandler(newValue);
             }}
           />
         )
@@ -85,18 +98,19 @@ const SelectCustomer = ({ rentalAgreement, setRentalAgreement }) => {
           <Autocomplete
             disablePortal
             id="customer"
-            value={rentalAgreement?.customer || null}
+            name="customer"
+            value={customer || null}
             options={options}
-            getOptionLabel={(option) => option.formalName}
+            getOptionLabel={(option) => option.formal_name}
             renderOption={(props, option, state) => {
               return (
                 <ListItem
                   {...props}
                   component="li"
-                  key={`${option.formalName} ${option.id}`}
+                  key={`${option.formal_name} ${option.id}`}
                   sx={{ justifyContent: "space-between!important" }}
                 >
-                  <span>{option.formalName}</span>
+                  <span>{option.formal_name}</span>
                   <Typography variant="overline" sx={{ color: "#444" }}>
                     (ID: {option.id})
                   </Typography>
@@ -104,10 +118,7 @@ const SelectCustomer = ({ rentalAgreement, setRentalAgreement }) => {
               );
             }}
             onChange={(event, newValue) => {
-              setRentalAgreement({
-                ...rentalAgreement,
-                customer: newValue,
-              });
+              changeHandler(newValue);
             }}
             sx={{
               width: 1,

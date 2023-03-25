@@ -2,7 +2,6 @@ import React from "react";
 import {
   Box,
   FormControl,
-  Input,
   InputAdornment,
   InputLabel,
   MenuItem,
@@ -12,7 +11,7 @@ import {
 } from "@mui/material";
 import { centsToDollars } from "../DataFormatHelpers";
 
-const UnitFormFields = (props) => {
+const FormFields = ({ unit, readOnly }) => {
   const [unitType, setUnitType] = React.useState("");
   const [unitName, setUnitName] = React.useState("");
   const [unitPrice, setUnitPrice] = React.useState(0);
@@ -21,22 +20,20 @@ const UnitFormFields = (props) => {
     setUnitType(event.target.value);
   };
 
-  const readOnly = props?.readOnly;
-
   React.useEffect(() => {
-    setUnitType(props.values?.typeOf || "");
-    setUnitName(props.values?.name || "");
-    setUnitPrice(centsToDollars(props.values?.priceInCents || 0));
-  }, [props.values]);
+    setUnitType(unit.type_of || "");
+    setUnitName(unit.name || "");
+    setUnitPrice(centsToDollars(unit.price_in_cents) || "");
+  }, [unit]);
 
   return (
     <>
       <Box sx={{ display: "flex" }}>
         <TextField
           required
-          id="name"
+          id="unit_name"
           label="Name"
-          name="name"
+          name="unit[name]"
           placeholder="Name"
           sx={{ width: 1, m: 1, maxWidth: "sm" }}
           value={unitName}
@@ -61,9 +58,9 @@ const UnitFormFields = (props) => {
           <InputLabel id="unit-type-select-label">Type</InputLabel>
           <Select
             labelId="unit-type-select-label"
-            id="unit-type-select"
+            id="unit_type_of"
             label="Type"
-            name="typeOf"
+            name="unit[type_of]"
             value={unitType}
             onChange={handleChange}
             readOnly={readOnly}
@@ -80,8 +77,8 @@ const UnitFormFields = (props) => {
         <FormControl sx={{ width: 1 / 2 }}>
           <InputLabel htmlFor="standard-adornment-amount">Amount</InputLabel>
           <OutlinedInput
-            name="priceInCents"
-            id="standard-adornment-amount"
+            id="unit_price"
+            name="unit[price]"
             label="Amount"
             type="number"
             value={unitPrice}
@@ -97,4 +94,4 @@ const UnitFormFields = (props) => {
   );
 };
 
-export default UnitFormFields;
+export default FormFields;
