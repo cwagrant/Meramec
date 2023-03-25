@@ -22,7 +22,7 @@ Devise.setup do |config|
     jwt.revocation_requests = [
       ['DELETE', %r{^api/logout$}]
     ]
-    jwt.expiration_time = 24.hours.to_i
+    jwt.expiration_time = 7.days.to_i
   end
   # The secret key used by Devise. Devise uses this key to generate
   # random tokens. Changing this key will render invalid all existing

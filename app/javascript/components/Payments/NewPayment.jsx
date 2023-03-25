@@ -1,8 +1,6 @@
 import React from "react";
 import { Box, Button } from "@mui/material";
-import { useOutletContext, useParams } from "react-router-dom";
 import FormFields from "./FormFields";
-import { dollarsToCents } from "../DataFormatHelpers";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
 
