@@ -1,6 +1,7 @@
 require_relative "boot"
 
 require "rails/all"
+require "rack"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -11,13 +12,16 @@ module Meramec
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
 
-    config.middleware.insert_before 0, Rack::Cors do
-      allow do
-        origins 'http://localhost:3000'
-        resource '*', 
-          headers: :any, 
-          expose: ['access-token', 'expiry', 'token-type', 'Authorization'],
-          methods: [:get, :post, :patch, :put, :delete]
+    if !Rails.env.production?
+
+      config.middleware.insert_before 0, Rack::Cors do
+        allow do
+          origins 'http://localhost:3000'
+          resource '*', 
+            headers: :any, 
+            expose: ['access-token', 'expiry', 'token-type', 'Authorization'],
+            methods: [:get, :post, :patch, :put, :delete]
+        end
       end
     end
 

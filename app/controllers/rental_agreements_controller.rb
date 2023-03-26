@@ -11,7 +11,7 @@ class RentalAgreementsController < ApplicationController
   def create
     full_params = rental_agreement_params.to_h.stringify_keys
     if full_params.key?('customer')
-      full_params["customer_attributes"] = full_params.delete('customer'))
+      full_params["customer_attributes"] = full_params.delete('customer')
     end
 
     rental_agreement = RentalAgreement.new(full_params)
@@ -28,10 +28,8 @@ class RentalAgreementsController < ApplicationController
 
     full_params = rental_agreement_params.to_h.stringify_keys
     if full_params.key?('customer')
-      full_params["customer_attributes"] = full_params.delete('customer'))
+      full_params["customer_attributes"] = full_params.delete('customer')
     end
-
-    binding.pry
 
     rental_agreement.update(full_params)
 
