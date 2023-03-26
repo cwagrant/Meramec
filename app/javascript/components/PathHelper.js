@@ -46,5 +46,6 @@ export const API = {
     LOGIN: pathHelper("/api/login"),
     LOGOUT: pathHelper("/api/logout"),
     REGISTER: pathHelper("/api/signup"),
+    CHECKIN: pathHelper("/current_user"),
   },
 };

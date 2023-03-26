@@ -16,12 +16,11 @@ module Meramec
         origins 'http://localhost:3000'
         resource '*', 
           headers: :any, 
-          expose: ['access-token', 'expiry', 'token-type', 'Authorization'],
           methods: [:get, :post, :patch, :put, :delete]
       end
     end
 
-    config.session_store :disabled
+    # config.session_store :disabled
 
     # Configuration for the application, engines, and railties goes here.
     #

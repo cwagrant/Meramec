@@ -16,6 +16,10 @@ import {
 const user_json = localStorage.getItem("user");
 const jwtToken = user_json ? JSON.parse(user_json).token : null;
 
+// <Route
+//   path="/"
+//   element={jwtToken ? <Root /> : <Navigate to="/login" exact />}
+// >
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
@@ -23,7 +27,7 @@ const router = createBrowserRouter(
       <Route path="/logout" element={<Logout />} />
       <Route
         path="/"
-        element={jwtToken ? <Root /> : <Navigate to="/login" exact />}
+        element={<Root />}
       >
         <Route
           path="properties"

@@ -28,6 +28,21 @@ export const Login = () => {
   let urlParams = new URLSearchParams(window.location.search);
   let redirect_to = urlParams.get("redirect_to");
 
+  React.useEffect(() => {
+    axios
+      .get(paths.API.USER.CHECKIN())
+      .then((response) => {
+        if (redirect_to) {
+          window.location = redirect_to;
+        } else {
+          window.location = "/";
+        }
+      })
+      .catch((error) => {
+        // console.log(error);
+      });
+  }, []);
+
   const loginSubmit = (event) => {
     event.preventDefault();
 
@@ -148,20 +163,12 @@ export const Logout = () => {
   const user_json = JSON.parse(user_storage);
   const axios = useAxios();
 
-  if (user_json) {
-    let { token, ...user } = user_json;
-
-    axios
-      .delete(paths.API.USER.LOGOUT())
-      .then((res) => {
-        localStorage.setItem(JSON.stringify({ ...user }));
-        navigate("/login");
-      })
-      .catch((error) => {
-        if (token) {
-          localStorage.setItem("user", JSON.stringify({ ...user }));
-        }
-        navigate("/login");
-      });
-  }
+  axios
+    .delete(paths.API.USER.LOGOUT())
+    .then((res) => {
+      navigate("/login");
+    })
+    .catch((error) => {
+      navigate("/login");
+    });
 };
