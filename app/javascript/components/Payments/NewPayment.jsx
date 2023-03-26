@@ -4,24 +4,14 @@ import FormFields from "./FormFields";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
 
-/* TODO: Let's look at creating an overall error context that all of the
- * individual components can report to. We'll have the Alerts component
- * that actually displays alerts and will be the 'consumer' of the context.
- * If we put it in Root then basically everything will be able to use it
- * and we can just have a call to useContext(AlertContext) which will
- * be a destructurable object that will contain { alerts, addAlert }
- *
- * The goal being we'll be able to pretty easily call addAlert anywhere
- * for different types of alerts (successes, failures, etc).
- *
+/* TODO:
  * Additionally we'll want to look at adding validations to different form
  * fields (required, etc.) as well as in models to try to preserve data
  * integerity as much as possible.
  *
- * Finally we'll need to look at data again as there may be a few extra fields
- * we need.
- *
- * LedgerEntry: Need a basic form for adding Account Adjustments.
+ * Needed Forms/Data Changes
+ * LedgerEntry: Need a basic form for Creating entries. Maybe add it to
+ *   to the bottom of a RentalAgreement for viewing purposes?
  * Breadcrumbs: Payments
  * Buttons: Probably need to cleanup show page and add some links to edit
  *  something in it's show page.

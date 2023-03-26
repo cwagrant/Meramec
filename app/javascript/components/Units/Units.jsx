@@ -114,12 +114,11 @@ const Units = () => {
     axios
       .delete(paths.API.UNITS(id))
       .then((res) => {
-        // requery the properties as we've just deleted one
         queryUnits();
       })
       .catch((error) => {
+        pushNotification(`Unable to delete Unit ${id}`, "error");
         console.log(error);
-        // display an error? Might be able to use the ErrorContext to shoot it up to the top.
       });
   };
 
@@ -131,7 +130,13 @@ const Units = () => {
       .then((res) => {
         setData(res.data);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        pushNotification(
+          "Looks like there was an error in finding the existing units",
+          "error",
+        );
+        console.log(error);
+      });
   };
 
   return (
