@@ -20,6 +20,7 @@ import LaunchIcon from "@mui/icons-material/Launch";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useAxios from "../useAxios";
+import useNotifications from "../useNotifications";
 
 const SEARCH_PROPERTIES_URL = "/api/properties";
 
@@ -58,6 +59,7 @@ const Properties = () => {
   const [query, setQuery] = useState("");
   const [data, setData] = useState();
   const axios = useAxios();
+  const { pushNotification } = useNotifications();
 
   const changeHandler = (event) => {
     setQuery(event.target.value);
@@ -76,12 +78,11 @@ const Properties = () => {
     axios
       .delete(`api/properties/${id}`)
       .then((res) => {
-        // requery the properties as we've just deleted one
         queryProperties();
       })
       .catch((error) => {
+        pushNotification(`Unable to delete Property ${id}`, "error");
         console.log(error);
-        // display an error? Might be able to use the ErrorContext to shoot it up to the top.
       });
   };
 
@@ -91,7 +92,13 @@ const Properties = () => {
       .then((res) => {
         setData(res.data);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        pushNotification(
+          "Looks like there was an error in finding the existing properties",
+          "error",
+        );
+        console.log(error);
+      });
   };
 
   return (

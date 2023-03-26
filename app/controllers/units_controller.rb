@@ -32,8 +32,6 @@ class UnitsController < ApplicationController
   def destroy
     unit = Unit.find(params[:id])
 
-    return render json: { status: :ok }, status: :ok
-
     if unit.delete!
       render status: :ok
     else

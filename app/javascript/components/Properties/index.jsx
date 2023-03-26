@@ -9,6 +9,7 @@ import { Alert } from "@mui/material";
 import { ErrorContext } from "./ErrorContext";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
+import useNotifications from "../useNotifications";
 
 const GET_PROPERTY_URL = "/api/properties/";
 
@@ -21,6 +22,7 @@ const Properties = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const axios = useAxios();
+  const { pushNotification } = useNotifications();
 
   React.useEffect(() => {
     return () => {
@@ -36,11 +38,11 @@ const Properties = ({ children }) => {
           setCurrentProperty(res.data);
         })
         .catch((error) => {
-          navigate("/properties", {
-            state: [{
-              error: "Unable to load property with id " + propertyId,
-            }],
-          });
+          pushNotification(
+            `Unable to load property with id ${propertyId}`,
+            "error",
+          );
+          navigate("/properties");
         });
     }
   }, [propertyId]);
@@ -63,15 +65,6 @@ const Properties = ({ children }) => {
             ));
           }}
         </ErrorContext.Consumer>
-        {location?.state && location.state.map((data, index) => {
-          const key = Object.keys(data)[0];
-
-          return (
-            <Alert sx={{ maxWidth: "md", my: 2 }} key={index} severity={key}>
-              {data[key]}
-            </Alert>
-          );
-        })}
         <Outlet
           context={{
             currentProperty,

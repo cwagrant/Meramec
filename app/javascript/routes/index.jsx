@@ -23,7 +23,7 @@ const router = createBrowserRouter(
       <Route path="/logout" element={<Logout />} />
       <Route
         path="/"
-        element={jwtToken ? <Root /> : <Navigate to="/login" exact />}
+        element={<Root />}
       >
         <Route
           path="properties"
