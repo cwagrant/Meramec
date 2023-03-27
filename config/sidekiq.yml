@@ -1,0 +1,7 @@
+:queues:
+  - default
+:scheduler:
+  :schedule:
+    billing_cycle:
+      every: 2 hours
+      class: BillingCycleWorker

@@ -75,3 +75,5 @@ gem "sidekiq", "~> 7.0"
 gem "devise-jwt", "~> 0.10.0"
 
 gem "fast_jsonapi", "~> 1.5"
+
+gem "sidekiq-scheduler", "~> 5.0"

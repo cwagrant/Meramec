@@ -7,7 +7,7 @@ class RentalAgreement < ApplicationRecord
   has_many :ledger_entries
   accepts_nested_attributes_for :unit, :customer, allow_destroy: true
 
-  scope :payment_due_on, ->(date) { where('next_due_date < ?', date.to_date)}
+  scope :payment_due_on, ->(date) { where('next_due_date <= ?', date.to_date)}
   scope :active, -> { where(end_date: nil) }
 
   def balance
@@ -21,7 +21,7 @@ class RentalAgreement < ApplicationRecord
   def owes!
     ledger_entries.create(
       source: self,
-      amount_in_cents: price_in_cents * -1
+      amount_in_cents: (price_in_cents || 0) * -1
     )
 
     update(next_due_date: Date.today + 1.month)

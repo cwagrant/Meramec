@@ -25,6 +25,13 @@ module Meramec
     end
 
     config.session_store :disabled
+    config.active_job.queue_adapter = :sidekiq
+
+    if Rails.env.production?
+      config.log_level = :info
+      config.log_tags  = [:subdomain, :uuid]
+      config.logger    = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
+    end
 
     # Configuration for the application, engines, and railties goes here.
     #
