@@ -28,26 +28,6 @@ export const Login = () => {
   let urlParams = new URLSearchParams(window.location.search);
   let redirect_to = urlParams.get("redirect_to");
 
-  // on loading the page we check if the user is still active
-  // if so we'll redirect them to the main site. Otherwise
-  // they're exactly where they need to be.
-  React.useEffect(() => {
-    if (redirect_to === null) {
-      axios
-        .get(paths.API.USER.CHECKIN())
-        .then((response) => {
-          if (redirect_to) {
-            window.location = redirect_to;
-          } else {
-            window.location = "/";
-          }
-        })
-        .catch((error) => {
-          // console.log(error);
-        });
-    }
-  }, []);
-
   const loginSubmit = (event) => {
     event.preventDefault();
 

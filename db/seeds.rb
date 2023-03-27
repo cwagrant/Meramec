@@ -31,7 +31,7 @@ if User.none?
   )
 end
 
-if Rails.env.production?
+unless Rails.env.production?
   ActiveRecord::Base.transaction do 
 
     late_fee = Term.create(

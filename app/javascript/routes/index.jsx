@@ -20,7 +20,7 @@ const jwtToken = user_json ? JSON.parse(user_json).token : null;
 // perhaps we can use a useeffect hook to make it so that when
 // the page initially loads we run a current_user check
 // and then if we can't hit it we redirect
-
+//
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
