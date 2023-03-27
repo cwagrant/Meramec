@@ -1,24 +1,34 @@
 FROM ruby:3.2.0
 
-RUN apt-get update && apt-get install -y --no-install-recommends nodejs npm
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg -o /root/yarn-pubkey.gpg && apt-key add /root/yarn-pubkey.gpg
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list
+RUN apt-get update && apt-get install -y --no-install-recommends nodejs npm yarn less
+RUN npm install -g n
+RUN n 19
 
-ENV INSTALL_PATH /opt/app
+ENV INSTALL_PATH /opt/meramec
 RUN mkdir -p $INSTALL_PATH
-VOLUME ["/data"]
+RUN mkdir -p /data /credentials /public
+VOLUME ["/data", "/credentials", "/public"]
 
 WORKDIR $INSTALL_PATH
-RUN git clone https://github.com/cwagrant/Meramec.git
-
-WORKDIR $INSTALL_PATH/Meramec
-
+COPY ./ ./
 RUN gem install bundler
 RUN bundle install
-RUN npm install --legacy-peer-deps
+RUN yarn
 
-ENV RAILS_ENV production
-RUN bundle exec rails assets:precompile
+# clear the linked directories
+RUN rm -rf ./config/credentials
+RUN rm -rf ./public
 
-CMD bundle exec puma -p 3802 -e production
+# link things up to the volumes
+RUN ln -s /credentials ./config
+RUN ln -s /public ./
+RUN ln -s /data data
+
+RUN ["chmod", "+x", "./entrypoint.sh"]
+CMD ./entrypoint.sh
+
 EXPOSE 3802
 
 
