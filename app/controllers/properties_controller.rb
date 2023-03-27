@@ -32,12 +32,10 @@ class PropertiesController < ApplicationController
   def destroy
     property = Property.find(params[:id])
 
-    return render json: { status: :ok }, status: :ok
-
-    if property.delete!
+    if property.destroy
       render status: :ok
     else
-      render json: { errors: property.errors.full_messages}, status: 500
+      render json: { errors: property.errors.full_messages}, status: 403
     end
   end
 

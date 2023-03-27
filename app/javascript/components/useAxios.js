@@ -35,8 +35,8 @@ const useAxios = (contentType = "") => {
 
       currentLocation = window.location;
       window.location = `/login?redirect_to=${currentLocation}`;
-      throw error;
     }
+    throw error;
   });
 
   return instance;

@@ -4,7 +4,6 @@ import { Alert } from "@mui/material";
 
 const Notifications = () => {
   const { notifications, removeNotification } = useNotifications();
-  console.log("notifications", notifications);
 
   return (
     <>
@@ -19,7 +18,6 @@ const Notifications = () => {
               sx={{ my: 1 }}
               severity={notification.severity}
               onClose={(event) => {
-                console.log("remove", key);
                 removeNotification(key);
               }}
             >

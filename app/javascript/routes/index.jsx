@@ -2,10 +2,12 @@ import React from "react";
 import Root from "../components/Root";
 import Properties from "../components/Properties";
 import Units from "../components/Units";
+import Users from "../components/Users";
 import RentalAgreements from "../components/RentalAgreements";
 import Customers from "../components/Customers";
 import Payments from "../components/Payments";
-import { Login, Logout } from "../components/Users";
+
+import { Login, Logout } from "../components/Login";
 
 import {
   createBrowserRouter,
@@ -15,6 +17,9 @@ import {
 } from "react-router-dom";
 const user_json = localStorage.getItem("user");
 const jwtToken = user_json ? JSON.parse(user_json).token : null;
+// perhaps we can use a useeffect hook to make it so that when
+// the page initially loads we run a current_user check
+// and then if we can't hit it we redirect
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -112,6 +117,25 @@ const router = createBrowserRouter(
           >
             <Route index element={<Customers.Show />} />
             <Route path="edit" element={<Customers.Edit />} />
+          </Route>
+        </Route>
+        <Route
+          path="users"
+          element={<Users />}
+          handle={{ crumb: { name: "Users" } }}
+        >
+          <Route index element={<Users.Index />} />
+          <Route
+            path="new"
+            element={<Users.New />}
+            handle={{ crumb: { name: "New" } }}
+          />
+          <Route
+            path=":userId"
+            handle={{ crumb: { name: "{user}" } }}
+          >
+            <Route index element={<Users.Show />} />
+            <Route path="edit" element={<Users.Edit />} />
           </Route>
         </Route>
       </Route>,

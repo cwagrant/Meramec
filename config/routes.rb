@@ -7,8 +7,7 @@ Rails.application.routes.draw do
   get 'site/index'
   devise_for :users, path: 'api', path_names: {
     sign_in: 'login',
-    sign_out: 'logout',
-    registration: 'signup'
+    sign_out: 'logout'
   }, 
   controllers: {
     sessions: 'users/sessions',
@@ -19,6 +18,7 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "site#index"
   scope :api do
+    resources :users, except: [:new, :edit] 
     resources :properties, except: [:new, :edit]
     resources :units, except: [:new, :edit] 
     resources :customers, except: [:new, :edit]

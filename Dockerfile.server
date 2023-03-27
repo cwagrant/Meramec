@@ -27,7 +27,7 @@ RUN ln -s /public ./
 RUN ln -s /data data
 
 RUN ["chmod", "+x", "./entrypoint.sh"]
-CMD ./entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 3802
 

@@ -75,14 +75,23 @@ const Properties = () => {
   );
 
   const deleteProperty = (id) => {
+    console.log("delete", id);
     axios
       .delete(`api/properties/${id}`)
       .then((res) => {
-        queryProperties();
+        if (res) {
+          queryProperties();
+        }
       })
       .catch((error) => {
-        pushNotification(`Unable to delete Property ${id}`, "error");
-        console.log(error);
+        console.log(error?.response?.data?.errors);
+        const errors = error?.response?.data?.errors;
+
+        if (errors) {
+          errors.map((err) => {
+            pushNotification(`${err} (ID: ${id})`, "error");
+          });
+        }
       });
   };
 
@@ -93,6 +102,7 @@ const Properties = () => {
         setData(res.data);
       })
       .catch((error) => {
+        console.log("stuff");
         pushNotification(
           "Looks like there was an error in finding the existing properties",
           "error",

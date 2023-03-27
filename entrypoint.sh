@@ -1,9 +1,11 @@
 #!/bin/bash
 
-cd /opt/meramec
-export RAILS_ENV=production
-export RAILS_SERVE_STATIC_FILES=1
+cd /opt/meramec || exit
+printf 'env var RAILS_ENV = %s' "$RAILS_ENV"
+printf 'env var RACK_ENV = %s' "$RACK_ENV"
 
 bin/rails assets:precompile
+bin/rake db:migrate
+bin/rake db:seed
 
-bundle exec puma -p 3802 -e production 
+bundle exec puma -p 3802 -e production

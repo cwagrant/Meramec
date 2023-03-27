@@ -215,6 +215,12 @@ export default function MiniDrawer() {
             <List>
               <ListLink
                 open={open}
+                to="/users"
+                name="Users"
+                icon={<PeopleIcon />}
+              />
+              <ListLink
+                open={open}
                 to="/logout"
                 name="Logout"
                 icon={<LogoutIcon />}
