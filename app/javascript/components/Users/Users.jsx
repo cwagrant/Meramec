@@ -120,7 +120,7 @@ const Users = () => {
       >
         <Button
           component={RouterLink}
-          to={"./users/new"}
+          to={"/users/new"}
           variant="outlined"
           startIcon={<AddBoxIcon />}
         >
