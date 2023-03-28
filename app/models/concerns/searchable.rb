@@ -38,9 +38,14 @@ module Searchable
 
       self.joins!(associations) if associations.any?
 
-      queries.reduce(self) do |searches, terms|
-        searches.where(terms.reduce(:or))
+      # I want to get get all the terms into a where clause
+      # that then does a .or(where()) for each of the models
+
+      scopes = queries.map do |terms|
+        self.where(terms.reduce(:or))
       end
+
+      scopes.reduce(:or)
     end
   end
 

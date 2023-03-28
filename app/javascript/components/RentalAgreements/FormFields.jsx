@@ -16,11 +16,12 @@ import * as paths from "../PathHelper";
 const FormFields = ({ rentalAgreement, setRentalAgreement }) => {
   const [unitOptions, setUnitOptions] = React.useState([]);
   const [unit, setUnit] = React.useState(null);
-  const [startDate, setStartDate] = React.useState("");
-  const [endDate, setEndDate] = React.useState("");
-  const [nextDueDate, setNextDueDate] = React.useState("");
+  const [startDate, setStartDate] = React.useState(null);
+  const [endDate, setEndDate] = React.useState(null);
+  const [nextDueDate, setNextDueDate] = React.useState(null);
   const [customer, setCustomer] = React.useState();
   const [data, setData] = React.useState();
+  const [error, setError] = React.useState();
   const axios = useAxios();
 
   React.useEffect(() => {
@@ -48,9 +49,16 @@ const FormFields = ({ rentalAgreement, setRentalAgreement }) => {
     }
 
     if (rentalAgreement) {
-      setStartDate(dayjs(rentalAgreement.start_date));
-      setEndDate(dayjs(rentalAgreement.end_date));
-      setNextDueDate(dayjs(rentalAgreement.next_due_date));
+      console.log(dayjs(rentalAgreement.start_date));
+      if (rentalAgreement.start_date) {
+        setStartDate(dayjs(rentalAgreement.start_date));
+      }
+      if (rentalAgreement.end_date) {
+        setEndDate(dayjs(rentalAgreement.endDate));
+      }
+      if (rentalAgreement.next_due_date) {
+        setNextDueDate(dayjs(rentalAgreement.next_due_date));
+      }
     }
   }, [rentalAgreement, unitOptions]);
 
@@ -71,6 +79,11 @@ const FormFields = ({ rentalAgreement, setRentalAgreement }) => {
 
     setUnitOptions(units || []);
   }, [data]);
+
+  React.useEffect(() => {
+    console.log("end_date", endDate);
+    console.log("error", error);
+  }, [endDate, error]);
 
   return (
     <>
@@ -109,7 +122,6 @@ const FormFields = ({ rentalAgreement, setRentalAgreement }) => {
             }}
           />
           <DatePicker
-            required
             id="rental_agreement_end_date"
             name="rental_agreement[end_date]"
             label="End Date"
@@ -118,6 +130,7 @@ const FormFields = ({ rentalAgreement, setRentalAgreement }) => {
             onChange={(newValue) => {
               setEndDate(newValue);
             }}
+            onError={(newError) => setError(newError)}
           />
           <DatePicker
             required

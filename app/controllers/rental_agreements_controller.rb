@@ -1,7 +1,7 @@
 class RentalAgreementsController < ApplicationController
   def index
     render json: RentalAgreement.includes(:customer, :unit)
-      .search(params[:search], models: [Customer])
+      .search(params[:search], models: [Customer, Unit])
   end
 
   def show
@@ -43,8 +43,8 @@ class RentalAgreementsController < ApplicationController
   def destroy
     rental_agreement = RentalAgreement.find(params[:id])
 
-    if rental_agreement.delete!
-      render status: :ok
+    if rental_agreement.destroy
+      render json: {}, status: :ok
     else
       render json: { errors: rental_agreement.errors.full_messages}, status: 500
     end

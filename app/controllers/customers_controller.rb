@@ -1,6 +1,6 @@
 class CustomersController < ApplicationController
   def index
-    render json: Customer.search(params[:search]).as_json(methods: [:formal_name])
+    render json: Customer.search(params[:search], models: [Customer, Unit]).as_json(methods: [:formal_name])
   end
 
   def show
@@ -32,10 +32,8 @@ class CustomersController < ApplicationController
   def destroy
     customer = Customer.find(params[:id])
 
-    return render json: { status: :ok }, status: :ok
-
-    if customer.delete!
-      render status: :ok
+    if customer.destroy
+      render json: { message: 'Success' }, status: :ok
     else
       render json: { errors: customer.errors.full_messages}, status: 500
     end

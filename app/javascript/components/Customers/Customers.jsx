@@ -21,8 +21,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
+import useNotifications from "../useNotifications";
 
-const Records = ({ customers }) => {
+const Records = ({ customers, deleteCallback }) => {
   return customers.map(({ id, first_name, last_name }) => (
     <TableRow key={id}>
       <TableCell>{id}</TableCell>
@@ -39,7 +40,12 @@ const Records = ({ customers }) => {
           <Link component={RouterLink} to={"/customers/" + id + "/edit"}>
             <EditIcon />
           </Link>
-          <Link component={RouterLink} to={"/customers/" + id}>
+          <Link
+            onClick={(event) => {
+              event.preventDefault();
+              deleteCallback(id);
+            }}
+          >
             <DeleteIcon />
           </Link>
         </Box>
@@ -52,6 +58,7 @@ const Customers = () => {
   const [query, setQuery] = useState("");
   const axios = useAxios();
   const [data, setData] = React.useState();
+  const { pushNotification } = useNotifications();
 
   const changeHandler = (event) => {
     setQuery(event.target.value);
@@ -75,6 +82,27 @@ const Customers = () => {
         setData(res.data);
       })
       .catch((error) => console.log(error));
+  };
+
+  const deleteCustomer = (id) => {
+    axios
+      .delete(paths.API.CUSTOMERS(id))
+      .then((res) => {
+        if (res) {
+          queryCustomers();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        console.log(error?.response?.data?.errors);
+        const errors = error?.response?.data?.errors;
+
+        if (errors) {
+          errors.map((err) => {
+            pushNotification(`${err} (ID: ${id})`, "error");
+          });
+        }
+      });
   };
 
   return (
@@ -122,7 +150,13 @@ const Customers = () => {
           </TableHead>
           <TableBody>
             {data &&
-              <Records key="customersListItems" customers={data} />}
+              (
+                <Records
+                  key="customersListItems"
+                  customers={data}
+                  deleteCallback={deleteCustomer}
+                />
+              )}
           </TableBody>
         </Table>
       </TableContainer>

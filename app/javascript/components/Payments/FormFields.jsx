@@ -17,11 +17,19 @@ const FormFields = ({ payment, onChange, readOnly }) => {
   });
   const [data, setData] = React.useState();
   const axios = useAxios();
-  const [customerId, setCustomerId] = React.useState(null);
-  const [paymentDate, setPaymentDate] = React.useState("");
+  const [customerId, setCustomerId] = React.useState(0);
+  const [paymentDate, setPaymentDate] = React.useState(null);
 
   React.useEffect(() => {
-    setPaymentDate(payment?.date ? dayjs(payment?.date) : dayjs());
+    if (payment) {
+      if (payment.date) {
+        setPaymentDate(dayjs(payment.date));
+      } else {
+        setPaymentDate(dayjs());
+      }
+    } else {
+      setPaymentDate(dayjs());
+    }
   }, []);
 
   React.useEffect(() => {
@@ -44,8 +52,6 @@ const FormFields = ({ payment, onChange, readOnly }) => {
         setData(res.data);
       })
       .catch((error) => console.log(error));
-
-    setPaymentDate(payment?.date ? dayjs(payment?.date) : dayjs());
   };
 
   return (

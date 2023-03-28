@@ -4,6 +4,7 @@ import { Link as RouterLink, useParams } from "react-router-dom";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
 import { debounce } from "lodash";
+import useNotifications from "../useNotifications";
 
 import {
   Box,
@@ -23,12 +24,12 @@ import LaunchIcon from "@mui/icons-material/Launch";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const Records = ({ rentalAgreements }) => {
+const Records = ({ rentalAgreements, deleteCallback }) => {
   return rentalAgreements.map(({ id, customer, unit }) => (
     <TableRow key={id}>
       <TableCell>{unit.name}</TableCell>
       <TableCell>
-        <Link component={RouterLink} to={"/rentalAgreements/" + id}>
+        <Link component={RouterLink} to={"/agreements/" + id}>
           {customer.formal_name}
         </Link>
       </TableCell>
@@ -40,7 +41,12 @@ const Records = ({ rentalAgreements }) => {
           <Link component={RouterLink} to={"/agreements/" + id + "/edit"}>
             <EditIcon />
           </Link>
-          <Link component={RouterLink} to={"/agreements/" + id}>
+          <Link
+            onClick={(event) => {
+              event.preventDefault();
+              deleteCallback(id);
+            }}
+          >
             <DeleteIcon />
           </Link>
         </Box>
@@ -53,6 +59,7 @@ const RentalAgreements = () => {
   const [query, setQuery] = useState("");
   const [data, setData] = useState();
   const axios = useAxios();
+  const { pushNotification } = useNotifications();
 
   const changeHandler = (event) => {
     setQuery(event.target.value);
@@ -77,6 +84,26 @@ const RentalAgreements = () => {
     debounce(changeHandler, 300),
     [],
   );
+
+  const deleteAgreement = (id) => {
+    axios
+      .delete(paths.API.RENTAL_AGREEMENTS(id))
+      .then((res) => {
+        if (res) {
+          queryRentalAgreements();
+        }
+      })
+      .catch((error) => {
+        console.log(error?.response?.data?.errors);
+        const errors = error?.response?.data?.errors;
+
+        if (errors) {
+          errors.map((err) => {
+            pushNotification(`${err} (ID: ${id})`, "error");
+          });
+        }
+      });
+  };
 
   return (
     <div key="rentalAgreementsList">
@@ -127,6 +154,7 @@ const RentalAgreements = () => {
                 <Records
                   key="rentalAgreementsListItems"
                   rentalAgreements={data}
+                  deleteCallback={deleteAgreement}
                 />
               )}
           </TableBody>

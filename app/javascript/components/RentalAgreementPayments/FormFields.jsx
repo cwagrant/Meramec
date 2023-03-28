@@ -3,7 +3,8 @@ import { TextField } from "@mui/material";
 import { centsToDollars } from "../DataFormatHelpers";
 
 const FormFields = ({ rentalAgreement }) => {
-  const [paid, setPaid] = React.useState(0);
+  const [paid, setPaid] = React.useState("");
+  const [notes, setNotes] = React.useState("");
 
   return (
     <>
@@ -35,6 +36,8 @@ const FormFields = ({ rentalAgreement }) => {
         id="payment_rental_agreement_payments_amount"
         placeholder="Paid"
         label="Paid"
+        value={paid}
+        onChange={(event) => setPaid(event.target.value)}
       />
       <TextField
         multiline
@@ -42,6 +45,8 @@ const FormFields = ({ rentalAgreement }) => {
         id="payment_rental_agreement_payments_note"
         label="Notes"
         rows={3}
+        value={notes}
+        onChange={(event) => setNotes(event.target.value)}
         sx={{ width: 1, pr: 2 }}
       />
     </>

@@ -33,7 +33,7 @@ class PropertiesController < ApplicationController
     property = Property.find(params[:id])
 
     if property.destroy
-      render status: :ok
+      render json: {}, status: :ok
     else
       render json: { errors: property.errors.full_messages}, status: 403
     end

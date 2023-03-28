@@ -3,9 +3,9 @@ class RentalAgreement < ApplicationRecord
 
   belongs_to :unit
   belongs_to :customer
-  has_many :rental_agreement_terms
+  has_many :rental_agreement_terms, dependent: :destroy
   has_many :ledger_entries
-  accepts_nested_attributes_for :unit, :customer, allow_destroy: true
+  accepts_nested_attributes_for :unit, :customer
 
   scope :payment_due_on, ->(date) { where('next_due_date <= ?', date.to_date)}
   scope :active, -> { where(end_date: nil).or(where('end_date >= ?', Time.zone.now.to_date)) }

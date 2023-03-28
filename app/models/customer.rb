@@ -1,8 +1,9 @@
 class Customer < ApplicationRecord
   include Searchable
   belongs_to :address, optional: true
-  has_many :payments
-  has_many :rental_agreements
+  has_many :payments, dependent: :restrict_with_error
+  has_many :rental_agreements, dependent: :restrict_with_error
+  has_many :units, through: :rental_agreements
 
   def name
     "#{first_name} #{last_name}"
