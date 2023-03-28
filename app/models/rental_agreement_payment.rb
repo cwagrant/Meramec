@@ -2,7 +2,7 @@ class RentalAgreementPayment < ApplicationRecord
   belongs_to :rental_agreement
   belongs_to :payment
 
-  has_one :ledger_entry
+  has_one :ledger_entry, as: :source, dependent: :destroy
 
   before_validation :set_amount_in_cents
   after_save :create_or_update_transaction

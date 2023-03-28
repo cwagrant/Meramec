@@ -3,6 +3,8 @@ import { Box, Button } from "@mui/material";
 import FormFields from "./FormFields";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
+import useNotifications from "../useNotifications";
+import { useNavigate } from "react-router-dom";
 
 /* TODO:
  * Additionally we'll want to look at adding validations to different form
@@ -22,6 +24,8 @@ import * as paths from "../PathHelper";
 
 const New = () => {
   const axios = useAxios();
+  const navigate = useNavigate();
+  const { pushNotification } = useNotifications();
   const [payment, setPayment] = React.useState({
     date: null,
     customer: null,
@@ -33,6 +37,9 @@ const New = () => {
     axios
       .post(paths.API.PAYMENTS(), document.querySelector("#paymentForm"))
       .then((res) => {
+        const id = res.data.id;
+        pushNotification("Payment saved", "success");
+        navigate(`/payments`);
       })
       .catch((error) => console.log(error.response.data));
   };

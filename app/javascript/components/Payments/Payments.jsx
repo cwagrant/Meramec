@@ -3,6 +3,8 @@ import { useCallback, useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
+import useNotifications from "../useNotifications";
+
 import { debounce } from "lodash";
 import {
   Box,
@@ -22,7 +24,7 @@ import LaunchIcon from "@mui/icons-material/Launch";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const Records = ({ payments }) => {
+const Records = ({ payments, deleteCallback }) => {
   return payments.map(({ id, customer, date }) => (
     <TableRow key={id}>
       <TableCell>{id}</TableCell>
@@ -40,7 +42,12 @@ const Records = ({ payments }) => {
           <Link component={RouterLink} to={"/agreements/" + id + "/edit"}>
             <EditIcon />
           </Link>
-          <Link component={RouterLink} to={"/agreements/" + id}>
+          <Link
+            onClick={(event) => {
+              event.preventDefault();
+              deleteCallback(id);
+            }}
+          >
             <DeleteIcon />
           </Link>
         </Box>
@@ -52,6 +59,7 @@ const Records = ({ payments }) => {
 const Payments = () => {
   const [query, setQuery] = useState("");
   const [data, setData] = useState();
+  const { pushNotification } = useNotifications();
   const axios = useAxios();
 
   const changeHandler = (event) => {
@@ -76,6 +84,27 @@ const Payments = () => {
         setData(res.data);
       })
       .catch((error) => console.log(error.response.data));
+  };
+
+  const deletePayment = (id) => {
+    axios
+      .delete(paths.API.PAYMENTS(id))
+      .then((res) => {
+        if (res) {
+          queryPayments();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        console.log(error?.response?.data?.errors);
+        const errors = error?.response?.data?.errors;
+
+        if (errors) {
+          errors.map((err) => {
+            pushNotification(`${err} (ID: ${id})`, "error");
+          });
+        }
+      });
   };
 
   return (
@@ -127,6 +156,7 @@ const Payments = () => {
                 <Records
                   key="paymentsListItems"
                   payments={data}
+                  deleteCallback={deletePayment}
                 />
               )}
           </TableBody>

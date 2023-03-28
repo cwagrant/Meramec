@@ -36,10 +36,8 @@ class PaymentsController < ApplicationController
   def destroy
     payment = Payment.find(params[:id])
 
-    return render json: { status: :ok }, status: :ok
-
-    if payment.delete!
-      render status: :ok
+    if payment.destroy
+      render json: {}, status: :ok
     else
       render json: { errors: payment.errors.full_messages}, status: 500
     end

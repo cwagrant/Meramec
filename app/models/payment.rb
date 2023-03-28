@@ -2,7 +2,7 @@ class Payment < ApplicationRecord
   include Searchable
   belongs_to :customer
 
-  has_many :rental_agreement_payments, inverse_of: :payment
+  has_many :rental_agreement_payments, inverse_of: :payment, dependent: :destroy
   accepts_nested_attributes_for :rental_agreement_payments
 
   validates :date, presence: true
