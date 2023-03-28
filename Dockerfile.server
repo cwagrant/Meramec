@@ -8,8 +8,8 @@ RUN n 19
 
 ENV INSTALL_PATH /opt/meramec
 RUN mkdir -p $INSTALL_PATH
-RUN mkdir -p /data /credentials /public
-VOLUME ["/data", "/credentials", "/public"]
+RUN mkdir -p /data /credentials /public /log
+VOLUME ["/data", "/credentials", "/public", "/log"]
 
 WORKDIR $INSTALL_PATH
 COPY ./ ./
@@ -21,11 +21,13 @@ RUN yarn
 # clear the linked directories
 RUN rm -rf ./config/credentials
 RUN rm -rf ./public
+RUN rm -rf ./log
 
 # link things up to the volumes
 RUN ln -s /credentials ./config
 RUN ln -s /public ./
 RUN ln -s /data data
+RUN ln -s /log log
 
 RUN ["chmod", "+x", "./entrypoint.sh"]
 ENTRYPOINT ["./entrypoint.sh"]
