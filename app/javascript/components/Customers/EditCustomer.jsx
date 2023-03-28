@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Button } from "@mui/material";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
-import FormFields from "./FormFields";
+import FormFields from "./CustomerFields";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
 

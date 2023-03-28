@@ -1,7 +1,7 @@
 import React from "react";
 import { useOutletContext } from "react-router-dom";
 import { Box, Divider, Paper, TextField, Typography } from "@mui/material";
-import { default as CustomerForm } from "../Customers/FormFields";
+import { default as CustomerForm } from "../Customers/CustomerFields";
 import { default as UnitForm } from "../Units/FormFields";
 
 const Show = () => {

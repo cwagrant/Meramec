@@ -24,12 +24,21 @@ import * as paths from "../PathHelper";
 import useNotifications from "../useNotifications";
 
 const Records = ({ customers, deleteCallback }) => {
-  return customers.map(({ id, first_name, last_name }) => (
+  return customers.map(({ id, first_name, last_name, company }) => (
     <TableRow key={id}>
       <TableCell>{id}</TableCell>
       <TableCell>
         <Link component={RouterLink} to={"/customers/" + id}>
-          {first_name} {last_name}
+          {company &&
+            <span>{company}</span>}
+          {!company &&
+            <span>{first_name}, {last_name}</span>}
+        </Link>
+      </TableCell>
+      <TableCell>
+        <Link component={RouterLink} to={"/customers/" + id}>
+          {company &&
+            <span>{first_name}, {last_name}</span>}
         </Link>
       </TableCell>
       <TableCell>
@@ -145,6 +154,7 @@ const Customers = () => {
             <TableRow>
               <TableCell>ID</TableCell>
               <TableCell>Name</TableCell>
+              <TableCell>Contact</TableCell>
               <TableCell />
             </TableRow>
           </TableHead>

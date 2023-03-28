@@ -1,7 +1,7 @@
 import React from "react";
 import { useOutletContext } from "react-router-dom";
 import { Box, Button, Paper } from "@mui/material";
-import FormFields from "./FormFields";
+import FormFields from "./CustomerFields";
 import { Link as RouterLink } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
 

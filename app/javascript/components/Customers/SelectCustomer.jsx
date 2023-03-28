@@ -8,7 +8,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import FormFields from "./FormFields";
+import FormFields from "./CustomerFields";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
 

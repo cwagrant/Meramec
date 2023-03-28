@@ -18,6 +18,6 @@ class Customer < ApplicationRecord
   end
 
   def self.searchable_attributes
-    %w(first_name last_name)
+    %w(first_name last_name company phone)
   end
 end
