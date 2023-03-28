@@ -29,6 +29,7 @@ RUN ln -s /data data
 
 RUN ["chmod", "+x", "./entrypoint.sh"]
 ENTRYPOINT ["./entrypoint.sh"]
+CMD ["sh", "-c", "bundle exec puma -p 3802 -e production"]
 
 EXPOSE 3802
 

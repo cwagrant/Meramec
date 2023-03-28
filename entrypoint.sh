@@ -8,4 +8,4 @@ bin/rails assets:precompile
 bin/rake db:migrate
 bin/rake db:seed
 
-bundle exec puma -p 3802 -e production
+exec "$@"
