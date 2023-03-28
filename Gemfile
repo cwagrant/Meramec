@@ -31,6 +31,7 @@ gem "bootsnap", require: false
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
+  gem "faker", "~> 3.1"
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
   gem "pry"
   gem "pry-byebug"
@@ -64,16 +65,8 @@ end
 gem "cssbundling-rails", "~> 1.1"
 
 gem "jsbundling-rails", "~> 1.1"
-gem "graphiql-rails", group: :development
-
 gem "rack-cors", "~> 1.1", :groups => [:development, :test]
-
-gem "faker", "~> 3.1"
-
 gem "sidekiq", "~> 7.0"
-
 gem "devise-jwt", "~> 0.10.0"
-
 gem "fast_jsonapi", "~> 1.5"
-
 gem "sidekiq-scheduler", "~> 5.0"

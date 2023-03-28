@@ -1,6 +1,6 @@
 class UnitsController < ApplicationController
   def index
-    render json: Unit.search(params[:search])
+    render json: Unit.search(params[:search]).where(property_id: params[:property])
   end
 
   def show
