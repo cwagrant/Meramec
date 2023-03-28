@@ -8,7 +8,7 @@ class RentalAgreement < ApplicationRecord
   accepts_nested_attributes_for :unit, :customer, allow_destroy: true
 
   scope :payment_due_on, ->(date) { where('next_due_date <= ?', date.to_date)}
-  scope :active, -> { where(end_date: nil) }
+  scope :active, -> { where(end_date: nil).or(where('end_date >= ?', Time.zone.now.to_date)) }
 
   def balance
     ledger_entries.sum(:amount_in_cents)
