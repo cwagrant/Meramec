@@ -4,11 +4,13 @@ import FormFields from "./FormFields";
 import { useNavigate } from "react-router-dom";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
+import { useSnackbar } from "notistack";
 
 const New = () => {
   const [rentalAgreement, setRentalAgreement] = React.useState(null);
   const navigate = useNavigate();
-  const axios = useAxios();
+  const { enqueueSnackbar } = useSnackbar();
+  const axios = useAxios(enqueueSnackbar);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -20,9 +22,11 @@ const New = () => {
       )
       .then((res) => {
         const id = res.data.id;
+        enqueueSnackbar("Rental Agreement created successfully", {
+          variant: "success",
+        });
         navigate(`/agreements/${id}`);
-      })
-      .catch((error) => console.log(error));
+      });
   };
 
   return (

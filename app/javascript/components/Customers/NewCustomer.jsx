@@ -3,13 +3,13 @@ import { Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import FormFields from "./CustomerFields";
 import useAxios from "../useAxios";
+import { useSnackbar } from "notistack";
 import * as paths from "../PathHelper";
-import useNotifications from "../useNotifications";
 
 const Edit = () => {
-  const axios = useAxios();
+  const { enqueueSnackbar } = useSnackbar();
+  const axios = useAxios(enqueueSnackbar);
   const navigate = useNavigate();
-  const { pushNotification } = useNotifications();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -18,10 +18,11 @@ const Edit = () => {
       .post(paths.API.CUSTOMERS(), document.querySelector("#customerForm"))
       .then((res) => {
         const id = res.data.id;
-        pushNotification("Customer created successfully", "success");
+        enqueueSnackbar("Customer created successfully", {
+          variant: "success",
+        });
         navigate(`/customers/${id}`);
-      })
-      .catch((error) => console.log(error));
+      });
   };
 
   return (

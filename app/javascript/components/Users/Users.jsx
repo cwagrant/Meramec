@@ -17,12 +17,12 @@ import {
 } from "@mui/material";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
+import { useSnackbar } from "notistack";
 
 import LaunchIcon from "@mui/icons-material/Launch";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddBoxIcon from "@mui/icons-material/AddBox";
-import useNotifications from "../useNotifications";
 
 const Records = ({ users }) => {
   return users.map(({ id, email }) => (
@@ -54,8 +54,8 @@ const Users = () => {
   const [query, setQuery] = React.useState("");
   const [data, setData] = React.useState();
   const { userId } = useParams();
-  const { pushNotification } = useNotifications();
-  const axios = useAxios();
+  const { enqueueSnackbar } = useSnackbar();
+  const axios = useAxios(enqueueSnackbar);
 
   const changeHandler = (event) => {
     setQuery(event.target.value);
@@ -75,10 +75,6 @@ const Users = () => {
       .delete(paths.API.USERS(id))
       .then((res) => {
         queryUsers();
-      })
-      .catch((error) => {
-        pushNotification(`Unable to delete User ${id}`, "error");
-        console.log(error);
       });
   };
 
@@ -91,11 +87,10 @@ const Users = () => {
         setData(res.data);
       })
       .catch((error) => {
-        pushNotification(
+        enqueueSnackbar(
           "Looks like there was an error in finding the existing users",
-          "error",
+          { variant: "error" },
         );
-        console.log(error);
       });
   };
 

@@ -38,7 +38,7 @@ const New = () => {
       .post(paths.API.PAYMENTS(), document.querySelector("#paymentForm"))
       .then((res) => {
         const id = res.data.id;
-        pushNotification("Payment saved", "success");
+        enqueueSnackbar("Payment saved successfully", { variant: "success" });
         navigate(`/payments`);
       });
   };

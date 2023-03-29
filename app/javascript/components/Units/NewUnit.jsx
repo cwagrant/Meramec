@@ -3,11 +3,13 @@ import { Box, Button } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import UnitFormFields from "./FormFields";
 import useAxios from "../useAxios";
+import { useSnackbar } from "notistack";
 import * as paths from "../PathHelper";
 
 const Unit = () => {
   const { propertyId } = useParams();
-  const axios = useAxios();
+  const { enqueueSnackbar } = useSnackbar();
+  const axios = useAxios(enqueueSnackbar);
   const navigate = useNavigate();
 
   const handleSubmit = (event) => {
@@ -18,8 +20,7 @@ const Unit = () => {
       .then((res) => {
         const id = res.data.id;
         navigate(`/properties/${propertyId}/units/${id}`);
-      })
-      .catch((error) => console.log(error));
+      });
   };
 
   return (

@@ -9,7 +9,7 @@ import { Alert } from "@mui/material";
 import { ErrorContext } from "./ErrorContext";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
-import useNotifications from "../useNotifications";
+import { useSnackbar } from "notistack";
 
 const GET_PROPERTY_URL = "/api/properties/";
 
@@ -21,8 +21,8 @@ const Properties = ({ children }) => {
   const [error, setError] = React.useState({ severity: "", message: "" });
   const navigate = useNavigate();
   const location = useLocation();
-  const axios = useAxios();
-  const { pushNotification } = useNotifications();
+  const { enqueueSnackbar } = useSnackbar();
+  const axios = useAxios(enqueueSnackbar);
 
   React.useEffect(() => {
     return () => {
@@ -38,10 +38,9 @@ const Properties = ({ children }) => {
           setCurrentProperty(res.data);
         })
         .catch((error) => {
-          pushNotification(
-            `Unable to load property with id ${propertyId}`,
-            "error",
-          );
+          enqueueSnackbar(`Unable to load property with id ${propertyId}`, {
+            variant: "error",
+          });
           navigate("/properties");
         });
     }
@@ -49,31 +48,14 @@ const Properties = ({ children }) => {
 
   return (
     <div className="property">
-      <ErrorContext.Provider value={{ error: error, setError: setError }}>
-        <Breadcrumbs
-          currentProperty={currentProperty}
-          currentUnit={currentUnit}
-        />
-        {children}
-
-        <ErrorContext.Consumer>
-          {({ error }) => {
-            let { severity, message } = error;
-
-            return (severity.length > 0 && (
-              <Alert severity={severity}>{message}</Alert>
-            ));
-          }}
-        </ErrorContext.Consumer>
-        <Outlet
-          context={{
-            currentProperty,
-            setCurrentProperty,
-            currentUnit,
-            setCurrentUnit,
-          }}
-        />
-      </ErrorContext.Provider>
+      <Outlet
+        context={{
+          currentProperty,
+          setCurrentProperty,
+          currentUnit,
+          setCurrentUnit,
+        }}
+      />
     </div>
   );
 };

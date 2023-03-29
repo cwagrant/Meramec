@@ -4,13 +4,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import UserFields from "./UserFields";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
-import useNotifications from "../useNotifications";
+import { useSnackbar } from "notistack";
 
 const User = () => {
   const { propertyId } = useParams();
-  const axios = useAxios();
+  const { enqueueSnackbar } = useSnackbar();
+  const axios = useAxios(enqueueSnackbar);
   const navigate = useNavigate();
-  const { pushNotification } = useNotifications();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -21,9 +21,9 @@ const User = () => {
         const user = res.data;
 
         navigate(`/users/${user.id}`);
-        pushNotification(
+        enqueueSnackbar(
           `New user ${user.email} created, their temporary password is: ${user.password}`,
-          "info",
+          { variant: "info", autoHideDuration: 15000 },
         );
       })
       .catch((error) => console.log(error));

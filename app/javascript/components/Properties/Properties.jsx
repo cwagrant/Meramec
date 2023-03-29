@@ -20,7 +20,7 @@ import LaunchIcon from "@mui/icons-material/Launch";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useAxios from "../useAxios";
-import useNotifications from "../useNotifications";
+import { useSnackbar } from "notistack";
 
 const SEARCH_PROPERTIES_URL = "/api/properties";
 
@@ -58,8 +58,8 @@ const Records = ({ properties, deleteCallback }) => {
 const Properties = () => {
   const [query, setQuery] = useState("");
   const [data, setData] = useState();
-  const axios = useAxios();
-  const { pushNotification } = useNotifications();
+  const { enqueueSnackbar } = useSnackbar();
+  const axios = useAxios(enqueueSnackbar);
 
   const changeHandler = (event) => {
     setQuery(event.target.value);
@@ -82,16 +82,6 @@ const Properties = () => {
         if (res) {
           queryProperties();
         }
-      })
-      .catch((error) => {
-        console.log(error?.response?.data?.errors);
-        const errors = error?.response?.data?.errors;
-
-        if (errors) {
-          errors.map((err) => {
-            pushNotification(`${err} (ID: ${id})`, "error");
-          });
-        }
       });
   };
 
@@ -100,14 +90,6 @@ const Properties = () => {
       .get(SEARCH_PROPERTIES_URL, { params: { search: query } })
       .then((res) => {
         setData(res.data);
-      })
-      .catch((error) => {
-        console.log("stuff");
-        pushNotification(
-          "Looks like there was an error in finding the existing properties",
-          "error",
-        );
-        console.log(error);
       });
   };
 

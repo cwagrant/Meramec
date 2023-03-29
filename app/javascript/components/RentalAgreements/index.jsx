@@ -2,6 +2,7 @@ import React from "react";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
+import { useSnackbar } from "notistack";
 
 import { default as Index } from "./RentalAgreements";
 import Edit from "./EditRentalAgreement";
@@ -12,7 +13,8 @@ import Breadcrumbs from "../Breadcrumbs";
 const RentalAgreements = ({ children }) => {
   const { agreementId } = useParams();
   const [rentalAgreement, setRentalAgreement] = React.useState({});
-  const axios = useAxios();
+  const { enqueueSnackbar } = useSnackbar();
+  const axios = useAxios(enqueueSnackbar);
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -29,12 +31,13 @@ const RentalAgreements = ({ children }) => {
           setRentalAgreement(res.data);
         })
         .catch((error) => {
-          console.log(error);
-          navigate("..", {
-            state: [{
-              error: "Unable to find Rental Agreement with id " + agreementId,
-            }],
-          });
+          enqueueSnackbar(
+            `Unable to find rental agreement with id ${agreementId}`,
+            {
+              variant: "error",
+            },
+          );
+          navigate("/agreements");
         });
     }
   }, [agreementId]);

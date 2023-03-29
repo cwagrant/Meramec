@@ -4,6 +4,7 @@ import Show from "./Unit";
 import NewUnit from "./NewUnit";
 import EditUnit from "./EditUnit";
 import useAxios from "../useAxios";
+import { useSnackbar } from "notistack";
 import {
   Outlet,
   useNavigate,
@@ -17,7 +18,8 @@ const Units = ({ children }) => {
   const { unitId } = useParams();
   const { currentUnit, setCurrentUnit } = useOutletContext();
   const navigate = useNavigate();
-  const axios = useAxios();
+  const { enqueueSnackbar } = useSnackbar();
+  const axios = useAxios(enqueueSnackbar);
 
   const setUnit = (data) => {
     setCurrentUnit(data.unit);
@@ -39,10 +41,10 @@ const Units = ({ children }) => {
           setCurrentUnit(res.data);
         })
         .catch((error) => {
-          console.log(error);
-          navigate("..", {
-            state: [{ error: "Unable to find unit with id " + unitId }],
+          enqueueSnackbar(`Unable to find Unit with id ${unitId}`, {
+            variant: "error",
           });
+          navigate("..");
         });
     }
   }, [unitId]);

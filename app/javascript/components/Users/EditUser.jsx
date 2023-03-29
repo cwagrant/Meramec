@@ -17,18 +17,10 @@ const Unit = () => {
     axios
       .put(paths.API.USERS(userId), document.querySelector("#userForm"))
       .then((res) => {
-        const user = res.data;
-
-        navigate(`/users/${user.id}`);
-        pushNotification(
-          `New user ${user.email} created, their temporary password is: ${user.password}`,
-          "info",
-        );
         const id = res.data.id;
         setUser(res.data);
         navigate("/users/" + id);
-      })
-      .catch((error) => console.log(error));
+      });
   };
 
   return (

@@ -7,13 +7,13 @@ import { Outlet, useNavigate, useParams } from "react-router-dom";
 import Breadcrumbs from "../Breadcrumbs";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
-import useNotifications from "../useNotifications";
+import { useSnackbar } from "notistack";
 
 const Users = ({ children }) => {
   const { userId } = useParams();
   const navigate = useNavigate();
-  const axios = useAxios();
-  const { pushNotification } = useNotifications();
+  const { enqueueSnackbar } = useSnackbar();
+  const axios = useAxios(enqueueSnackbar);
   const [user, setUser] = React.useState();
 
   React.useEffect(() => {
@@ -30,9 +30,9 @@ const Users = ({ children }) => {
           setUser(res.data);
         })
         .catch((error) => {
-          pushNotification(
-            `Unable to load user with id ${userId}`,
-            "error",
+          enqueueSnackbar(
+            `Unable to find user with id ${userId}`,
+            { variant: "error" },
           );
           navigate("/users");
         });

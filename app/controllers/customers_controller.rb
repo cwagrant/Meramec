@@ -32,8 +32,6 @@ class CustomersController < ApplicationController
   def destroy
     customer = Customer.find(params[:id])
 
-    return render json: { errors: ['test1']}, status: 500
-
     if customer.destroy
       render json: { message: 'Success' }, status: :ok
     else

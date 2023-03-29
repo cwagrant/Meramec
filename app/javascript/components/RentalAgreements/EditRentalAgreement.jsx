@@ -5,12 +5,14 @@ import FormFields from "./FormFields";
 import { useNavigate } from "react-router-dom";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
+import { useSnackbar } from "notistack";
 
 const Edit = () => {
   const { agreementId } = useParams();
   const { rentalAgreement, setRentalAgreement } = useOutletContext();
   const navigate = useNavigate();
-  const axios = useAxios();
+  const { enqueueSnackbar } = useSnackbar();
+  const axios = useAxios(enqueueSnackbar);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -22,10 +24,12 @@ const Edit = () => {
       )
       .then((res) => {
         const id = res.data.id;
-        navigate(`/agreements/${id}`);
+        enqueueSnackbar("Rental Agreement updated successfully", {
+          variant: "success",
+        });
         setRentalAgreement(res.data);
-      })
-      .catch((error) => console.log(error));
+        navigate(`/agreements/${id}`);
+      });
   };
 
   return (

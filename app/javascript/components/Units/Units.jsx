@@ -18,6 +18,7 @@ import {
   TextField,
 } from "@mui/material";
 import useAxios from "../useAxios";
+import { useSnackbar } from "notistack";
 import * as paths from "../PathHelper";
 import Unit from "./Unit";
 
@@ -95,7 +96,8 @@ const Units = () => {
   const [query, setQuery] = useState("");
   const [data, setData] = useState();
   const { propertyId } = useParams();
-  const axios = useAxios();
+  const { enqueueSnackbar } = useSnackbar();
+  const axios = useAxios(enqueueSnackbar);
 
   const changeHandler = (event) => {
     setQuery(event.target.value);
@@ -115,10 +117,6 @@ const Units = () => {
       .delete(paths.API.UNITS(id))
       .then((res) => {
         queryUnits();
-      })
-      .catch((error) => {
-        pushNotification(`Unable to delete Unit ${id}`, "error");
-        console.log(error);
       });
   };
 
@@ -131,11 +129,10 @@ const Units = () => {
         setData(res.data);
       })
       .catch((error) => {
-        pushNotification(
+        enqueueSnackbar(
           "Looks like there was an error in finding the existing units",
-          "error",
+          { variant: "error" },
         );
-        console.log(error);
       });
   };
 

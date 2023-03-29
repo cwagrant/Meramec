@@ -3,6 +3,7 @@ import { Box, Button } from "@mui/material";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import FormFields from "./FormFields";
 import useAxios from "../useAxios";
+import { useSnackbar } from "notistack";
 
 const UPDATE_PROPERTY_URL = "/api/properties/";
 
@@ -10,7 +11,8 @@ const Edit = () => {
   const { propertyId } = useParams();
   const { currentProperty, setCurrentProperty } = useOutletContext();
   const navigate = useNavigate();
-  const axios = useAxios();
+  const { enqueueSnackbar } = useSnackbar();
+  const axios = useAxios(enqueueSnackbar);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -24,12 +26,13 @@ const Edit = () => {
         const id = res.data.id;
 
         setCurrentProperty(res.data);
+        enqueueSnackbar("Property updated successfully", {
+          variant: "success",
+        });
         navigate("/properties/" + id);
-      })
-      .catch((error) => console.log(error));
+      });
   };
 
-  console.log("getprop", currentProperty);
   return (
     <Box
       component="form"

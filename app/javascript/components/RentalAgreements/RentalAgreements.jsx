@@ -4,7 +4,7 @@ import { Link as RouterLink, useParams } from "react-router-dom";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
 import { debounce } from "lodash";
-import useNotifications from "../useNotifications";
+import { useSnackbar } from "notistack";
 
 import {
   Box,
@@ -58,8 +58,8 @@ const Records = ({ rentalAgreements, deleteCallback }) => {
 const RentalAgreements = () => {
   const [query, setQuery] = useState("");
   const [data, setData] = useState();
-  const axios = useAxios();
-  const { pushNotification } = useNotifications();
+  const { enqueueSnackbar } = useSnackbar();
+  const axios = useAxios(enqueueSnackbar);
 
   const changeHandler = (event) => {
     setQuery(event.target.value);
@@ -76,8 +76,7 @@ const RentalAgreements = () => {
       })
       .then((res) => {
         setData(res.data);
-      })
-      .catch((error) => console.log(error.response.data));
+      });
   };
 
   const debouncedChangeHandler = useCallback(
@@ -91,16 +90,6 @@ const RentalAgreements = () => {
       .then((res) => {
         if (res) {
           queryRentalAgreements();
-        }
-      })
-      .catch((error) => {
-        console.log(error?.response?.data?.errors);
-        const errors = error?.response?.data?.errors;
-
-        if (errors) {
-          errors.map((err) => {
-            pushNotification(`${err} (ID: ${id})`, "error");
-          });
         }
       });
   };

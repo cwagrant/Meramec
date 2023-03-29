@@ -3,12 +3,14 @@ import { Box, Button } from "@mui/material";
 import FormFields from "./FormFields";
 import { useNavigate } from "react-router-dom";
 import useAxios from "../useAxios";
+import { useSnackbar } from "notistack";
 
 const ADD_PROPERTY_URL = "/api/properties";
 
 const Property = () => {
   const navigate = useNavigate();
-  const axios = useAxios();
+  const { enqueueSnackbar } = useSnackbar();
+  const axios = useAxios(enqueueSnackbar);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -17,9 +19,11 @@ const Property = () => {
       .post(ADD_PROPERTY_URL, document.querySelector("#propertyForm"))
       .then((res) => {
         const id = res.data.id;
+        enqueueSnackbar("New property created successfully", {
+          variant: "success",
+        });
         navigate("/properties/" + id);
-      })
-      .catch((error) => console.log(error));
+      });
   };
 
   return (
