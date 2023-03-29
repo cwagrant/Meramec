@@ -55,7 +55,7 @@ class RentalAgreementsController < ApplicationController
   def rental_agreement_params
 
 
-    rental_params = params.require(:rental_agreement).permit(:start_date, :end_date, :next_due_date, :unit_id, :customer_id, customer: [:first_name, :last_name, :email, :gate_code])
+    rental_params = params.require(:rental_agreement).permit(:start_date, :end_date, :next_due_date, :unit_id, :customer_id, customer: [:first_name, :last_name, :email, :gate_code, :phone_number, :company])
 
     rental_params.to_h.merge(params.permit(customer: {}))
   end
