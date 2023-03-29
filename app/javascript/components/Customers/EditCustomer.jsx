@@ -40,7 +40,6 @@ const Edit = () => {
     >
       <FormFields
         customer={customer}
-        onChange={(newValue) => setCustomer(newValue)}
       />
 
       <Box sx={{ display: "flex", m: 1 }}>

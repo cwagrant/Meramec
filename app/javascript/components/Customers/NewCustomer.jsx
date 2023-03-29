@@ -4,10 +4,12 @@ import { useNavigate } from "react-router-dom";
 import FormFields from "./CustomerFields";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
+import useNotifications from "../useNotifications";
 
 const Edit = () => {
   const axios = useAxios();
   const navigate = useNavigate();
+  const { pushNotification } = useNotifications();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -16,6 +18,7 @@ const Edit = () => {
       .post(paths.API.CUSTOMERS(), document.querySelector("#customerForm"))
       .then((res) => {
         const id = res.data.id;
+        pushNotification("Customer created successfully", "success");
         navigate(`/customers/${id}`);
       })
       .catch((error) => console.log(error));
