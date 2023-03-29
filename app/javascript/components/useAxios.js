@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const useAxios = (contentType = "") => {
+const useAxios = (pushNotification) => {
   let instance = axios.create();
   const csrfToken = document.querySelector("[name=csrf-token]")?.content;
   if (csrfToken) {
@@ -36,7 +36,15 @@ const useAxios = (contentType = "") => {
       currentLocation = window.location;
       window.location = `/login?redirect_to=${currentLocation}`;
     }
-    throw error;
+
+    const errors = error?.response?.data?.errors;
+    if (errors && pushNotification) {
+      errors.map((err) => {
+        pushNotification(`${err}`, { variant: "error" });
+      });
+    } else {
+      throw error;
+    }
   });
 
   return instance;

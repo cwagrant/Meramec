@@ -12,27 +12,36 @@ const StyledInput = styled(TextField)(({ theme }) => ({
 const insertAt = (str, sub, pos) =>
   `${str.slice(0, pos)}${sub}${str.slice(pos)}`;
 
-const FormFields = ({ customer, onChange, readOnly }) => {
-  const [localCustomer, setLocalCustomer] = React.useState({
-    first_name: customer?.first_name || "",
-    last_name: customer?.last_name || "",
-    gate_code: customer?.gate_code || "",
-    email: customer?.email || "",
-    company: customer?.customer || "",
-    phone: customer?.phone || "",
-  });
+const FormFields = ({ customer, readOnly }) => {
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
+  const [company, setCompany] = React.useState("");
+  const [gateCode, setGateCode] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [phoneNumber, setPhone] = React.useState("");
 
   React.useEffect(() => {
     if (customer) {
-      setLocalCustomer(customer);
+      if (customer.first_name) {
+        setFirstName(customer.first_name);
+      }
+      if (customer.last_name) {
+        setLastName(customer.last_name);
+      }
+      if (customer.company) {
+        setCompany(customer.company);
+      }
+      if (customer.gate_code) {
+        setGateCode(customer.gate_code);
+      }
+      if (customer.email) {
+        setEmail(customer.email);
+      }
+      if (customer.phone_number) {
+        setPhone(customer.phone_number);
+      }
     }
   }, [customer]);
-
-  React.useEffect(() => {
-    if (onChange) {
-      onChange(localCustomer);
-    }
-  }, [localCustomer]);
 
   return (
     <>
@@ -48,13 +57,8 @@ const FormFields = ({ customer, onChange, readOnly }) => {
           label="Company"
           name="customer[company]"
           placeholder="Company"
-          value={localCustomer.company}
-          onChange={(event) => {
-            setLocalCustomer({
-              ...localCustomer,
-              company: event.target.value,
-            });
-          }}
+          value={company}
+          onChange={(event) => setCompany(event.target.value)}
           InputProps={{
             readOnly: readOnly,
           }}
@@ -65,13 +69,8 @@ const FormFields = ({ customer, onChange, readOnly }) => {
           label="First Name"
           name="customer[first_name]"
           placeholder="First Name"
-          value={localCustomer.first_name}
-          onChange={(event) => {
-            setLocalCustomer({
-              ...localCustomer,
-              first_name: event.target.value,
-            });
-          }}
+          value={firstName}
+          onChange={(event) => setFirstName(event.target.value)}
           InputProps={{
             readOnly: readOnly,
           }}
@@ -82,13 +81,8 @@ const FormFields = ({ customer, onChange, readOnly }) => {
           label="Last Name"
           name="customer[last_name]"
           placeholder="Last Name"
-          value={localCustomer.last_name}
-          onChange={(event) => {
-            setLocalCustomer({
-              ...localCustomer,
-              last_name: event.target.value,
-            });
-          }}
+          value={lastName}
+          onChange={(event) => setLastName(event.target.value)}
           InputProps={{
             readOnly: readOnly,
           }}
@@ -99,13 +93,8 @@ const FormFields = ({ customer, onChange, readOnly }) => {
           label="Gate Code"
           name="customer[gate_code]"
           placeholder="Gate Code"
-          value={localCustomer.gate_code}
-          onChange={(event) => {
-            setLocalCustomer({
-              ...localCustomer,
-              gate_code: event.target.value,
-            });
-          }}
+          value={gateCode}
+          onChange={(event) => setGateCode(event.target.value)}
           InputProps={{
             readOnly: readOnly,
           }}
@@ -123,13 +112,8 @@ const FormFields = ({ customer, onChange, readOnly }) => {
           label="Email"
           name="customer[email]"
           placeholder="Email"
-          value={localCustomer.email}
-          onChange={(event) => {
-            setLocalCustomer({
-              ...localCustomer,
-              email: event.target.value,
-            });
-          }}
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
           InputProps={{
             readOnly: readOnly,
           }}
@@ -139,13 +123,8 @@ const FormFields = ({ customer, onChange, readOnly }) => {
           id="customer_phone_number"
           variant="outlined"
           defaultCountry={"us"}
-          value={localCustomer.phone_number}
-          onChange={(value) => {
-            setLocalCustomer({
-              ...localCustomer,
-              phone_number: value,
-            });
-          }}
+          value={phoneNumber}
+          onChange={(newValue) => setPhone(newValue)}
           sx={{
             width: "100%",
             m: 1,

@@ -7,6 +7,8 @@ class RentalAgreement < ApplicationRecord
   has_many :ledger_entries
   accepts_nested_attributes_for :unit, :customer
 
+  before_save :update_unit_occupancy, if: :will_save_change_to_end_date?
+
   scope :payment_due_on, ->(date) { where('next_due_date <= ?', date.to_date)}
   scope :active, -> { where(end_date: nil).or(where('end_date >= ?', Time.zone.now.to_date)) }
 

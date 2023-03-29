@@ -63,10 +63,10 @@ group :test do
 end
 
 gem "cssbundling-rails", "~> 1.1"
-
 gem "jsbundling-rails", "~> 1.1"
 gem "rack-cors", "~> 1.1", :groups => [:development, :test]
 gem "sidekiq", "~> 7.0"
 gem "devise-jwt", "~> 0.10.0"
 gem "fast_jsonapi", "~> 1.5"
 gem "sidekiq-scheduler", "~> 5.0"
+gem "lograge", "~> 0.12.0"

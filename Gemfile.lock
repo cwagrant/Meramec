@@ -124,9 +124,6 @@ GEM
       raabro (~> 1.4)
     globalid (1.0.0)
       activesupport (>= 5.0)
-    graphiql-rails (1.8.0)
-      railties
-      sprockets-rails
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
     importmap-rails (1.1.5)
@@ -141,6 +138,11 @@ GEM
     jsbundling-rails (1.1.1)
       railties (>= 6.0.0)
     jwt (2.7.0)
+    lograge (0.12.0)
+      actionpack (>= 4)
+      activesupport (>= 4)
+      railties (>= 4)
+      request_store (~> 1.0)
     loofah (2.19.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -227,6 +229,8 @@ GEM
     regexp_parser (2.6.1)
     reline (0.3.2)
       io-console (~> 0.5)
+    request_store (1.5.1)
+      rack (>= 1.4)
     responders (3.0.1)
       actionpack (>= 5.0)
       railties (>= 5.0)
@@ -331,10 +335,10 @@ DEPENDENCIES
   devise-jwt (~> 0.10.0)
   faker (~> 3.1)
   fast_jsonapi (~> 1.5)
-  graphiql-rails
   importmap-rails
   jbuilder
   jsbundling-rails (~> 1.1)
+  lograge (~> 0.12.0)
   pry
   pry-byebug
   pry-doc

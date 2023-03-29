@@ -1,5 +1,5 @@
 import React from "react";
-import { Outlet, useParams } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { default as Index } from "./Customers";
 import Show from "./Customer";
 import Edit from "./EditCustomer";
@@ -7,11 +7,14 @@ import New from "./NewCustomer";
 import Breadcrumbs from "../Breadcrumbs";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
+import { useSnackbar } from "notistack";
 
 const Customers = ({ children }) => {
   const { customerId } = useParams();
   const [customer, setCustomer] = React.useState();
-  const axios = useAxios();
+  const { enqueueSnackbar } = useSnackbar();
+  const axios = useAxios(enqueueSnackbar);
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     if (customerId) {
@@ -21,11 +24,10 @@ const Customers = ({ children }) => {
           setCustomer(res.data);
         })
         .catch((error) => {
-          navigate("/customers", {
-            state: [{
-              error: "Unable to load property with id " + customerId,
-            }],
+          enqueueSnackbar(`Unable to load customer with id ${customerId}`, {
+            variant: "error",
           });
+          navigate("/customers");
         });
     }
   }, [customerId]);

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
-import useNotifications from "../useNotifications";
+import { useSnackbar } from "notistack";
 
 import { debounce } from "lodash";
 import {
@@ -59,8 +59,8 @@ const Records = ({ payments, deleteCallback }) => {
 const Payments = () => {
   const [query, setQuery] = useState("");
   const [data, setData] = useState();
-  const { pushNotification } = useNotifications();
-  const axios = useAxios();
+  const { enqueueSnackbar } = useSnackbar();
+  const axios = useAxios(enqueueSnackbar);
 
   const changeHandler = (event) => {
     setQuery(event.target.value);
@@ -82,8 +82,7 @@ const Payments = () => {
       })
       .then((res) => {
         setData(res.data);
-      })
-      .catch((error) => console.log(error.response.data));
+      });
   };
 
   const deletePayment = (id) => {
@@ -92,17 +91,6 @@ const Payments = () => {
       .then((res) => {
         if (res) {
           queryPayments();
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        console.log(error?.response?.data?.errors);
-        const errors = error?.response?.data?.errors;
-
-        if (errors) {
-          errors.map((err) => {
-            pushNotification(`${err} (ID: ${id})`, "error");
-          });
         }
       });
   };

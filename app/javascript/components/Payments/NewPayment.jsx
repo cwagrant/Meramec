@@ -3,8 +3,8 @@ import { Box, Button } from "@mui/material";
 import FormFields from "./FormFields";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
-import useNotifications from "../useNotifications";
 import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "notistack";
 
 /* TODO:
  * Additionally we'll want to look at adding validations to different form
@@ -23,9 +23,9 @@ import { useNavigate } from "react-router-dom";
  */
 
 const New = () => {
-  const axios = useAxios();
   const navigate = useNavigate();
-  const { pushNotification } = useNotifications();
+  const { enqueueSnackbar } = useSnackbar();
+  const axios = useAxios(enqueueSnackbar);
   const [payment, setPayment] = React.useState({
     date: null,
     customer: null,
@@ -40,8 +40,7 @@ const New = () => {
         const id = res.data.id;
         pushNotification("Payment saved", "success");
         navigate(`/payments`);
-      })
-      .catch((error) => console.log(error.response.data));
+      });
   };
 
   return (

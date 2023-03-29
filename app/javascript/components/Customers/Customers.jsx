@@ -21,7 +21,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
-import useNotifications from "../useNotifications";
+import { useSnackbar } from "notistack";
 
 const Records = ({ customers, deleteCallback }) => {
   return customers.map(({ id, first_name, last_name, company }) => (
@@ -64,10 +64,10 @@ const Records = ({ customers, deleteCallback }) => {
 };
 
 const Customers = () => {
+  const { enqueueSnackbar } = useSnackbar();
   const [query, setQuery] = useState("");
-  const axios = useAxios();
+  const axios = useAxios(enqueueSnackbar);
   const [data, setData] = React.useState();
-  const { pushNotification } = useNotifications();
 
   const changeHandler = (event) => {
     setQuery(event.target.value);
@@ -89,8 +89,7 @@ const Customers = () => {
       })
       .then((res) => {
         setData(res.data);
-      })
-      .catch((error) => console.log(error));
+      });
   };
 
   const deleteCustomer = (id) => {
@@ -99,17 +98,6 @@ const Customers = () => {
       .then((res) => {
         if (res) {
           queryCustomers();
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        console.log(error?.response?.data?.errors);
-        const errors = error?.response?.data?.errors;
-
-        if (errors) {
-          errors.map((err) => {
-            pushNotification(`${err} (ID: ${id})`, "error");
-          });
         }
       });
   };

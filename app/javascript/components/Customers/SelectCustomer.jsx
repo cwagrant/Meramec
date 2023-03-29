@@ -84,56 +84,46 @@ const SelectCustomer = ({ customer, onChange, allowNew }) => {
             />
           </Box>
         )}
-      {newCustomer
-        ? (
-          <FormFields
-            values={newCustomerAttr}
-            onChange={(newValue) => {
-              setNewCustomerAttr(newValue);
-              changeHandler(newValue);
-            }}
-          />
-        )
-        : (
-          <Autocomplete
-            disablePortal
-            id="customer"
-            name="customer"
-            value={customer || null}
-            options={options}
-            getOptionLabel={(option) => option.formal_name}
-            renderOption={(props, option, state) => {
-              return (
-                <ListItem
-                  {...props}
-                  component="li"
-                  key={`${option.formal_name} ${option.id}`}
-                  sx={{ justifyContent: "space-between!important" }}
-                >
-                  <span>{option.formal_name}</span>
-                  <Typography variant="overline" sx={{ color: "#444" }}>
-                    (ID: {option.id})
-                  </Typography>
-                </ListItem>
-              );
-            }}
-            onChange={(event, newValue) => {
-              changeHandler(newValue);
-            }}
-            sx={{
-              width: 1,
-              pr: 2,
-              "& .MuiAutocomplete-option": {
-                display: "flex",
-                justifyContent: "space-between",
-              },
-            }}
-            renderInput={(params) => <TextField {...params} label="Customer" />}
-            isOptionEqualToValue={(option, value) => {
-              return option.id === value.id;
-            }}
-          />
-        )}
+      {newCustomer ? <FormFields values={newCustomerAttr} /> : (
+        <Autocomplete
+          disablePortal
+          id="customer"
+          name="customer"
+          value={customer || null}
+          options={options}
+          getOptionLabel={(option) => option.formal_name}
+          renderOption={(props, option, state) => {
+            return (
+              <ListItem
+                {...props}
+                component="li"
+                key={`${option.formal_name} ${option.id}`}
+                sx={{ justifyContent: "space-between!important" }}
+              >
+                <span>{option.formal_name}</span>
+                <Typography variant="overline" sx={{ color: "#444" }}>
+                  (ID: {option.id})
+                </Typography>
+              </ListItem>
+            );
+          }}
+          onChange={(event, newValue) => {
+            changeHandler(newValue);
+          }}
+          sx={{
+            width: 1,
+            pr: 2,
+            "& .MuiAutocomplete-option": {
+              display: "flex",
+              justifyContent: "space-between",
+            },
+          }}
+          renderInput={(params) => <TextField {...params} label="Customer" />}
+          isOptionEqualToValue={(option, value) => {
+            return option.id === value.id;
+          }}
+        />
+      )}
     </>
   );
 };

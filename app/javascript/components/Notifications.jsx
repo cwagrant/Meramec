@@ -1,9 +1,12 @@
 import React from "react";
 import useNotifications from "./useNotifications";
-import { Alert } from "@mui/material";
+import { Alert, Snackbar } from "@mui/material";
 
 const Notifications = () => {
   const { notifications, removeNotification } = useNotifications();
+
+  React.useEffect(() => {
+  }, [notifications]);
 
   return (
     <>
@@ -12,17 +15,23 @@ const Notifications = () => {
           let notification = notifications[key];
 
           return (
-            <Alert
+            <Snackbar
+              open={true}
               key={key}
-              id={key}
-              sx={{ my: 1 }}
-              severity={notification.severity}
-              onClose={(event) => {
-                removeNotification(key);
-              }}
+              autoHideDuration={6000}
+              anchorOrigin={{ vertical: "top", horizontal: "center" }}
             >
-              {notification.message}
-            </Alert>
+              <Alert
+                id={key}
+                sx={{ my: 1 }}
+                severity={notification.severity}
+                onClose={(event) => {
+                  removeNotification(key);
+                }}
+              >
+                {notification.message}
+              </Alert>
+            </Snackbar>
           );
         })}
     </>

@@ -31,6 +31,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { Link } from "react-router-dom";
 import NotificationProvider from "./NotificationProvider";
 import Notifications from "./Notifications";
+import { SnackbarProvider } from "notistack";
 
 import useAxios from "./useAxios";
 import * as paths from "./PathHelper";
@@ -170,86 +171,88 @@ export default function MiniDrawer() {
 
   return (
     <ThemeProvider theme={darkTheme}>
-      <NotificationProvider>
-        <Box sx={{ display: "flex" }}>
-          <CssBaseline />
-          <AppBar position="fixed" open={open}>
-            <Toolbar>
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                onClick={handleDrawerOpen}
-                edge="start"
-                sx={{
-                  marginRight: 5,
-                  ...(open && { display: "none" }),
-                }}
-              >
-                <MenuIcon />
-              </IconButton>
-              <Typography variant="h6" noWrap component="div">
-                Meramec
-              </Typography>
-            </Toolbar>
-          </AppBar>
-          <Drawer variant="permanent" open={open}>
-            <DrawerHeader>
-              <IconButton onClick={handleDrawerClose}>
-                {theme.direction === "rtl"
-                  ? <ChevronRightIcon />
-                  : <ChevronLeftIcon />}
-              </IconButton>
-            </DrawerHeader>
-            <Divider />
-            <List>
-              <ListLink
-                open={open}
-                to="/properties"
-                name="Properties"
-                icon={<ApartmentIcon />}
-              />
-              <ListLink
-                open={open}
-                to="/customers"
-                name="Customers"
-                icon={<PeopleIcon />}
-              />
-              <ListLink
-                open={open}
-                to="/agreements"
-                name="Rental Agreements"
-                icon={<FolderIcon />}
-              />
-              <ListLink
-                open={open}
-                to="/payments"
-                name="Payments"
-                icon={<PaidIcon />}
-              />
-            </List>
-            <Divider />
-            <List>
-              <ListLink
-                open={open}
-                to="/users"
-                name="Users"
-                icon={<PeopleIcon />}
-              />
-              <ListLink
-                open={open}
-                to="/logout"
-                name="Logout"
-                icon={<LogoutIcon />}
-              />
-            </List>
-          </Drawer>
-          <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-            <DrawerHeader />
-            <Notifications />
-            <Outlet />
+      <SnackbarProvider>
+        <NotificationProvider>
+          <Box sx={{ display: "flex" }}>
+            <CssBaseline />
+            <AppBar position="fixed" open={open}>
+              <Toolbar>
+                <IconButton
+                  color="inherit"
+                  aria-label="open drawer"
+                  onClick={handleDrawerOpen}
+                  edge="start"
+                  sx={{
+                    marginRight: 5,
+                    ...(open && { display: "none" }),
+                  }}
+                >
+                  <MenuIcon />
+                </IconButton>
+                <Typography variant="h6" noWrap component="div">
+                  Meramec
+                </Typography>
+              </Toolbar>
+            </AppBar>
+            <Drawer variant="permanent" open={open}>
+              <DrawerHeader>
+                <IconButton onClick={handleDrawerClose}>
+                  {theme.direction === "rtl"
+                    ? <ChevronRightIcon />
+                    : <ChevronLeftIcon />}
+                </IconButton>
+              </DrawerHeader>
+              <Divider />
+              <List>
+                <ListLink
+                  open={open}
+                  to="/properties"
+                  name="Properties"
+                  icon={<ApartmentIcon />}
+                />
+                <ListLink
+                  open={open}
+                  to="/customers"
+                  name="Customers"
+                  icon={<PeopleIcon />}
+                />
+                <ListLink
+                  open={open}
+                  to="/agreements"
+                  name="Rental Agreements"
+                  icon={<FolderIcon />}
+                />
+                <ListLink
+                  open={open}
+                  to="/payments"
+                  name="Payments"
+                  icon={<PaidIcon />}
+                />
+              </List>
+              <Divider />
+              <List>
+                <ListLink
+                  open={open}
+                  to="/users"
+                  name="Users"
+                  icon={<PeopleIcon />}
+                />
+                <ListLink
+                  open={open}
+                  to="/logout"
+                  name="Logout"
+                  icon={<LogoutIcon />}
+                />
+              </List>
+            </Drawer>
+            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+              <DrawerHeader />
+              <Notifications />
+              <Outlet />
+            </Box>
           </Box>
-        </Box>
-      </NotificationProvider>
+        </NotificationProvider>
+      </SnackbarProvider>
     </ThemeProvider>
   );
 }
