@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { centsToDollars } from "../DataFormatHelpers";
 
-const FormFields = ({ unit, readOnly }) => {
+const FormFields = ({ unit, hidePrice, readOnly }) => {
   const [unitType, setUnitType] = React.useState("");
   const [unitName, setUnitName] = React.useState("");
   const [unitPrice, setUnitPrice] = React.useState(0);
@@ -51,10 +51,11 @@ const FormFields = ({ unit, readOnly }) => {
           display: "flex",
           justifyContent: "space-between",
           width: 1,
+          flexDirection: "row",
           "& .MuiFormControl-root": { m: 1, maxWidth: "sm" },
         }}
       >
-        <FormControl sx={{ width: 1 / 2 }}>
+        <FormControl sx={{ flexGrow: 1 }}>
           <InputLabel id="unit-type-select-label">Type</InputLabel>
           <Select
             labelId="unit-type-select-label"
@@ -74,21 +75,28 @@ const FormFields = ({ unit, readOnly }) => {
           </Select>
         </FormControl>
 
-        <FormControl sx={{ width: 1 / 2 }}>
-          <InputLabel htmlFor="standard-adornment-amount">Amount</InputLabel>
-          <OutlinedInput
-            id="unit_price"
-            name="unit[price]"
-            label="Amount"
-            type="number"
-            value={unitPrice}
-            onChange={(event) => {
-              setUnitPrice(event.target.value);
-            }}
-            readOnly={readOnly}
-            startAdornment={<InputAdornment position="start">$</InputAdornment>}
-          />
-        </FormControl>
+        {!hidePrice &&
+          (
+            <FormControl sx={{ flexGrow: 1 }}>
+              <InputLabel htmlFor="standard-adornment-amount">
+                Amount
+              </InputLabel>
+              <OutlinedInput
+                id="unit_price"
+                name="unit[price]"
+                label="Amount"
+                type="number"
+                value={unitPrice}
+                onChange={(event) => {
+                  setUnitPrice(event.target.value);
+                }}
+                readOnly={readOnly}
+                startAdornment={
+                  <InputAdornment position="start">$</InputAdornment>
+                }
+              />
+            </FormControl>
+          )}
       </Box>
     </>
   );

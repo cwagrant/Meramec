@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Button } from "@mui/material";
-import FormFields from "./FormFields";
+import FormFields from "./PaymentFields";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
 import { useNavigate } from "react-router-dom";

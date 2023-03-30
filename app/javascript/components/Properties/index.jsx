@@ -48,6 +48,10 @@ const Properties = ({ children }) => {
 
   return (
     <div className="property">
+      <Breadcrumbs
+        currentProperty={currentProperty}
+        currentUnit={currentUnit}
+      />
       <Outlet
         context={{
           currentProperty,

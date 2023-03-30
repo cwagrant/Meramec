@@ -6,6 +6,7 @@ import Users from "../components/Users";
 import RentalAgreements from "../components/RentalAgreements";
 import Customers from "../components/Customers";
 import Payments from "../components/Payments";
+import ErrorBoundary from "../components/ErrorBoundary";
 
 import { Login, Logout } from "../components/Login";
 
@@ -15,12 +16,7 @@ import {
   Navigate,
   Route,
 } from "react-router-dom";
-const user_json = localStorage.getItem("user");
-const jwtToken = user_json ? JSON.parse(user_json).token : null;
-// perhaps we can use a useeffect hook to make it so that when
-// the page initially loads we run a current_user check
-// and then if we can't hit it we redirect
-//
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
@@ -28,6 +24,7 @@ const router = createBrowserRouter(
       <Route path="/logout" element={<Logout />} />
       <Route
         path="/"
+        errorElement={<ErrorBoundary />}
         element={<Root />}
       >
         <Route
@@ -46,9 +43,20 @@ const router = createBrowserRouter(
               crumb: { name: "{property}" },
             }}
           >
-            <Route index element={<Units.Index />} />
-            <Route path="edit" element={<Properties.Edit />} />
-            <Route path="units" element={<Units />}>
+            <Route
+              index
+              element={<Units.Index />}
+            />
+            <Route
+              path="edit"
+              element={<Properties.Edit />}
+              handle={{ crumb: { name: "Edit" } }}
+            />
+            <Route
+              path="units"
+              element={<Units />}
+              handle={{ crumb: { name: "Units" } }}
+            >
               <Route index element={<Navigate replace to=".." />} />
               <Route
                 path="new"
@@ -61,7 +69,11 @@ const router = createBrowserRouter(
                 handle={{ crumb: { name: "{unit}" } }}
               >
                 <Route index element={<Units.Show />} />
-                <Route path="edit" element={<Units.Edit />} />
+                <Route
+                  path="edit"
+                  element={<Units.Edit />}
+                  handle={{ crumb: { name: "Edit" } }}
+                />
               </Route>
             </Route>
           </Route>
@@ -85,19 +97,34 @@ const router = createBrowserRouter(
             <Route
               path="edit"
               element={<RentalAgreements.Edit />}
+              handle={{ crumb: { name: "Edit" } }}
             />
           </Route>
         </Route>
-        <Route path="payments" element={<Payments />}>
+        <Route
+          path="payments"
+          element={<Payments />}
+          errorElement={<ErrorBoundary />}
+        >
           <Route index element={<Payments.Index />} />
           <Route
             path="new"
             element={<Payments.New />}
             handle={{ crumb: { name: "New" } }}
+            errorElement={<ErrorBoundary />}
           />
-          <Route path=":paymentId" element={<Payments />}>
+          <Route
+            path=":paymentId"
+            element={<Payments />}
+            errorElement={<ErrorBoundary />}
+          >
             <Route index element={<Payments.Show />} />
-            <Route path="edit" element={<Payments.Edit />} />
+            <Route
+              path="edit"
+              element={<Payments.Edit />}
+              errorElement={<ErrorBoundary />}
+              handle={{ crumb: { name: "Edit" } }}
+            />
           </Route>
         </Route>
         <Route
@@ -116,7 +143,11 @@ const router = createBrowserRouter(
             handle={{ crumb: { name: "{customer}" } }}
           >
             <Route index element={<Customers.Show />} />
-            <Route path="edit" element={<Customers.Edit />} />
+            <Route
+              path="edit"
+              element={<Customers.Edit />}
+              handle={{ crumb: { name: "Edit" } }}
+            />
           </Route>
         </Route>
         <Route
@@ -135,7 +166,11 @@ const router = createBrowserRouter(
             handle={{ crumb: { name: "{user}" } }}
           >
             <Route index element={<Users.Show />} />
-            <Route path="edit" element={<Users.Edit />} />
+            <Route
+              path="edit"
+              element={<Users.Edit />}
+              handle={{ crumb: { name: "Edit" } }}
+            />
           </Route>
         </Route>
       </Route>,

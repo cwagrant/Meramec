@@ -3,12 +3,35 @@ import { Outlet, useParams } from "react-router-dom";
 
 import { default as Index } from "./Payments";
 // import Edit from "./EditRentalAgreement";
-// import Show from "./ShowRentalAgreement";
+import Show from "./Payment";
 import New from "./NewPayment";
+import useAxios from "../useAxios";
+import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "notistack";
+import * as paths from "../PathHelper";
 
 const Payments = ({ children }) => {
   const { paymentId } = useParams();
   const [payment, setPayment] = React.useState();
+  const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+  const axios = useAxios(enqueueSnackbar);
+
+  React.useEffect(() => {
+    if (paymentId) {
+      axios
+        .get(paths.API.PAYMENTS(paymentId))
+        .then((res) => {
+          setPayment(res.data);
+        })
+        .catch((error) => {
+          enqueueSnackbar(`Unable to load payment with id ${paymentId}`, {
+            variant: "error",
+          });
+          navigate("/payments");
+        });
+    }
+  }, [paymentId]);
 
   // React.useEffect(() => {
   //   if (agreementId) {
@@ -27,6 +50,6 @@ const Payments = ({ children }) => {
 Payments.New = New;
 Payments.Index = Index;
 // Payments.Edit = Edit;
-// Payments.Show = Show;
+Payments.Show = Show;
 
 export default Payments;

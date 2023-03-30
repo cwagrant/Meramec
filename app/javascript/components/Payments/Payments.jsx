@@ -36,10 +36,13 @@ const Records = ({ payments, deleteCallback }) => {
       <TableCell>{date}</TableCell>
       <TableCell>
         <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
-          <Link component={RouterLink} to={"/agreements/" + id}>
+          <Link component={RouterLink} to={"/payments/" + id}>
             <LaunchIcon />
           </Link>
-          <Link component={RouterLink} to={"/agreements/" + id + "/edit"}>
+          <Link
+            component={RouterLink}
+            to={"/payments/" + id + "/edit"}
+          >
             <EditIcon />
           </Link>
           <Link

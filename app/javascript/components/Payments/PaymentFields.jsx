@@ -10,7 +10,7 @@ import SelectCustomer from "../Customers/SelectCustomer";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
 
-const FormFields = ({ payment, onChange, readOnly }) => {
+const PaymentFields = ({ payment, onChange, readOnly }) => {
   const [value, setValue] = React.useState({
     date: null,
     customer: null,
@@ -30,13 +30,19 @@ const FormFields = ({ payment, onChange, readOnly }) => {
     } else {
       setPaymentDate(dayjs());
     }
+
+    if (readOnly) {
+      findAgreements();
+    }
   }, []);
 
   React.useEffect(() => {
-    onChange({
-      ...payment,
-      date: paymentDate,
-    });
+    if (onChange) {
+      onChange({
+        ...payment,
+        date: paymentDate,
+      });
+    }
   }, [paymentDate]);
 
   React.useEffect(() => {
@@ -76,6 +82,7 @@ const FormFields = ({ payment, onChange, readOnly }) => {
           value={dayjs(paymentDate).format("YYYY-MM-DD")}
         />
         <SelectCustomer
+          readOnly={readOnly}
           customer={payment.customer}
           onChange={(newValue) => {
             onChange({
@@ -118,4 +125,4 @@ const FormFields = ({ payment, onChange, readOnly }) => {
   );
 };
 
-export default FormFields;
+export default PaymentFields;

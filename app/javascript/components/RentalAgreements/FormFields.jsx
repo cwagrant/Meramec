@@ -3,6 +3,10 @@ import {
   Autocomplete,
   Box,
   Divider,
+  FormControl,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
   TextField,
   Typography,
 } from "@mui/material";
@@ -12,14 +16,16 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
+import { centsToDollars } from "../DataFormatHelpers";
 
-const FormFields = ({ rentalAgreement, setRentalAgreement }) => {
+const FormFields = ({ rentalAgreement, setRentalAgreement, readOnly }) => {
   const [unitOptions, setUnitOptions] = React.useState([]);
   const [unit, setUnit] = React.useState(null);
   const [startDate, setStartDate] = React.useState(null);
   const [endDate, setEndDate] = React.useState(null);
   const [nextDueDate, setNextDueDate] = React.useState(null);
   const [customer, setCustomer] = React.useState();
+  const [price, setPrice] = React.useState(0);
   const [data, setData] = React.useState();
   const [error, setError] = React.useState();
   const axios = useAxios();
@@ -144,6 +150,21 @@ const FormFields = ({ rentalAgreement, setRentalAgreement }) => {
             }}
           />
         </LocalizationProvider>
+        <FormControl sx={{ width: 1, m: 1, maxWidth: "sm" }}>
+          <InputLabel htmlFor="standard-adornment-amount">Amount</InputLabel>
+          <OutlinedInput
+            id="unit_price"
+            name="unit[price]"
+            label="Amount"
+            type="number"
+            value={price}
+            onChange={(event) => {
+              setPrice(event.target.value);
+            }}
+            readOnly={readOnly}
+            startAdornment={<InputAdornment position="start">$</InputAdornment>}
+          />
+        </FormControl>
       </Box>
 
       <Divider>Unit</Divider>
@@ -166,6 +187,9 @@ const FormFields = ({ rentalAgreement, setRentalAgreement }) => {
         value={unit}
         onChange={(event, newValue) => {
           setUnit(newValue);
+          if (newValue.price_in_cents) {
+            setPrice(centsToDollars(newValue.price_in_cents));
+          }
         }}
         sx={{ width: 1, pr: 2 }}
         renderInput={(params) => <TextField {...params} label="Unit" />}

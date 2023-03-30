@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Paper } from "@mui/material";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import FormFields from "./CustomerFields";
 import useAxios from "../useAxios";
@@ -42,18 +42,20 @@ const Edit = () => {
         "& .MuiFormControl-root": { m: 1, maxWidth: "sm" },
       }}
     >
-      <FormFields
-        customer={customer}
-      />
+      <Paper sx={{ p: 1 }}>
+        <FormFields
+          customer={customer}
+        />
 
-      <Box sx={{ display: "flex", m: 1 }}>
-        <Button
-          variant="outlined"
-          type="submit"
-        >
-          Submit
-        </Button>
-      </Box>
+        <Box sx={{ display: "flex", m: 1 }}>
+          <Button
+            variant="outlined"
+            type="submit"
+          >
+            Submit
+          </Button>
+        </Box>
+      </Paper>
     </Box>
   );
 };

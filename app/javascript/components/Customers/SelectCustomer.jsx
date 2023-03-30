@@ -12,7 +12,7 @@ import FormFields from "./CustomerFields";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
 
-const SelectCustomer = ({ customer, onChange, allowNew }) => {
+const SelectCustomer = ({ customer, onChange, allowNew, readOnly }) => {
   const [options, setOptions] = React.useState([]);
   const [newCustomer, setNewCustomer] = React.useState(false);
   const [newCustomerAttr, setNewCustomerAttr] = React.useState(null);
@@ -86,6 +86,7 @@ const SelectCustomer = ({ customer, onChange, allowNew }) => {
         )}
       {newCustomer ? <FormFields values={newCustomerAttr} /> : (
         <Autocomplete
+          readOnly={readOnly}
           disablePortal
           id="customer"
           name="customer"

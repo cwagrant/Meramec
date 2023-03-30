@@ -32,7 +32,7 @@ const Records = ({ customers, deleteCallback }) => {
           {company &&
             <span>{company}</span>}
           {!company &&
-            <span>{first_name}, {last_name}</span>}
+            <span>{last_name}, {first_name}</span>}
         </Link>
       </TableCell>
       <TableCell>

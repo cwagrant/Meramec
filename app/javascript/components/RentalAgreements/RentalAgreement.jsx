@@ -1,8 +1,19 @@
 import React from "react";
 import { useOutletContext } from "react-router-dom";
-import { Box, Divider, Paper, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Divider,
+  FormControl,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { default as CustomerForm } from "../Customers/CustomerFields";
 import { default as UnitForm } from "../Units/FormFields";
+import { centsToDollars } from "../DataFormatHelpers";
 
 const Show = () => {
   const { rentalAgreement, setRentalAgreement } = useOutletContext();
@@ -37,9 +48,24 @@ const Show = () => {
           value={rentalAgreement.next_due_date || "Missing"}
           readOnly={true}
         />
+        <FormControl sx={{ width: 1, m: 1, maxWidth: "sm" }}>
+          <InputLabel htmlFor="standard-adornment-amount">Amount</InputLabel>
+          <OutlinedInput
+            readOnly={true}
+            id="unit_price"
+            name="unit[price]"
+            label="Amount"
+            type="number"
+            value={centsToDollars(rentalAgreement.price_in_cents) || "Missing"}
+            onChange={(event) => {
+              setPrice(event.target.value);
+            }}
+            startAdornment={<InputAdornment position="start">$</InputAdornment>}
+          />
+        </FormControl>
       </Box>
       <Divider>Unit</Divider>
-      <UnitForm unit={rentalAgreement.unit} readOnly={true} />
+      <UnitForm unit={rentalAgreement.unit} readOnly={true} hidePrice />
       <Divider>Customer</Divider>
       <CustomerForm customer={rentalAgreement.customer} readOnly={true} />
     </Paper>

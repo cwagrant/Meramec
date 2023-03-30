@@ -6,6 +6,8 @@ const FormFields = ({ rentalAgreement }) => {
   const [paid, setPaid] = React.useState("");
   const [notes, setNotes] = React.useState("");
 
+  console.log("ra", rentalAgreement);
+
   return (
     <>
       <input
