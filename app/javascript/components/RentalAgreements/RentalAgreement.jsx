@@ -12,7 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import { default as CustomerForm } from "../Customers/CustomerFields";
-import { default as UnitForm } from "../Units/FormFields";
+import { default as UnitForm } from "../Units/UnitFields";
 import { centsToDollars } from "../DataFormatHelpers";
 
 const Show = () => {
@@ -48,7 +48,7 @@ const Show = () => {
           value={rentalAgreement.next_due_date || "Missing"}
           readOnly={true}
         />
-        <FormControl sx={{ width: 1, m: 1, maxWidth: "sm" }}>
+        <FormControl>
           <InputLabel htmlFor="standard-adornment-amount">Amount</InputLabel>
           <OutlinedInput
             readOnly={true}
@@ -57,9 +57,6 @@ const Show = () => {
             label="Amount"
             type="number"
             value={centsToDollars(rentalAgreement.price_in_cents) || "Missing"}
-            onChange={(event) => {
-              setPrice(event.target.value);
-            }}
             startAdornment={<InputAdornment position="start">$</InputAdornment>}
           />
         </FormControl>

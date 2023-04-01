@@ -11,20 +11,16 @@ import {
 } from "@mui/material";
 import { centsToDollars } from "../DataFormatHelpers";
 
-const FormFields = ({ unit, hidePrice, readOnly }) => {
-  const [unitType, setUnitType] = React.useState("");
-  const [unitName, setUnitName] = React.useState("");
-  const [unitPrice, setUnitPrice] = React.useState(0);
-
-  const handleChange = (event) => {
-    setUnitType(event.target.value);
-  };
+const FormFields = ({ unit, onChange, hidePrice, readOnly }) => {
+  const [price, setPrice] = React.useState("");
 
   React.useEffect(() => {
-    setUnitType(unit?.type_of || "");
-    setUnitName(unit?.name || "");
-    setUnitPrice(centsToDollars(unit?.price_in_cents) || "");
-  }, [unit]);
+    if (unit?.price_in_cents) {
+      setPrice(centsToDollars(unit.price_in_cents));
+    }
+  }, [unit?.price_in_cents]);
+
+  if (!unit) return <h4>Loading...</h4>;
 
   return (
     <>
@@ -36,9 +32,9 @@ const FormFields = ({ unit, hidePrice, readOnly }) => {
           name="unit[name]"
           placeholder="Name"
           sx={{ width: 1, m: 1, maxWidth: "sm" }}
-          value={unitName}
+          value={unit.name || ""}
           onChange={(event) => {
-            setUnitName(event.target.value);
+            onChange({ ...unit, name: event.target.value });
           }}
           InputProps={{
             readOnly: readOnly,
@@ -62,8 +58,10 @@ const FormFields = ({ unit, hidePrice, readOnly }) => {
             id="unit_type_of"
             label="Type"
             name="unit[type_of]"
-            value={unitType}
-            onChange={handleChange}
+            value={unit.type_of || ""}
+            onChange={(event) => {
+              onChange({ ...unit, type_of: event.target.value });
+            }}
             readOnly={readOnly}
           >
             <MenuItem value="">
@@ -84,11 +82,12 @@ const FormFields = ({ unit, hidePrice, readOnly }) => {
               <OutlinedInput
                 id="unit_price"
                 name="unit[price]"
-                label="Amount"
+                label="Price"
                 type="number"
-                value={unitPrice}
+                value={price}
                 onChange={(event) => {
-                  setUnitPrice(event.target.value);
+                  setPrice(event.target.value);
+                  onChange({ ...unit, price: event.target.value });
                 }}
                 readOnly={readOnly}
                 startAdornment={

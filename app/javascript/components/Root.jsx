@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Outlet, useNavigate } from "react-router-dom";
 import {
   createTheme,
@@ -29,8 +31,6 @@ import FolderIcon from "@mui/icons-material/Folder";
 import PaidIcon from "@mui/icons-material/Paid";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Link } from "react-router-dom";
-import NotificationProvider from "./NotificationProvider";
-import Notifications from "./Notifications";
 import { SnackbarProvider } from "notistack";
 
 import useAxios from "./useAxios";
@@ -135,10 +135,18 @@ const ListLink = ({ open, to, name, icon }) => {
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
+    primary: {
+      main: "#d6deeb",
+    },
+    secondary: {
+      main: "#f50057",
+    },
+    background: {
+      default: "#011627",
+      paper: "#011627",
+    },
   },
 });
-
-const NavigationContext = React.createContext();
 
 export default function MiniDrawer() {
   const theme = useTheme();
@@ -171,8 +179,8 @@ export default function MiniDrawer() {
 
   return (
     <ThemeProvider theme={darkTheme}>
-      <SnackbarProvider>
-        <NotificationProvider>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <SnackbarProvider>
           <Box sx={{ display: "flex" }}>
             <CssBaseline />
             <AppBar position="fixed" open={open}>
@@ -247,12 +255,11 @@ export default function MiniDrawer() {
             </Drawer>
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
               <DrawerHeader />
-              <Notifications />
               <Outlet />
             </Box>
           </Box>
-        </NotificationProvider>
-      </SnackbarProvider>
+        </SnackbarProvider>
+      </LocalizationProvider>
     </ThemeProvider>
   );
 }

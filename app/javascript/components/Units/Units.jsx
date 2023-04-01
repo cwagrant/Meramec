@@ -8,12 +8,7 @@ import {
   Collapse,
   IconButton,
   Link,
-  Paper,
-  Table,
-  TableBody,
   TableCell,
-  TableContainer,
-  TableHead,
   TableRow,
   TextField,
 } from "@mui/material";
@@ -21,6 +16,8 @@ import useAxios from "../useAxios";
 import { useSnackbar } from "notistack";
 import * as paths from "../PathHelper";
 import Unit from "./Unit";
+import EnhancedTable from "../EnhancedTable";
+import UnitTableRow from "./UnitTableRow";
 
 import LaunchIcon from "@mui/icons-material/Launch";
 import EditIcon from "@mui/icons-material/Edit";
@@ -28,69 +25,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import AddBoxIcon from "@mui/icons-material/AddBox";
-
-const Row = ({ row, deleteCallback }) => {
-  const [open, setOpen] = React.useState(false);
-  const navigate = useNavigate();
-
-  return (
-    <React.Fragment>
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="large"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {row.name}
-        </TableCell>
-        <TableCell
-          onClick={() => {
-            navigate("units/" + row.id);
-          }}
-          sx={{ cursor: "pointer" }}
-        >
-          {row.type_of}
-        </TableCell>
-        <TableCell>
-          <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
-            <Link component={RouterLink} to={"./units/" + row.id}>
-              <LaunchIcon />
-            </Link>
-            <Link component={RouterLink} to={"./units/" + row.id + "/edit"}>
-              <EditIcon />
-            </Link>
-            <Link
-              onClick={(event) => {
-                event.preventDefault();
-                deleteCallback(row.id);
-              }}
-            >
-              <DeleteIcon />
-            </Link>
-          </Box>
-        </TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Unit unit={row} />
-          </Collapse>
-        </TableCell>
-      </TableRow>
-    </React.Fragment>
-  );
-};
-
-const Records = ({ units, deleteCallback }) => {
-  return units.map((unit) => (
-    <Row key={unit.name} row={unit} deleteCallback={deleteCallback} />
-  ));
-};
 
 const Units = () => {
   const [query, setQuery] = useState("");
@@ -164,22 +98,22 @@ const Units = () => {
           New
         </Button>
       </Box>
-      <TableContainer component={Paper} sx={{ maxWidth: "md" }}>
-        <Table aria-label="units listing">
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ width: 32 }} />
-              <TableCell>Name</TableCell>
-              <TableCell>Type</TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data &&
-              <Records units={data} deleteCallback={deleteUnit} />}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <Box sx={{ maxWidth: "md" }}>
+        <EnhancedTable
+          rows={data}
+          DefaultOrder="asc"
+          DefaultOrderBy="name"
+          TableHeaders={[
+            { id: "name", numeric: false, label: "Name" },
+            { id: "type_of", numeric: false, label: "Type" },
+            { id: "price_in_cents", numeric: false, label: "Price" },
+            { id: "occupied", numeric: false, label: "Occupancy" },
+            { id: null },
+          ]}
+          TableRow={UnitTableRow}
+          onDelete={deleteUnit}
+        />
+      </Box>
     </>
   );
 };

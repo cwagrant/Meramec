@@ -1,59 +1,15 @@
 import React from "react";
 import { useCallback, useEffect, useState } from "react";
-import { Link as RouterLink, useParams } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
 import { debounce } from "lodash";
 import { useSnackbar } from "notistack";
+import EnhancedTable from "../EnhancedTable";
+import RentalAgreementTableRow from "./RentalAgreementTableRow";
 
-import {
-  Box,
-  Button,
-  Link,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-} from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
 import AddBoxIcon from "@mui/icons-material/AddBox";
-import LaunchIcon from "@mui/icons-material/Launch";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-
-const Records = ({ rentalAgreements, deleteCallback }) => {
-  return rentalAgreements.map(({ id, customer, unit }) => (
-    <TableRow key={id}>
-      <TableCell>{unit.name}</TableCell>
-      <TableCell>
-        <Link component={RouterLink} to={"/agreements/" + id}>
-          {customer.formal_name}
-        </Link>
-      </TableCell>
-      <TableCell>
-        <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
-          <Link component={RouterLink} to={"/agreements/" + id}>
-            <LaunchIcon />
-          </Link>
-          <Link component={RouterLink} to={"/agreements/" + id + "/edit"}>
-            <EditIcon />
-          </Link>
-          <Link
-            onClick={(event) => {
-              event.preventDefault();
-              deleteCallback(id);
-            }}
-          >
-            <DeleteIcon />
-          </Link>
-        </Box>
-      </TableCell>
-    </TableRow>
-  ));
-};
 
 const RentalAgreements = () => {
   const [query, setQuery] = useState("");
@@ -124,33 +80,31 @@ const RentalAgreements = () => {
           </Button>
         </Box>
       </Box>
-      <TableContainer
-        component={Paper}
-        sx={{ maxWidth: "md" }}
-        key="propertiesListTable"
-      >
-        <Table aria-label="rentalAgreements listing">
-          <TableHead>
-            <TableRow>
-              <TableCell>Unit</TableCell>
-              <TableCell>Customer</TableCell>
-              <TableCell />
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data &&
-              (
-                <Records
-                  key="rentalAgreementsListItems"
-                  rentalAgreements={data}
-                  deleteCallback={deleteAgreement}
-                />
-              )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <Box sx={{ maxWidth: "md" }}>
+        <EnhancedTable
+          rows={data}
+          DefaultOrder="asc"
+          DefaultOrderBy="customer.formal_name"
+          TableHeaders={[
+            { id: "unit.name", numeric: false, label: "Unit" },
+            { id: "customer.formal_name", numeric: false, label: "Customer" },
+            { id: "start_date", numeric: false, label: "Start Date" },
+            { id: "end_date", numeric: false, label: "End Date" },
+            { id: "null" },
+          ]}
+          TableRow={RentalAgreementTableRow}
+          onDelete={deleteAgreement}
+        />
+      </Box>
     </div>
   );
 };
 
 export default RentalAgreements;
+/* I think passing in a TableRow might be best as it lets us be very specific
+ * about what happens in the table row while not having to have things like
+ * DataActions or DataKeys. Instead we just pass in a row that will tell it
+ * what to do, then we can pass whatever TableHeaders we need to match up to that.
+ *
+ * It'll be pretty big, but it'll also help avoid complexity down the line.
+ */

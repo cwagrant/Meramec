@@ -9,6 +9,7 @@ import Edit from "./EditRentalAgreement";
 import Show from "./RentalAgreement";
 import New from "./NewRentalAgreement";
 import Breadcrumbs from "../Breadcrumbs";
+import { centsToDollars } from "../DataFormatHelpers";
 
 const RentalAgreements = ({ children }) => {
   const { agreementId } = useParams();
@@ -28,7 +29,13 @@ const RentalAgreements = ({ children }) => {
       axios
         .get(paths.API.RENTAL_AGREEMENTS(agreementId))
         .then((res) => {
-          setRentalAgreement(res.data);
+          let agreement = res.data;
+
+          agreement = {
+            ...agreement,
+            price: centsToDollars(agreement.price_in_cents),
+          };
+          setRentalAgreement(agreement);
         })
         .catch((error) => {
           enqueueSnackbar(

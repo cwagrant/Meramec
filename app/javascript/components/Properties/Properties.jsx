@@ -21,6 +21,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useAxios from "../useAxios";
 import { useSnackbar } from "notistack";
+import EnhancedTable from "../EnhancedTable";
+import PropertyTableRow from "./PropertyTableRow";
 
 const SEARCH_PROPERTIES_URL = "/api/properties";
 
@@ -75,7 +77,6 @@ const Properties = () => {
   );
 
   const deleteProperty = (id) => {
-    console.log("delete", id);
     axios
       .delete(`api/properties/${id}`)
       .then((res) => {
@@ -123,31 +124,20 @@ const Properties = () => {
           </Button>
         </Box>
       </Box>
-      <TableContainer
-        component={Paper}
-        sx={{ maxWidth: "md" }}
-        key="propertiesListTable"
-      >
-        <Table aria-label="properties listing">
-          <TableHead>
-            <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell />
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data &&
-              (
-                <Records
-                  key="propertiesListItems"
-                  properties={data}
-                  deleteCallback={deleteProperty}
-                />
-              )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <Box sx={{ maxWidth: "md" }}>
+        <EnhancedTable
+          rows={data}
+          DefaultOrder="asc"
+          DefaultOrderBy="name"
+          TableHeaders={[
+            { id: "id", numeric: false, label: "ID" },
+            { id: "property", numeric: false, label: "Property" },
+            { id: null },
+          ]}
+          TableRow={PropertyTableRow}
+          onDelete={deleteProperty}
+        />
+      </Box>
     </div>
   );
 };

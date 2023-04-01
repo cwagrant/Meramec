@@ -8,7 +8,7 @@ class Payment < ApplicationRecord
   validates :date, presence: true
 
   def as_json(args)
-    super({include: { customer: { methods: [:formal_name] }}}.merge(args))
+    super({include: { customer: { methods: [:formal_name] }}}.deep_merge(args))
   end
 
   def self.searchable_attributes

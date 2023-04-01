@@ -38,7 +38,6 @@ const router = createBrowserRouter(
           <Route path="new" element={<Properties.New />} />
           <Route
             path=":propertyId"
-            element={<Properties.Show />}
             handle={{
               crumb: { name: "{property}" },
             }}
@@ -105,6 +104,7 @@ const router = createBrowserRouter(
           path="payments"
           element={<Payments />}
           errorElement={<ErrorBoundary />}
+          handle={{ crumb: { name: "Payments" } }}
         >
           <Route index element={<Payments.Index />} />
           <Route
@@ -115,8 +115,8 @@ const router = createBrowserRouter(
           />
           <Route
             path=":paymentId"
-            element={<Payments />}
             errorElement={<ErrorBoundary />}
+            handle={{ crumb: { name: "{payment}" } }}
           >
             <Route index element={<Payments.Show />} />
             <Route

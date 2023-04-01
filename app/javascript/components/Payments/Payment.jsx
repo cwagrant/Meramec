@@ -1,6 +1,6 @@
 import React from "react";
 import { useOutletContext } from "react-router-dom";
-import { Box, Button, Paper } from "@mui/material";
+import { Box, Button, ButtonGroup } from "@mui/material";
 import PaymentFields from "./PaymentFields";
 import { Link as RouterLink } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
@@ -13,29 +13,43 @@ const Payment = ({ payment }) => {
   if (!usePayment) return "payment not found...";
 
   return (
-    <Paper
-      sx={{ display: "flex", flexDirection: "column", maxWidth: "sm", p: 1 }}
-    >
-      <Box sx={{ display: "flex", justifyContent: "flex-end", m: 1, gap: 1 }}>
-        <Button
-          component={RouterLink}
-          to={"./edit"}
-          variant="outlined"
-          startIcon={<EditIcon />}
-        >
-          Edit
-        </Button>
-        <Button
-          component={RouterLink}
-          to={"/payments/new"}
-          variant="outlined"
-          startIcon={<AddBoxIcon />}
-        >
-          New
-        </Button>
+    <>
+      <Box
+        sx={{
+          display: "flex",
+          maxWidth: "md",
+          justifyContent: "flex-end",
+          m: 1,
+          gap: 1,
+        }}
+      >
+        <ButtonGroup variant="outlined">
+          <Button
+            component={RouterLink}
+            to={"./edit"}
+            startIcon={<EditIcon />}
+          >
+            Edit
+          </Button>
+          <Button
+            component={RouterLink}
+            to={"/payments/new"}
+            startIcon={<AddBoxIcon />}
+          >
+            New
+          </Button>
+        </ButtonGroup>
       </Box>
-      <PaymentFields payment={usePayment} readOnly={true} />
-    </Paper>
+      <Box
+        sx={{
+          width: 1,
+          maxWidth: "md",
+          "& .MuiFormControl-root": { m: 1, maxWidth: "md" },
+        }}
+      >
+        <PaymentFields payment={usePayment} readOnly={true} />
+      </Box>
+    </>
   );
 };
 

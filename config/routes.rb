@@ -20,6 +20,7 @@ Rails.application.routes.draw do
     resources :customers, except: [:new, :edit]
     resources :rental_agreements, except: [:new, :edit]
     resources :payments, except: [:new, :edit]
+    resources :invoices, only: [:show]
   end
 
   get '/*path' => 'site#index'

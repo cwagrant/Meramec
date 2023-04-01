@@ -4,7 +4,7 @@ class CustomersController < ApplicationController
   end
 
   def show
-    render json: Customer.find(params[:id])
+    render json: Customer.find(params[:id]).as_json(methods: [:formal_name])
   end
 
   def create

@@ -13,18 +13,19 @@ const fetchName = (data, name) => {
 };
 
 const Crumbs = (
-  { currentProperty, currentUnit, rentalAgreement, customer, user },
+  { property, unit, rentalAgreement, customer, user, payment },
 ) => {
   const matches = useMatches();
   const crumbs = matches
     .filter((match) => Boolean(match.handle?.crumb));
 
   const dynamicNames = {
-    "{property}": currentProperty?.name,
-    "{unit}": currentUnit?.name,
+    "{property}": property?.name,
+    "{unit}": unit?.name,
     "{rentalAgreement}": `Agreement ${rentalAgreement?.id}`,
     "{customer}": `${customer?.first_name} ${customer?.last_name}`,
     "{user}": `${user?.email}`,
+    "{payment}": `Payment ${payment?.id}`,
   };
 
   return (

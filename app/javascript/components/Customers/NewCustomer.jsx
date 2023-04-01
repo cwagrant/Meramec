@@ -10,6 +10,14 @@ const Edit = () => {
   const { enqueueSnackbar } = useSnackbar();
   const axios = useAxios(enqueueSnackbar);
   const navigate = useNavigate();
+  const [customer, setCustomer] = React.useState({
+    company: "",
+    first_name: "",
+    last_name: "",
+    gate_code: "",
+    email: "",
+    phone_number: "",
+  });
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -36,14 +44,28 @@ const Edit = () => {
         "& .MuiFormControl-root": { m: 1, maxWidth: "sm" },
       }}
     >
-      <FormFields values={{}} />
+      <FormFields
+        customer={customer}
+        onChange={(newValue) => setCustomer(newValue)}
+      />
 
-      <Box sx={{ display: "flex", m: 1 }}>
+      <Box sx={{ display: "flex", m: 1, gap: 2 }}>
         <Button
           variant="outlined"
           type="submit"
         >
           Submit
+        </Button>
+        <Button
+          variant="outlined"
+          type="button"
+          onClick={(event) => {
+            event.preventDefault();
+            if (!window.confirm("Are you sure you wish to cancel?")) return;
+            navigate("..");
+          }}
+        >
+          Cancel
         </Button>
       </Box>
     </Box>

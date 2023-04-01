@@ -16,19 +16,15 @@ const GET_UNIT_URL = "/api/units/";
 
 const Units = ({ children }) => {
   const { unitId } = useParams();
-  const { currentUnit, setCurrentUnit } = useOutletContext();
+  const { unit, setUnit } = useOutletContext();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const axios = useAxios(enqueueSnackbar);
 
-  const setUnit = (data) => {
-    setCurrentUnit(data.unit);
-  };
-
   React.useEffect(() => {
     /* This will run on unmount to clear out Unit state */
     return () => {
-      setCurrentUnit(null);
+      setUnit(null);
     };
   }, []);
 
@@ -37,8 +33,7 @@ const Units = ({ children }) => {
       axios
         .get(`${GET_UNIT_URL}${unitId}`)
         .then((res) => {
-          const id = res.data.id;
-          setCurrentUnit(res.data);
+          setUnit(res.data);
         })
         .catch((error) => {
           enqueueSnackbar(`Unable to find Unit with id ${unitId}`, {
@@ -52,7 +47,7 @@ const Units = ({ children }) => {
   return (
     <>
       {children}
-      <Outlet context={{ currentUnit, setCurrentUnit }} />
+      <Outlet context={{ unit, setUnit }} />
     </>
   );
 };

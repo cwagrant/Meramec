@@ -19,7 +19,7 @@ const Edit = () => {
     axios
       .put(
         paths.API.CUSTOMERS(customerId),
-        document.querySelector("#customerForm"),
+        { customer: customer },
       )
       .then((res) => {
         const id = res.data.id;
@@ -45,14 +45,28 @@ const Edit = () => {
       <Paper sx={{ p: 1 }}>
         <FormFields
           customer={customer}
+          onChange={(newValue) => {
+            setCustomer(newValue);
+          }}
         />
 
-        <Box sx={{ display: "flex", m: 1 }}>
+        <Box sx={{ display: "flex", m: 1, gap: 2 }}>
           <Button
             variant="outlined"
             type="submit"
           >
             Submit
+          </Button>
+          <Button
+            variant="outlined"
+            type="button"
+            onClick={(event) => {
+              event.preventDefault();
+              if (!window.confirm("Are you sure you wish to cancel?")) return;
+              navigate("..");
+            }}
+          >
+            Cancel
           </Button>
         </Box>
       </Paper>
