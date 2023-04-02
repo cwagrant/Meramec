@@ -1,26 +1,10 @@
 import React from "react";
 import { Box, Button } from "@mui/material";
-import FormFields from "./PaymentFields";
+import PaymentFields from "./PaymentFields";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
-
-/* TODO:
- * Additionally we'll want to look at adding validations to different form
- * fields (required, etc.) as well as in models to try to preserve data
- * integerity as much as possible.
- *
- * Needed Forms/Data Changes
- * LedgerEntry: Need a basic form for Creating entries. Maybe add it to
- *   to the bottom of a RentalAgreement for viewing purposes?
- * Breadcrumbs: Payments
- * Buttons: Probably need to cleanup show page and add some links to edit
- *  something in it's show page.
- *
- * After that the true last stage will be figuring out how to set up a docker
- * container that I can then run this on on the homelab box.
- */
 
 const New = () => {
   const navigate = useNavigate();
@@ -29,13 +13,14 @@ const New = () => {
   const [payment, setPayment] = React.useState({
     date: null,
     customer: null,
+    rental_agreement_payments: [],
   });
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
     axios
-      .post(paths.API.PAYMENTS(), document.querySelector("#paymentForm"))
+      .post(paths.API.PAYMENTS(), { payment: payment })
       .then((res) => {
         const id = res.data.id;
         enqueueSnackbar("Payment saved successfully", { variant: "success" });
@@ -54,19 +39,30 @@ const New = () => {
         "& .MuiFormControl-root": { m: 1, maxWidth: "md" },
       }}
     >
-      <FormFields
+      <PaymentFields
         payment={payment}
         onChange={(newValue) => {
           setPayment(newValue);
         }}
       />
 
-      <Box sx={{ display: "flex", m: 1 }}>
+      <Box sx={{ display: "flex", m: 1, gap: 2 }}>
         <Button
           variant="outlined"
           type="submit"
         >
           Submit
+        </Button>
+        <Button
+          variant="outlined"
+          type="button"
+          onClick={(event) => {
+            event.preventDefault();
+            if (!window.confirm("Are you sure you wish to cancel?")) return;
+            navigate("..");
+          }}
+        >
+          Cancel
         </Button>
       </Box>
     </Box>

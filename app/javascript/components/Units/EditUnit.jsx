@@ -1,14 +1,14 @@
 import React from "react";
 import { Box, Button } from "@mui/material";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
-import FormFields from "./FormFields";
+import UnitFields from "./UnitFields";
 import useAxios from "../useAxios";
 import { useSnackbar } from "notistack";
 import * as paths from "../PathHelper";
 
 const Unit = () => {
   const { propertyId, unitId } = useParams();
-  const { currentUnit, setCurrentUnit } = useOutletContext();
+  const { unit, setUnit } = useOutletContext();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const axios = useAxios(enqueueSnackbar);
@@ -17,14 +17,15 @@ const Unit = () => {
     event.preventDefault();
 
     axios
-      .put(paths.API.UNITS(unitId), document.querySelector("#unitForm"))
+      .put(paths.API.UNITS(unitId), { unit: unit })
       .then((res) => {
-        const id = res.data.id;
-        setCurrentUnit(res.data);
+        setUnit(res.data);
         enqueueSnackbar("Unit updated successfully", { variant: "success" });
-        navigate("/properties/" + id);
+        navigate("/properties/" + propertyId);
       });
   };
+
+  if (!unit) return <h4>Loading...</h4>;
 
   return (
     <Box
@@ -39,14 +40,25 @@ const Unit = () => {
         name="unit[property_id]"
         value={propertyId}
       />
-      <FormFields unit={currentUnit} />
+      <UnitFields unit={unit} onChange={(newValue) => setUnit(newValue)} />
 
-      <Box sx={{ display: "flex", m: 1 }}>
+      <Box sx={{ display: "flex", m: 1, gap: 2 }}>
         <Button
           variant="outlined"
           type="submit"
         >
           Submit
+        </Button>
+        <Button
+          variant="outlined"
+          type="button"
+          onClick={(event) => {
+            event.preventDefault();
+            if (!window.confirm("Are you sure you wish to cancel?")) return;
+            navigate("..");
+          }}
+        >
+          Cancel
         </Button>
       </Box>
     </Box>

@@ -4,60 +4,12 @@ import { Link as RouterLink } from "react-router-dom";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
 import { useSnackbar } from "notistack";
+import PaymentTableRow from "./PaymentTableRow";
+import EnhancedTable from "../EnhancedTable";
 
 import { debounce } from "lodash";
-import {
-  Box,
-  Button,
-  Link,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-} from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
 import AddBoxIcon from "@mui/icons-material/AddBox";
-import LaunchIcon from "@mui/icons-material/Launch";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-
-const Records = ({ payments, deleteCallback }) => {
-  return payments.map(({ id, customer, date }) => (
-    <TableRow key={id}>
-      <TableCell>{id}</TableCell>
-      <TableCell>
-        <Link component={RouterLink} to={"/payments/" + id}>
-          {customer.formal_name}
-        </Link>
-      </TableCell>
-      <TableCell>{date}</TableCell>
-      <TableCell>
-        <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
-          <Link component={RouterLink} to={"/payments/" + id}>
-            <LaunchIcon />
-          </Link>
-          <Link
-            component={RouterLink}
-            to={"/payments/" + id + "/edit"}
-          >
-            <EditIcon />
-          </Link>
-          <Link
-            onClick={(event) => {
-              event.preventDefault();
-              deleteCallback(id);
-            }}
-          >
-            <DeleteIcon />
-          </Link>
-        </Box>
-      </TableCell>
-    </TableRow>
-  ));
-};
 
 const Payments = () => {
   const [query, setQuery] = useState("");
@@ -128,31 +80,21 @@ const Payments = () => {
           </Button>
         </Box>
       </Box>
-      <TableContainer
-        component={Paper}
-        sx={{ maxWidth: "md" }}
-        key="propertiesListTable"
-      >
-        <Table aria-label="payments listing">
-          <TableHead>
-            <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell />
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data &&
-              (
-                <Records
-                  key="paymentsListItems"
-                  payments={data}
-                  deleteCallback={deletePayment}
-                />
-              )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <Box sx={{ maxWidth: "md" }}>
+        <EnhancedTable
+          rows={data}
+          DefaultOrder="desc"
+          DefaultOrderBy="date"
+          TableHeaders={[
+            { id: "date", numeric: false, label: "Date" },
+            { id: "customer.formal_name", numeric: false, label: "Name" },
+            { id: "customer.company", numeric: false, label: "Company" },
+            { id: null },
+          ]}
+          TableRow={PaymentTableRow}
+          onDelete={deletePayment}
+        />
+      </Box>
     </div>
   );
 };

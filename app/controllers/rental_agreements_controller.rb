@@ -11,7 +11,8 @@ class RentalAgreementsController < ApplicationController
   def create
     full_params = rental_agreement_params.to_h.stringify_keys
     if full_params.key?('customer')
-      full_params["customer_attributes"] = full_params.delete('customer')
+      customer = full_params.delete('customer')
+      full_params["customer_attributes"] = customer if full_params['customer_id'].blank?
     end
 
     rental_agreement = RentalAgreement.new(full_params)
@@ -28,7 +29,8 @@ class RentalAgreementsController < ApplicationController
 
     full_params = rental_agreement_params.to_h.stringify_keys
     if full_params.key?('customer')
-      full_params["customer_attributes"] = full_params.delete('customer')
+      customer = full_params.delete('customer')
+      full_params["customer_attributes"] = customer if full_params['customer_id'].blank?
     end
 
     rental_agreement.update(full_params)
@@ -53,10 +55,6 @@ class RentalAgreementsController < ApplicationController
   private
 
   def rental_agreement_params
-
-
-    rental_params = params.require(:rental_agreement).permit(:start_date, :end_date, :next_due_date, :price, :unit_id, :customer_id, customer: [:first_name, :last_name, :email, :gate_code, :phone_number, :company])
-
-    rental_params.to_h.merge(params.permit(customer: {}))
+    params.require(:rental_agreement).permit(:start_date, :end_date, :next_due_date, :price, :unit_id, :customer_id, customer: [:first_name, :last_name, :email, :gate_code, :phone_number, :company])
   end
 end

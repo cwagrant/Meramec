@@ -1,6 +1,3 @@
-@import 'bootstrap/scss/bootstrap';
-@import 'bootstrap-icons/font/bootstrap-icons';
-@import 'bootstrap/scss/_variables.scss';
 
 .hero {
   width: 100vw;
@@ -13,54 +10,12 @@
   transition: visibility 0s 2s, opacity 2s linear;
 }
 
-
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
 }
 
-body {
-  // background-color: $blue-900;
-}
 
-// .property-nav a {
-//   background-color: $gray-800;
-//   color: $white;
-//
-//   &.active {
-//     background-color: $teal-700;
-//     color: $white;
-//   }
-//
-//   &:hover {
-//     background-color: $purple-700;
-//     color: $white;
-//   }
-// }
-//
-// .property { 
-//   background-color: $gray-800;
-//   color: $white;
-//   border: 1px solid $gray-500;
-//   border-radius: 8px;
-// }
-//
-// .propertyblah { 
-//   & ol.breadcrumb {
-//     li {
-//       display: none;
-//     }
-//
-//     li:nth-last-child(2) {
-//       display: block;
-//     }
-//
-//   } 
-// }
+a:visited{
+  color: unset;
+}

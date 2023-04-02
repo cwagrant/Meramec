@@ -10,7 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_28_225117) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_02_011552) do
+  create_table "account_adjustments", force: :cascade do |t|
+    t.integer "rental_agreement_id"
+    t.string "source_type"
+    t.integer "source_id"
+    t.string "type_of"
+    t.string "reason"
+    t.string "reason_description"
+    t.integer "price_in_cents", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["source_type", "source_id"], name: "index_account_adjustments_on_source"
+  end
+
   create_table "addresses", force: :cascade do |t|
     t.text "address_1"
     t.text "address_2"
@@ -40,6 +53,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_28_225117) do
     t.string "source_type"
     t.integer "source_id"
     t.integer "amount_in_cents", default: 0
+    t.datetime "created_at", default: "2023-04-02 01:17:51", null: false
+    t.datetime "updated_at", default: "2023-04-02 01:17:51", null: false
     t.index ["rental_agreement_id"], name: "index_ledger_entries_on_rental_agreement_id"
     t.index ["source_type", "source_id"], name: "index_ledger_entries_on_source"
   end

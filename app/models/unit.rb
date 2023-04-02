@@ -1,7 +1,7 @@
 class Unit < ApplicationRecord
   include Searchable
   belongs_to :property
-  has_many :rental_agreements
+  has_many :rental_agreements, dependent: :restrict_with_error
 
   enum type_of: [ :apartment, :storage, :parking ]
 

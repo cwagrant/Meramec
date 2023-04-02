@@ -4,17 +4,9 @@ import { Box, Grid, Paper, Stack, Typography } from "@mui/material";
 import { capitalizeFirstLetter, centsToDollars } from "../DataFormatHelpers";
 
 const Show = ({ unit }) => {
-  const { currentUnit } = useOutletContext();
+  const { unit: contextUnit } = useOutletContext();
 
-  let useUnit = null;
-
-  if (unit) {
-    useUnit = unit;
-  } else {
-    useUnit = currentUnit;
-  }
-
-  if (!useUnit) return "Unit not found...";
+  let useUnit = contextUnit ? contextUnit : unit;
 
   return (
     <Paper>

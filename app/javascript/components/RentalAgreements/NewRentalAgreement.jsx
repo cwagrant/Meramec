@@ -1,13 +1,21 @@
 import React from "react";
 import { Box, Button, Paper } from "@mui/material";
-import FormFields from "./FormFields";
+import RentalAgreementFields from "./RentalAgreementFields";
 import { useNavigate } from "react-router-dom";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
 import { useSnackbar } from "notistack";
 
 const New = () => {
-  const [rentalAgreement, setRentalAgreement] = React.useState(null);
+  const [rentalAgreement, setRentalAgreement] = React.useState({
+    start_date: null,
+    end_date: null,
+    next_due_date: null,
+    price_in_cents: "",
+    unit: null,
+    customer: null,
+    price: "",
+  });
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const axios = useAxios(enqueueSnackbar);
@@ -18,7 +26,7 @@ const New = () => {
     axios
       .post(
         paths.API.RENTAL_AGREEMENTS(),
-        document.querySelector("#rentalAgreementForm"),
+        { rental_agreement: rentalAgreement },
       )
       .then((res) => {
         const id = res.data.id;
@@ -41,17 +49,28 @@ const New = () => {
       }}
     >
       <Paper sx={{ p: 1 }}>
-        <FormFields
+        <RentalAgreementFields
           rentalAgreement={rentalAgreement}
-          setRentalAgreement={setRentalAgreement}
+          onChange={(newValue) => setRentalAgreement(newValue)}
         />
 
-        <Box sx={{ display: "flex", m: 1 }}>
+        <Box sx={{ display: "flex", m: 1, gap: 2 }}>
           <Button
             variant="outlined"
             type="submit"
           >
             Submit
+          </Button>
+          <Button
+            variant="outlined"
+            type="button"
+            onClick={(event) => {
+              event.preventDefault();
+              if (!window.confirm("Are you sure you wish to cancel?")) return;
+              navigate("..");
+            }}
+          >
+            Cancel
           </Button>
         </Box>
       </Paper>

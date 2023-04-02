@@ -1,41 +1,29 @@
 import React from "react";
 import { default as Index } from "./Properties";
-import Show from "./ShowProperty";
+import Show from "./Property";
 import New from "./NewProperty";
 import Edit from "./EditProperty";
-import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import Breadcrumbs from "../Breadcrumbs";
-import { Alert } from "@mui/material";
-import { ErrorContext } from "./ErrorContext";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
 import { useSnackbar } from "notistack";
 
-const GET_PROPERTY_URL = "/api/properties/";
-
 const Properties = ({ children }) => {
   const { propertyId, unitId } = useParams();
 
-  const [currentProperty, setCurrentProperty] = React.useState({});
-  const [currentUnit, setCurrentUnit] = React.useState({});
-  const [error, setError] = React.useState({ severity: "", message: "" });
+  const [property, setProperty] = React.useState({});
+  const [unit, setUnit] = React.useState({});
   const navigate = useNavigate();
-  const location = useLocation();
   const { enqueueSnackbar } = useSnackbar();
   const axios = useAxios(enqueueSnackbar);
 
   React.useEffect(() => {
-    return () => {
-      setCurrentProperty(null);
-    };
-  }, []);
-
-  React.useEffect(() => {
     if (propertyId) {
       axios
-        .get(`${GET_PROPERTY_URL}${propertyId}`)
+        .get(paths.API.PROPERTIES(propertyId))
         .then((res) => {
-          setCurrentProperty(res.data);
+          setProperty(res.data);
         })
         .catch((error) => {
           enqueueSnackbar(`Unable to load property with id ${propertyId}`, {
@@ -49,15 +37,15 @@ const Properties = ({ children }) => {
   return (
     <div className="property">
       <Breadcrumbs
-        currentProperty={currentProperty}
-        currentUnit={currentUnit}
+        property={property}
+        unit={unit}
       />
       <Outlet
         context={{
-          currentProperty,
-          setCurrentProperty,
-          currentUnit,
-          setCurrentUnit,
+          property,
+          setProperty,
+          unit,
+          setUnit,
         }}
       />
     </div>

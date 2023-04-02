@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Button, Paper } from "@mui/material";
 import { useOutletContext, useParams } from "react-router-dom";
-import FormFields from "./FormFields";
+import RentalAgreementFields from "./RentalAgreementFields";
 import { useNavigate } from "react-router-dom";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
@@ -20,7 +20,7 @@ const Edit = () => {
     axios
       .put(
         paths.API.RENTAL_AGREEMENTS(agreementId),
-        document.querySelector("#rentalAgreementForm"),
+        { rental_agreement: rentalAgreement },
       )
       .then((res) => {
         const id = res.data.id;
@@ -44,17 +44,33 @@ const Edit = () => {
       }}
     >
       <Paper sx={{ p: 1 }}>
-        <FormFields
-          rentalAgreement={rentalAgreement}
-          setRentalAgreement={setRentalAgreement}
-        />
+        {rentalAgreement &&
+          (
+            <RentalAgreementFields
+              rentalAgreement={rentalAgreement}
+              onChange={(newValue) => {
+                setRentalAgreement(newValue);
+              }}
+            />
+          )}
 
-        <Box sx={{ display: "flex", m: 1 }}>
+        <Box sx={{ display: "flex", m: 1, gap: 2 }}>
           <Button
             variant="outlined"
             type="submit"
           >
             Submit
+          </Button>
+          <Button
+            variant="outlined"
+            type="button"
+            onClick={(event) => {
+              event.preventDefault();
+              if (!window.confirm("Are you sure you wish to cancel?")) return;
+              navigate("..");
+            }}
+          >
+            Cancel
           </Button>
         </Box>
       </Paper>

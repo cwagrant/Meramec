@@ -1,126 +1,162 @@
 import React from "react";
-import { Box, Divider, Paper } from "@mui/material";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
+import { DatePicker } from "@mui/x-date-pickers";
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 
-import { default as RentalAgreementPayment } from "../RentalAgreementPayments/FormFields";
-
+import RentalAgreementPaymentTableRow from "../RentalAgreementPayments/RentalAgreementPaymentTableRow";
 import SelectCustomer from "../Customers/SelectCustomer";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
+import dayjs from "dayjs";
+import { centsToDollars } from "../DataFormatHelpers";
 
-const PaymentFields = ({ payment, onChange, readOnly }) => {
-  const [value, setValue] = React.useState({
-    date: null,
-    customer: null,
-  });
-  const [data, setData] = React.useState();
+const PaymentFields = ({ payment, onChange, readOnly, lockCustomer }) => {
   const axios = useAxios();
-  const [customerId, setCustomerId] = React.useState(0);
-  const [paymentDate, setPaymentDate] = React.useState(null);
 
   React.useEffect(() => {
-    if (payment) {
-      if (payment.date) {
-        setPaymentDate(dayjs(payment.date));
-      } else {
-        setPaymentDate(dayjs());
-      }
-    } else {
-      setPaymentDate(dayjs());
+    let customerId = payment?.customer_id || payment?.customer?.id;
+    if (customerId) {
+      axios
+        .get(paths.API.CUSTOMERS(customerId))
+        .then((res) => {
+          if (!onChange) return;
+          onChange({ ...payment, customer: res.data });
+        })
+        .catch((error) => console.log(error));
+    }
+  }, [payment.customer_id]);
+
+  const compareFunc = (a, b) => {
+    if (a.rental_agreement.unit.name < b.rental_agreement.unit.name) {
+      return -1;
     }
 
-    if (readOnly) {
-      findAgreements();
+    if (a.rental_agreement.unit.name > b.rental_agreement.unit.name) {
+      return 1;
     }
-  }, []);
+
+    return 0;
+  };
 
   React.useEffect(() => {
-    if (onChange) {
-      onChange({
-        ...payment,
-        date: paymentDate,
+    if (!payment?.customer?.rental_agreements) return;
+    if (!onChange) return;
+
+    let newAgreementPayments = [];
+
+    for (agreement of payment.customer.rental_agreements) {
+      newAgreementPayments.push({
+        rental_agreement: agreement,
+        rental_agreement_id: agreement.id,
+        amount: (agreement.price_in_cents
+          ? centsToDollars(agreement.price_in_cents)
+          : ""),
+        notes: "",
+        account_adjustments: [],
       });
     }
-  }, [paymentDate]);
 
-  React.useEffect(() => {
-    if (customerId) {
-      findAgreements();
-    }
-  }, [customerId]);
+    onChange({
+      ...payment,
+      rental_agreement_payments: newAgreementPayments,
+    });
+  }, [payment.customer?.id]);
 
-  const findAgreements = () => {
-    axios
-      .get(paths.API.CUSTOMERS(customerId))
-      .then((res) => {
-        setData(res.data);
-      })
-      .catch((error) => console.log(error));
+  const agreementPaymentChangeHandler = (updatedPayment) => {
+    let agreements = payment.rental_agreement_payments.filter((agreement) =>
+      updatedPayment.rental_agreement.id != agreement.rental_agreement.id
+    );
+
+    onChange({
+      ...payment,
+      rental_agreement_payments: [...agreements, updatedPayment],
+    });
   };
+
+  if (!payment) return;
 
   return (
     <>
-      <Paper
+      <Box
         sx={{
           display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "space-between",
+          flexDirection: { xs: "column", sm: "row" },
+          gap: 1,
+          width: 1,
         }}
       >
-        <input
-          type="hidden"
-          name="payment[customer_id]"
-          id="payment_customer_id]"
-          value={customerId}
-        />
-        <input
-          type="hidden"
-          name="payment[date]"
-          id="payment_date"
-          value={dayjs(paymentDate).format("YYYY-MM-DD")}
-        />
         <SelectCustomer
-          readOnly={readOnly}
+          sx={{ flexGrow: 1, flexBasis: 0 }}
+          readOnly={readOnly || lockCustomer}
           customer={payment.customer}
           onChange={(newValue) => {
             onChange({
               ...payment,
-              customer: newValue,
+              customer_id: newValue.id,
             });
-            setCustomerId(newValue?.id);
           }}
         />
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
-            required
-            id="payment_date"
-            name="payment[date]"
-            label="Date"
-            sx={{ width: 1, m: 1, maxWidth: "sm" }}
-            value={paymentDate}
-            onChange={(newValue) => {
-              setPaymentDate(newValue);
-            }}
-          />
-        </LocalizationProvider>
-      </Paper>
-      <Paper sx={{ my: 1 }}>
-        <Box sx={{ width: 1 }}>
-          <Divider>Rental Agreements</Divider>
-          {data && (
-            data.rental_agreements.map((agreement) => {
-              return (
-                <RentalAgreementPayment
-                  key={agreement.id}
-                  rentalAgreement={agreement}
-                />
-              );
-            })
-          )}
-        </Box>
-      </Paper>
+        <DatePicker
+          readOnly={readOnly}
+          required
+          id="payment_date"
+          name="payment[date]"
+          label="Date"
+          sx={{ flexGrow: 1, flexBasis: 0 }}
+          value={dayjs.isDayjs(payment.date)
+            ? payment.date
+            : payment.date
+            ? dayjs(payment.date)
+            : null}
+          onChange={(newValue) => {
+            onChange({
+              ...payment,
+              date: newValue,
+            });
+          }}
+        />
+      </Box>
+      <Box sx={{ width: 1 }}>
+        <TableContainer
+          sx={{ overflow: "clip", "& .MuiTableCell-root": { p: 1 } }}
+        >
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ width: "75px" }}>Unit</TableCell>
+                <TableCell sx={{ width: "75px" }}>Cost</TableCell>
+                <TableCell sx={{ width: "auto" }} />
+                <TableCell sx={{ width: "200px" }} align="center">
+                  Paid
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {payment.rental_agreement_payments && (
+                payment.rental_agreement_payments.sort(compareFunc).map(
+                  (agreementPayment) => {
+                    return (
+                      <RentalAgreementPaymentTableRow
+                        key={agreementPayment.rental_agreement.id}
+                        row={agreementPayment}
+                        onChange={agreementPaymentChangeHandler}
+                        readOnly={readOnly}
+                      />
+                    );
+                  },
+                )
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
     </>
   );
 };

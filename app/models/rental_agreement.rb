@@ -29,7 +29,7 @@ class RentalAgreement < ApplicationRecord
       amount_in_cents: (price_in_cents || 0) * -1
     )
 
-    update(next_due_date: Date.today + 1.month)
+    update(next_due_date: (next_due_date || Date.today) + 1.month)
   end
 
   private

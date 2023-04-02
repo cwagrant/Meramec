@@ -1,0 +1,59 @@
+#title.d-flex.justify-content-between.mb-3
+  %h3 Jay and May Properties
+  %h3 Invoice
+
+#id-block.d-flex.justify-content-between.mb-3
+  #address
+    %p.mb-0 12219 Tesson Ferry Rd
+    %p Saint Louis, MO 63128
+  #logo
+    logo goes here
+
+#invoice-meta.d-flex.justify-content-between.mb-3
+  #customer-address
+    %h4 Bill To
+    %p.mb-0 customer
+    %p.mb-0 street address
+    %p.mb-0 city state zip
+  #meta
+    %table
+      %tbody
+        %tr
+          %th Invoice #
+          %td 12345
+        %tr
+          %th Invoice Date
+          %td 10/06/2022
+        %tr
+          %th Due Date
+          %td 10/06/2022
+
+#invoice-data
+  %table.w-100
+    %thead
+      %tr
+        %th Qty
+        %th Description
+        %th Unit Price
+        %th Amount
+    %tbody
+      loop to create the body
+
+    %tbody
+      %tr
+        %td
+        %td
+        %th Subtotal
+        %td amount
+      %tr
+        %td
+        %td
+        %th Discounts
+        %td amount
+      %tr
+        %td
+        %td
+        %th Total
+        %td
+
+#terms

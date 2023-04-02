@@ -1,54 +1,51 @@
 import React from "react";
 import { Box, Button } from "@mui/material";
-import { useNavigate, useOutletContext, useParams } from "react-router-dom";
-import PropertyFields from "./PropertyFields";
+import PaymentFields from "./PaymentFields";
 import useAxios from "../useAxios";
-import { useSnackbar } from "notistack";
 import * as paths from "../PathHelper";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+import { useSnackbar } from "notistack";
 
-const Edit = () => {
-  const { propertyId } = useParams();
-  const { property, setProperty } = useOutletContext();
+const EditPayment = () => {
+  const { paymentId } = useParams();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const axios = useAxios(enqueueSnackbar);
-  console.log(property, setProperty);
-  console.log(useOutletContext());
+  const { payment, setPayment } = useOutletContext();
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
     axios
-      .put(
-        paths.API.PROPERTIES(propertyId),
-        { property: property },
-      )
+      .put(paths.API.PAYMENTS(paymentId), { payment: payment })
       .then((res) => {
-        const id = res.data.id;
-
-        setProperty(res.data);
-        enqueueSnackbar("Property updated successfully", {
-          variant: "success",
-        });
-        navigate("/properties/" + id);
+        enqueueSnackbar("Payment saved successfully", { variant: "success" });
+        setPayment(res.data);
+        navigate(`/payments/${paymentId}`);
       });
   };
 
   return (
     <Box
+      id="paymentForm"
       component="form"
-      id="propertyForm"
       onSubmit={handleSubmit}
       sx={{
         width: 1,
-        maxWidth: "sm",
-        "& .MuiFormControl-root": { m: 1, maxWidth: "sm" },
+        maxWidth: "md",
+        "& .MuiFormControl-root": { m: 1, maxWidth: "md" },
       }}
     >
-      <PropertyFields
-        property={property}
-        onChange={(newValue) => setProperty(newValue)}
-      />
+      {payment &&
+        (
+          <PaymentFields
+            lockCustomer
+            payment={payment}
+            onChange={(newValue) => {
+              setPayment(newValue);
+            }}
+          />
+        )}
 
       <Box sx={{ display: "flex", m: 1, gap: 2 }}>
         <Button
@@ -73,4 +70,4 @@ const Edit = () => {
   );
 };
 
-export default Edit;
+export default EditPayment;

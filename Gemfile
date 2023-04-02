@@ -70,3 +70,7 @@ gem "devise-jwt", "~> 0.10.0"
 gem "fast_jsonapi", "~> 1.5"
 gem "sidekiq-scheduler", "~> 5.0"
 gem "lograge", "~> 0.12.0"
+
+gem "haml", "~> 6.1"
+
+gem "grover", "~> 1.1"

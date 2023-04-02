@@ -2,13 +2,14 @@ import React from "react";
 import { Outlet, useParams } from "react-router-dom";
 
 import { default as Index } from "./Payments";
-// import Edit from "./EditRentalAgreement";
+import Edit from "./EditPayment";
 import Show from "./Payment";
 import New from "./NewPayment";
 import useAxios from "../useAxios";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import * as paths from "../PathHelper";
+import Breadcrumbs from "../Breadcrumbs";
 
 const Payments = ({ children }) => {
   const { paymentId } = useParams();
@@ -44,12 +45,20 @@ const Payments = ({ children }) => {
   //   }
   // }, [agreementId]);
 
-  return <Outlet context={{ payment, setPayment }} />;
+  return (
+    <>
+      <Breadcrumbs
+        payment={payment}
+      />
+
+      <Outlet context={{ payment, setPayment }} />
+    </>
+  );
 };
 
 Payments.New = New;
 Payments.Index = Index;
-// Payments.Edit = Edit;
+Payments.Edit = Edit;
 Payments.Show = Show;
 
 export default Payments;
