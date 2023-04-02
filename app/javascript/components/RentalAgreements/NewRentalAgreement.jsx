@@ -48,7 +48,7 @@ const New = () => {
         "& .MuiFormControl-root": { m: 1, maxWidth: "sm" },
       }}
     >
-      <Paper sx={{ p: 1 }}>
+      <Box sx={{ p: 1 }}>
         <RentalAgreementFields
           rentalAgreement={rentalAgreement}
           onChange={(newValue) => setRentalAgreement(newValue)}
@@ -73,7 +73,7 @@ const New = () => {
             Cancel
           </Button>
         </Box>
-      </Paper>
+      </Box>
     </Box>
   );
 };

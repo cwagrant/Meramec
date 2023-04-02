@@ -22,36 +22,57 @@ import CustomerFields from "../Customers/CustomerFields";
 
 const RentalAgreementFields = ({ rentalAgreement, onChange, readOnly }) => {
   const [unitOptions, setUnitOptions] = React.useState([]);
-  const [data, setData] = React.useState();
+  const [propertyList, setPropertyList] = React.useState([]);
+  const [property, setProperty] = React.useState(null);
   const [newCustomer, setNewCustomer] = React.useState(false);
   const axios = useAxios();
 
   React.useEffect(() => {
     axios
-      .get(paths.API.UNITS())
+      .get(paths.API.PROPERTIES())
       .then((res) => {
-        setData(res.data);
+        const data = res.data?.slice().sort((a, b) => {
+          if (a.name === b.name) return 0;
+
+          a.name < b.name ? -1 : 1;
+        });
+        setPropertyList(data);
       })
       .catch((error) => console.log(error));
   }, []);
 
   React.useEffect(() => {
-    const units = data?.slice().sort((a, b) => {
-      let x = a.occupied - b.occupied;
+    if (property) return;
 
-      if (x !== 0) {
-        return x;
-      }
+    if (
+      rentalAgreement && rentalAgreement?.unit && rentalAgreement.unit?.property
+    ) {
+      setProperty(rentalAgreement.unit.property);
+    }
+  }, [rentalAgreement]);
 
-      if (a.name === b.name) {
-        return 0;
-      }
+  React.useEffect(() => {
+    if (!property) return;
+    axios
+      .get(paths.API.UNITS(), { params: { property: property.id } })
+      .then((res) => {
+        const units = res.data?.slice().sort((a, b) => {
+          let x = a.occupied - b.occupied;
 
-      return a.name < b.name ? -1 : 1;
-    });
+          if (x !== 0) {
+            return x;
+          }
 
-    setUnitOptions(units || []);
-  }, [data]);
+          if (a.name === b.name) {
+            return 0;
+          }
+
+          return a.name < b.name ? -1 : 1;
+        });
+        setUnitOptions(units);
+      })
+      .catch((error) => console.log(error));
+  }, [property]);
 
   return (
     <>
@@ -135,6 +156,25 @@ const RentalAgreementFields = ({ rentalAgreement, onChange, readOnly }) => {
       </Box>
 
       <Divider>Unit</Divider>
+      <Autocomplete
+        disablePortal
+        options={propertyList}
+        getOptionLabel={(option) => option.name}
+        value={property}
+        onChange={(event, newValue) => {
+          setProperty(newValue);
+          onChange({
+            ...rentalAgreement,
+            unit_id: null,
+            unit: null,
+          });
+        }}
+        sx={{ width: 1, pr: 2 }}
+        renderInput={(params) => <TextField {...params} label="Property" />}
+        isOptionEqualToValue={(option, value) => {
+          return option?.id === value?.id;
+        }}
+      />
       <Autocomplete
         disablePortal
         id="unit_id"

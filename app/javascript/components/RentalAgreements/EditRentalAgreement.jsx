@@ -43,7 +43,7 @@ const Edit = () => {
         "& .MuiFormControl-root": { m: 1, maxWidth: "sm" },
       }}
     >
-      <Paper sx={{ p: 1 }}>
+      <Box sx={{ p: 1 }}>
         {rentalAgreement &&
           (
             <RentalAgreementFields
@@ -73,7 +73,7 @@ const Edit = () => {
             Cancel
           </Button>
         </Box>
-      </Paper>
+      </Box>
     </Box>
   );
 };
