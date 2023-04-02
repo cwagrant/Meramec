@@ -131,7 +131,7 @@ const Properties = () => {
           DefaultOrderBy="name"
           TableHeaders={[
             { id: "id", numeric: false, label: "ID" },
-            { id: "property", numeric: false, label: "Property" },
+            { id: "name", numeric: false, label: "Property" },
             { id: null },
           ]}
           TableRow={PropertyTableRow}
