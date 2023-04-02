@@ -9,12 +9,6 @@
 #
 #
 #
-def create_rat(ra, term)
-  RentalAgreementTerm.create(
-    rental_agreement: ra,
-    term: term
-  )
-end
 
 def getDates()
   startDate = Date.today - rand(10000)
@@ -33,24 +27,6 @@ end
 
 unless Rails.env.production?
   ActiveRecord::Base.transaction do 
-
-    late_fee = Term.create(
-      name: 'Late Fee',
-      description: 'Fee for when customers fail to pay within 5 days.'
-    )
-
-    prorate = Term.create(
-      name: 'Prorate',
-      description: 'Prorated amount charged to the customer.',
-      term_type: :prorate
-    )
-
-    discount = Term.create(
-      name: 'Prepay Discount',
-      description: 'Amount discounted from the customers bill for prepaying for the month.',
-      term_type: :discount
-    )
-
     types = %w(apartment storage parking)
 
     100.times {
@@ -78,8 +54,8 @@ unless Rails.env.production?
       Unit.create(
         name: "#{Faker::Alphanumeric.alpha.last(2).upcase}#{SecureRandom.rand(100)}",
         type_of: types.sample,
-        price_in_cents: SecureRandom.rand(30000),
-        property: property
+        property: property,
+        price_in_cents: 2500 * rand(1..20)
       )
     }
 
@@ -89,8 +65,16 @@ unless Rails.env.production?
         last_name: Faker::Name.last_name,
         email: Faker::Internet.safe_email,
         gate_code: SecureRandom.random_number(10**6).to_s.last(4),
-        address: Address.where.not(id: Property.all.pluck(:address_id)).sample
+        address: Address.where.not(id: Property.all.pluck(:address_id)).sample,
+        phone_number: Faker::PhoneNumber.cell_phone
       )
+    }
+
+    10.times{
+      Customer
+        .where(company: [nil, ""])
+        .sample
+        .update(company: Faker::Company.name)
     }
 
     used_ids = []
@@ -107,13 +91,47 @@ unless Rails.env.production?
         start_date: dates[:open],
         end_date: dates[:close]
       )
-
-      terms = Term.all.sample(SecureRandom.rand(3))
-
-      terms.each do |term|
-        create_rat(ra, term)
-      end
     }
+
+    Customer.all.each do |customer|
+      next if customer.rental_agreements.none?
+
+      earliest = customer.rental_agreements.map(&:start_date).min
+      end_dates = customer.rental_agreements.map(&:end_date)
+      latest = end_dates.include?(nil) ? Date.today : end_dates.max
+
+      arel_table = RentalAgreement.arel_table
+
+      next_date = earliest
+      while(next_date < latest) do
+        customer.rental_agreements.each { |ra| ra.owes!(next_date) }
+        query = arel_table[:end_date].eq(nil).or(arel_table[:end_date].lteq(next_date))
+        rental_agreements = customer.rental_agreements.where(start_date: earliest..next_date).where(query)
+
+        raps = customer.rental_agreements.map do |ra|
+          discount_price = 500 * SecureRandom.rand(0..1)
+
+          {
+            rental_agreement_id: ra.id,
+            amount_in_cents: ra.price_in_cents - discount_price,
+            account_adjustments_attributes: [{
+              rental_agreement_id: ra.id,
+              type_of: 'discount',
+              reason: 'pre_payment',
+              price_in_cents: discount_price
+            }]
+          }
+        end
+
+        Payment.create({
+          customer_id: customer.id,
+          date: next_date,
+          rental_agreement_payments_attributes: raps
+        })
+
+        next_date = next_date + 1.month
+      end
+    end
   end
 end
 

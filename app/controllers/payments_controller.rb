@@ -1,6 +1,6 @@
 class PaymentsController < ApplicationController
   def index
-    render json: Payment.search(params[:search])
+    render json: Payment.includes(:customer).search(params[:search], models: [Payment, Customer, Unit]).as_json
   end
 
   def show

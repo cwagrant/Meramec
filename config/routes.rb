@@ -21,6 +21,7 @@ Rails.application.routes.draw do
     resources :rental_agreements, except: [:new, :edit]
     resources :payments, except: [:new, :edit]
     resources :invoices, only: [:show]
+    resources :ledger_entries, only: [:index]
   end
 
   get '/*path' => 'site#index'

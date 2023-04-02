@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_02_011552) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_02_221814) do
   create_table "account_adjustments", force: :cascade do |t|
     t.integer "rental_agreement_id"
     t.string "source_type"
@@ -21,6 +21,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_02_011552) do
     t.integer "price_in_cents", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.date "date"
     t.index ["source_type", "source_id"], name: "index_account_adjustments_on_source"
   end
 
@@ -45,6 +46,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_02_011552) do
     t.datetime "updated_at", null: false
     t.string "phone_number"
     t.string "company"
+    t.string "formal_name", default: ""
     t.index ["address_id"], name: "index_customers_on_address_id"
   end
 
@@ -55,6 +57,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_02_011552) do
     t.integer "amount_in_cents", default: 0
     t.datetime "created_at", default: "2023-04-02 01:17:51", null: false
     t.datetime "updated_at", default: "2023-04-02 01:17:51", null: false
+    t.date "date"
+    t.integer "balance_in_cents", default: 0
     t.index ["rental_agreement_id"], name: "index_ledger_entries_on_rental_agreement_id"
     t.index ["source_type", "source_id"], name: "index_ledger_entries_on_source"
   end
@@ -62,7 +66,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_02_011552) do
   create_table "payments", force: :cascade do |t|
     t.integer "customer_id"
     t.integer "attachment_id"
-    t.integer "amount_in_cents"
     t.date "date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -80,8 +83,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_02_011552) do
   create_table "rental_agreement_payments", force: :cascade do |t|
     t.integer "rental_agreement_id"
     t.integer "payment_id"
-    t.integer "paid_months"
-    t.date "paid_until"
     t.integer "amount_in_cents", default: 0
     t.text "note", default: ""
     t.index ["payment_id"], name: "index_rental_agreement_payments_on_payment_id"

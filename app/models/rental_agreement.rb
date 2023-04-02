@@ -5,11 +5,13 @@ class RentalAgreement < ApplicationRecord
 
   belongs_to :unit
   belongs_to :customer
-  has_many :rental_agreement_terms, dependent: :destroy
+
   has_many :ledger_entries
+  has_many :rental_agreement_payments
+
   accepts_nested_attributes_for :unit, :customer
 
-  before_save :update_unit_occupancy, if: :will_save_change_to_end_date?
+  after_save :update_unit_occupancy
   before_validation :set_price_in_cents
 
   scope :payment_due_on, ->(date) { where('next_due_date <= ?', date.to_date)}
@@ -20,11 +22,12 @@ class RentalAgreement < ApplicationRecord
   end
 
   def as_json(args)
-    super({include: { unit: { include: :property}, customer: { methods: [:formal_name] }}}.merge(args))
+    super({include: { unit: { include: :property}, customer: {}}}.merge(args))
   end
 
-  def owes!
+  def owes!(date)
     ledger_entries.create(
+      date: date || Date.today,
       source: self,
       amount_in_cents: (price_in_cents || 0) * -1
     )

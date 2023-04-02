@@ -1,30 +1,13 @@
 import React from "react";
-import { debounce } from "lodash";
 import { useCallback, useEffect, useState } from "react";
-import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
-import {
-  Box,
-  Button,
-  Collapse,
-  IconButton,
-  Link,
-  TableCell,
-  TableRow,
-  TextField,
-} from "@mui/material";
+import { Link as RouterLink, useParams } from "react-router-dom";
+import { Box, Button, TextField } from "@mui/material";
 import useAxios from "../useAxios";
 import { useSnackbar } from "notistack";
 import * as paths from "../PathHelper";
-import Unit from "./Unit";
 import EnhancedTable from "../EnhancedTable";
 import UnitTableRow from "./UnitTableRow";
-
-import LaunchIcon from "@mui/icons-material/Launch";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import AddBoxIcon from "@mui/icons-material/AddBox";
+import SearchBar from "../SearchBar";
 
 const Units = () => {
   const [query, setQuery] = useState("");
@@ -40,11 +23,6 @@ const Units = () => {
   useEffect(() => {
     queryUnits();
   }, [query]);
-
-  const debouncedChangeHandler = useCallback(
-    debounce(changeHandler, 300),
-    [],
-  );
 
   const deleteUnit = (id) => {
     axios
@@ -72,33 +50,12 @@ const Units = () => {
 
   return (
     <>
-      <TextField
-        sx={{ mb: 2, width: 1, maxWidth: "md" }}
-        id="property-search"
-        label="Search for units by name..."
-        variant="filled"
-        onChange={debouncedChangeHandler}
-        type="text"
+      <SearchBar
+        onChange={changeHandler}
+        TextFieldProps={{ sx: { width: 1, maxWidth: "lg" } }}
+        newUrl={"./units/new"}
       />
-      <Box
-        sx={{
-          my: 1,
-          display: "flex",
-          justifyContent: "flex-end",
-          width: 1,
-          maxWidth: "md",
-        }}
-      >
-        <Button
-          component={RouterLink}
-          to={"./units/new"}
-          variant="outlined"
-          startIcon={<AddBoxIcon />}
-        >
-          New
-        </Button>
-      </Box>
-      <Box sx={{ maxWidth: "md" }}>
+      <Box sx={{ maxWidth: "lg" }}>
         <EnhancedTable
           rows={data}
           DefaultOrder="asc"

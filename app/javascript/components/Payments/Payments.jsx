@@ -1,15 +1,14 @@
 import React from "react";
-import { useCallback, useEffect, useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Box, Paper } from "@mui/material";
+import { useSnackbar } from "notistack";
+import CircularProgress from "@mui/material/CircularProgress";
+
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
-import { useSnackbar } from "notistack";
 import PaymentTableRow from "./PaymentTableRow";
+import SearchBar from "../SearchBar";
 import EnhancedTable from "../EnhancedTable";
-
-import { debounce } from "lodash";
-import { Box, Button, TextField } from "@mui/material";
-import AddBoxIcon from "@mui/icons-material/AddBox";
 
 const Payments = () => {
   const [query, setQuery] = useState("");
@@ -25,17 +24,13 @@ const Payments = () => {
     queryPayments();
   }, [query]);
 
-  const debouncedChangeHandler = useCallback(
-    debounce(changeHandler, 300),
-    [],
-  );
-
   const queryPayments = () => {
     axios
       .get(paths.API.PAYMENTS(), {
         params: { search: query },
       })
       .then((res) => {
+        console.log(res.data);
         setData(res.data);
       });
   };
@@ -51,36 +46,13 @@ const Payments = () => {
   };
 
   return (
-    <div key="paymentsList">
-      <TextField
-        sx={{ width: 1, maxWidth: "md" }}
-        id="payment-search"
-        label="Search for payments by name..."
-        variant="filled"
-        onChange={debouncedChangeHandler}
-        type="text"
+    <Box sx={{ maxWidth: "lg" }}>
+      <SearchBar
+        onChange={changeHandler}
+        TextFieldProps={{ sx: { width: 1 } }}
+        newUrl={"./new"}
       />
-      <Box
-        sx={{
-          my: 1,
-          display: "flex",
-          justifyContent: "flex-end",
-          width: 1,
-          maxWidth: "md",
-        }}
-      >
-        <Box>
-          <Button
-            component={RouterLink}
-            to={"./new"}
-            variant="outlined"
-            startIcon={<AddBoxIcon />}
-          >
-            New
-          </Button>
-        </Box>
-      </Box>
-      <Box sx={{ maxWidth: "md" }}>
+      <Box>
         <EnhancedTable
           rows={data}
           DefaultOrder="desc"
@@ -95,7 +67,7 @@ const Payments = () => {
           onDelete={deletePayment}
         />
       </Box>
-    </div>
+    </Box>
   );
 };
 

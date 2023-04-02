@@ -7,11 +7,12 @@ import { debounce } from "lodash";
 import { useSnackbar } from "notistack";
 import EnhancedTable from "../EnhancedTable";
 import RentalAgreementTableRow from "./RentalAgreementTableRow";
+import SearchBar from "../SearchBar";
 
 import { Box, Button, TextField } from "@mui/material";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 
-const RentalAgreements = () => {
+const RentalAgreements = ({ customer }) => {
   const [query, setQuery] = useState("");
   const [data, setData] = useState();
   const { enqueueSnackbar } = useSnackbar();
@@ -26,10 +27,15 @@ const RentalAgreements = () => {
   }, [query]);
 
   const queryRentalAgreements = () => {
+    params = {
+      search: query,
+    };
+
+    if (customer) {
+      params = { ...params, customer_id: customer.id };
+    }
     axios
-      .get(paths.API.RENTAL_AGREEMENTS(), {
-        params: { search: query },
-      })
+      .get(paths.API.RENTAL_AGREEMENTS(), { params: params })
       .then((res) => {
         setData(res.data);
       });
@@ -51,60 +57,28 @@ const RentalAgreements = () => {
   };
 
   return (
-    <div key="rentalAgreementsList">
-      <TextField
-        sx={{ width: 1, maxWidth: "md" }}
-        id="rentalAgreement-search"
-        label="Search for rentalAgreements by name..."
-        variant="filled"
-        onChange={debouncedChangeHandler}
-        type="text"
+    <Box sx={{ maxWidth: "lg" }}>
+      <SearchBar
+        onChange={changeHandler}
+        TextFieldProps={{ sx: { width: 1 } }}
+        newUrl={"./units/new"}
       />
-      <Box
-        sx={{
-          my: 1,
-          display: "flex",
-          justifyContent: "flex-end",
-          width: 1,
-          maxWidth: "md",
-        }}
-      >
-        <Box>
-          <Button
-            component={RouterLink}
-            to={"./new"}
-            variant="outlined"
-            startIcon={<AddBoxIcon />}
-          >
-            New
-          </Button>
-        </Box>
-      </Box>
-      <Box sx={{ maxWidth: "md" }}>
-        <EnhancedTable
-          rows={data}
-          DefaultOrder="asc"
-          DefaultOrderBy="customer.formal_name"
-          TableHeaders={[
-            { id: "unit.name", numeric: false, label: "Unit" },
-            { id: "customer.formal_name", numeric: false, label: "Customer" },
-            { id: "start_date", numeric: false, label: "Start Date" },
-            { id: "end_date", numeric: false, label: "End Date" },
-            { id: "null" },
-          ]}
-          TableRow={RentalAgreementTableRow}
-          onDelete={deleteAgreement}
-        />
-      </Box>
-    </div>
+      <EnhancedTable
+        rows={data}
+        DefaultOrder="asc"
+        DefaultOrderBy="customer.formal_name"
+        TableHeaders={[
+          { id: "unit.name", numeric: false, label: "Unit" },
+          { id: "customer.formal_name", numeric: false, label: "Customer" },
+          { id: "start_date", numeric: false, label: "Start Date" },
+          { id: "end_date", numeric: false, label: "End Date" },
+          { id: "null" },
+        ]}
+        TableRow={RentalAgreementTableRow}
+        onDelete={deleteAgreement}
+      />
+    </Box>
   );
 };
 
 export default RentalAgreements;
-/* I think passing in a TableRow might be best as it lets us be very specific
- * about what happens in the table row while not having to have things like
- * DataActions or DataKeys. Instead we just pass in a row that will tell it
- * what to do, then we can pass whatever TableHeaders we need to match up to that.
- *
- * It'll be pretty big, but it'll also help avoid complexity down the line.
- */

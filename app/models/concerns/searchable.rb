@@ -20,6 +20,8 @@ module Searchable
         end
       end
 
+      queries.reject! { |c| c.blank? }
+
       associations = models.reduce([]) do |search, model|
         if model.name != self.model.name
           association = self.reflect_on_all_associations.find do |assoc|
@@ -38,14 +40,11 @@ module Searchable
 
       self.joins!(associations) if associations.any?
 
-      # I want to get get all the terms into a where clause
-      # that then does a .or(where()) for each of the models
-
       scopes = queries.map do |terms|
         self.where(terms.reduce(:or))
       end
 
-      scopes.reduce(:or)
+      scopes.reduce(:or).distinct
     end
   end
 

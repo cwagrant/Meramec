@@ -1,6 +1,7 @@
 class AccountAdjustment < ApplicationRecord
   # In retrospect a RentalAgreement would've been better called an Account. Too late for that though.
   belongs_to :rental_agreement
+  belongs_to :source, polymorphic: true
   has_one :ledger_entry, as: :source, dependent: :destroy
 
   attr_accessor :price
@@ -15,15 +16,20 @@ class AccountAdjustment < ApplicationRecord
   private
 
   def create_or_update_transaction
-    entry = LedgerEntry.where(source: self).first_or_create(
+    date_of_transaction = date || source.try(:date)
+    price_change = type_of == "discount" ? price_in_cents : (price_in_cents * -1)
+
+    entry = LedgerEntry.where(source: self).first_or_initialize(
+      date: date_of_transaction,
       source: self,
-      rental_agreement: rental_agreement
+      rental_agreement: rental_agreement,
+      amount_in_cents: price_change
     )
 
-    if type_of == "discount"
-      entry.update(amount_in_cents: price_in_cents)
+    if entry.new_record?
+      entry.save
     else
-      entry.update(amount_in_cents: price_in_cents * -1)
+      entry.update(amount_in_cents: price_change)
     end
   end
 

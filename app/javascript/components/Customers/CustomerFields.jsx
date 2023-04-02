@@ -1,11 +1,10 @@
 import React from "react";
-import { Box, TextField } from "@mui/material";
+import { Box, Grid, TextField } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import MuiPhoneNumber from "material-ui-phone-number";
 
 const StyledInput = styled(TextField)(({ theme }) => ({
   width: "100%",
-  margin: theme.spacing(1),
   maxWidth: theme.breakpoints.sm,
 }));
 
@@ -13,18 +12,10 @@ const CustomerFields = ({ customer, onChange, readOnly }) => {
   if (!customer) return;
 
   return (
-    <>
-      <Box
-        sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "space-between",
-        }}
-      >
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
         <StyledInput
-          id="customer_company"
           label="Company"
-          name="customer[company]"
           placeholder="Company"
           value={customer.company || ""}
           onChange={(event) => {
@@ -34,11 +25,11 @@ const CustomerFields = ({ customer, onChange, readOnly }) => {
             readOnly: readOnly,
           }}
         />
+      </Grid>
+      <Grid item xs={12} md={6}>
         <StyledInput
           required
-          id="first_name"
           label="First Name"
-          name="customer[first_name]"
           placeholder="First Name"
           value={customer.first_name}
           onChange={(event) =>
@@ -47,6 +38,8 @@ const CustomerFields = ({ customer, onChange, readOnly }) => {
             readOnly: readOnly,
           }}
         />
+      </Grid>
+      <Grid item xs={12} md={6}>
         <StyledInput
           required
           id="last_name"
@@ -60,6 +53,8 @@ const CustomerFields = ({ customer, onChange, readOnly }) => {
             readOnly: readOnly,
           }}
         />
+      </Grid>
+      <Grid item xs={12}>
         <StyledInput
           required
           id="gate_code"
@@ -73,14 +68,8 @@ const CustomerFields = ({ customer, onChange, readOnly }) => {
             readOnly: readOnly,
           }}
         />
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexWrap: { xs: "wrap", sm: "nowrap" },
-          justifyContent: "space-between",
-        }}
-      >
+      </Grid>
+      <Grid item xs={12} md={6}>
         <StyledInput
           id="customer_email"
           label="Email"
@@ -93,6 +82,8 @@ const CustomerFields = ({ customer, onChange, readOnly }) => {
             readOnly: readOnly,
           }}
         />
+      </Grid>
+      <Grid item xs={12} md={6}>
         <MuiPhoneNumber
           InputProps={{
             readOnly: readOnly,
@@ -108,12 +99,10 @@ const CustomerFields = ({ customer, onChange, readOnly }) => {
             onChange({ ...customer, phone_number: newValue })}
           sx={{
             width: "100%",
-            m: 1,
-            maxWidth: "sm",
           }}
         />
-      </Box>
-    </>
+      </Grid>
+    </Grid>
   );
 };
 

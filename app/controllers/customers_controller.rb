@@ -1,10 +1,10 @@
 class CustomersController < ApplicationController
   def index
-    render json: Customer.search(params[:search], models: [Customer, Unit]).as_json(methods: [:formal_name])
+    render json: Customer.search(params[:search], models: [Customer, Unit]).as_json
   end
 
   def show
-    render json: Customer.find(params[:id]).as_json(methods: [:formal_name])
+    render json: Customer.find(params[:id]).as_json
   end
 
   def create

@@ -14,6 +14,7 @@ import {
   TableSortLabel,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
+import CircularProgress from "@mui/material/CircularProgress";
 import { get } from "lodash";
 
 function descendingComparator(a, b, orderBy) {
@@ -35,8 +36,6 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-const DefaultOrder = "asc";
-const DefaultOrderBy = "calories";
 const DEFAULT_ROWS_PER_PAGE = 10;
 
 function EnhancedTableHead(props) {
@@ -88,7 +87,6 @@ function EnhancedTableHead(props) {
 }
 
 EnhancedTableHead.propTypes = {
-  numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
   order: PropTypes.oneOf(["asc", "desc"]).isRequired,
   orderBy: PropTypes.string.isRequired,
@@ -97,7 +95,6 @@ EnhancedTableHead.propTypes = {
 export default function EnhancedTable(props) {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("");
-  const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [visibleRows, setVisibleRows] = React.useState(null);
   const [rowsPerPage, setRowsPerPage] = React.useState(DEFAULT_ROWS_PER_PAGE);
@@ -108,10 +105,11 @@ export default function EnhancedTable(props) {
     TableHeaders,
     TableRow: ProvidedTableRow,
     onDelete,
+    TableProps,
   } = props;
 
   React.useEffect(() => {
-    if (!rows || !rows.length > 0) return;
+    if (!rows) return;
 
     setOrder(DefaultOrder);
     setOrderBy(DefaultOrderBy);
@@ -134,8 +132,6 @@ export default function EnhancedTable(props) {
       const toggledOrder = isAsc ? "desc" : "asc";
       setOrder(toggledOrder);
       setOrderBy(newOrderBy);
-
-      if (!rows) return;
 
       const sortedRows = rows.sort(
         getComparator(toggledOrder, newOrderBy),
@@ -173,7 +169,6 @@ export default function EnhancedTable(props) {
 
   const handleChangeRowsPerPage = React.useCallback(
     (event) => {
-      if (!rows) return;
       const updatedRowsPerPage = parseInt(event.target.value, 10);
       setRowsPerPage(updatedRowsPerPage);
 
@@ -190,17 +185,26 @@ export default function EnhancedTable(props) {
     [order, orderBy],
   );
 
+  if (!rows) {
+    return (
+      <Box sx={{ display: "flex" }}>
+        <Paper sx={{ p: 3 }}>
+          <CircularProgress />
+        </Paper>
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
         <TableContainer>
           <Table
-            sx={{ minWidth: 750 }}
+            {...TableProps}
             aria-labelledby="tableTitle"
             size={"medium"}
           >
             <EnhancedTableHead
-              numSelected={selected.length}
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}

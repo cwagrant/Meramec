@@ -42,6 +42,7 @@ export const API = {
   CUSTOMERS: pathHelper("/api/customers"),
   RENTAL_AGREEMENTS: pathHelper("/api/rental_agreements"),
   PAYMENTS: pathHelper("/api/payments"),
+  LEDGER: pathHelper("/api/ledger_entries"),
   USERS: pathHelper("/api/users"),
   USER: {
     LOGIN: pathHelper("/api/login"),

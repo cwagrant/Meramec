@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Paper } from "@mui/material";
+import { Box, Button, Grid, Typography } from "@mui/material";
 import { useOutletContext, useParams } from "react-router-dom";
 import RentalAgreementFields from "./RentalAgreementFields";
 import { useNavigate } from "react-router-dom";
@@ -33,47 +33,38 @@ const Edit = () => {
   };
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      id="rentalAgreementForm"
-      sx={{
-        width: 1,
-        maxWidth: "sm",
-        "& .MuiFormControl-root": { m: 1, maxWidth: "sm" },
-      }}
-    >
-      <Box sx={{ p: 1 }}>
-        {rentalAgreement &&
-          (
-            <RentalAgreementFields
-              rentalAgreement={rentalAgreement}
-              onChange={(newValue) => {
-                setRentalAgreement(newValue);
-              }}
-            />
-          )}
-
-        <Box sx={{ display: "flex", m: 1, gap: 2 }}>
-          <Button
-            variant="outlined"
-            type="submit"
-          >
-            Submit
-          </Button>
-          <Button
-            variant="outlined"
-            type="button"
-            onClick={(event) => {
-              event.preventDefault();
-              if (!window.confirm("Are you sure you wish to cancel?")) return;
-              navigate("..");
+    <Box sx={{ maxWidth: "md", p: 2 }}>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <RentalAgreementFields
+            rentalAgreement={rentalAgreement}
+            onChange={(newValue) => {
+              setRentalAgreement(newValue);
             }}
-          >
-            Cancel
-          </Button>
-        </Box>
-      </Box>
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <Box sx={{ display: "flex", m: 1, gap: 2 }}>
+            <Button
+              variant="outlined"
+              type="submit"
+            >
+              Submit
+            </Button>
+            <Button
+              variant="outlined"
+              type="button"
+              onClick={(event) => {
+                event.preventDefault();
+                if (!window.confirm("Are you sure you wish to cancel?")) return;
+                navigate("..");
+              }}
+            >
+              Cancel
+            </Button>
+          </Box>
+        </Grid>
+      </Grid>
     </Box>
   );
 };

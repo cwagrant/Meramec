@@ -22,7 +22,6 @@ const Units = ({ children }) => {
   const axios = useAxios(enqueueSnackbar);
 
   React.useEffect(() => {
-    /* This will run on unmount to clear out Unit state */
     return () => {
       setUnit(null);
     };
@@ -56,6 +55,5 @@ Units.Index = Index;
 Units.Show = Show;
 Units.Edit = EditUnit;
 Units.New = NewUnit;
-// Units.Nav = Nav
 
 export default Units;

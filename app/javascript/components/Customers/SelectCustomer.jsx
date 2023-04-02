@@ -55,7 +55,7 @@ const SelectCustomer = ({ customer, onChange, allowNew, readOnly, sx }) => {
             sx={{ justifyContent: "space-between!important" }}
           >
             <span>{option.formal_name}</span>
-            <Typography variant="overline" sx={{ color: "#444" }}>
+            <Typography variant="overline" sx={{ color: "#d6deeb" }}>
               (ID: {option.id})
             </Typography>
           </ListItem>
@@ -66,7 +66,6 @@ const SelectCustomer = ({ customer, onChange, allowNew, readOnly, sx }) => {
       }}
       sx={{
         ...sx,
-        pr: 2,
         "& .MuiAutocomplete-option": {
           display: "flex",
           justifyContent: "space-between",

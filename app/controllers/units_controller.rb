@@ -47,6 +47,6 @@ class UnitsController < ApplicationController
   private
 
   def unit_params
-    params.require(:unit).permit(:price, :type_of, :name, :property_id, :price_in_cents)
+    params.require(:unit).permit(:price, :type_of, :name, :property_id, :price)
   end
 end

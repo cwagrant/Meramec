@@ -1,7 +1,13 @@
 class RentalAgreementsController < ApplicationController
   def index
-    render json: RentalAgreement.includes(:customer, :unit)
+    agreements = RentalAgreement.includes(:customer, :unit)
       .search(params[:search], models: [Customer, Unit])
+
+    if params[:customer_id]
+      agreements = agreements.where(customer_id: params[:customer_id])
+    end
+
+    render json: agreements
   end
 
   def show
