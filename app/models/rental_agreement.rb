@@ -20,7 +20,7 @@ class RentalAgreement < ApplicationRecord
   end
 
   def as_json(args)
-    super({include: { unit: {}, customer: { methods: [:formal_name] }}}.merge(args))
+    super({include: { unit: { include: :property}, customer: { methods: [:formal_name] }}}.merge(args))
   end
 
   def owes!

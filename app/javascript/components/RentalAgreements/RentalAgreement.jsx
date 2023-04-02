@@ -1,19 +1,22 @@
 import React from "react";
-import { useOutletContext } from "react-router-dom";
+import { Link as RouterLink, useOutletContext } from "react-router-dom";
 import {
   Box,
+  Button,
+  ButtonGroup,
   Divider,
   FormControl,
   InputAdornment,
   InputLabel,
   OutlinedInput,
-  Paper,
   TextField,
   Typography,
 } from "@mui/material";
 import { default as CustomerForm } from "../Customers/CustomerFields";
 import { default as UnitForm } from "../Units/UnitFields";
 import { centsToDollars } from "../DataFormatHelpers";
+import EditIcon from "@mui/icons-material/Edit";
+import AddBoxIcon from "@mui/icons-material/AddBox";
 
 const Show = () => {
   const { rentalAgreement, setRentalAgreement } = useOutletContext();
@@ -21,7 +24,33 @@ const Show = () => {
   if (!rentalAgreement) return "Loading...";
 
   return (
-    <Paper sx={{ maxWidth: "sm", p: 2 }}>
+    <Box sx={{ maxWidth: "sm", p: 2 }}>
+      <Box
+        sx={{
+          display: "flex",
+          maxWidth: "md",
+          justifyContent: "flex-end",
+          m: 1,
+          gap: 1,
+        }}
+      >
+        <ButtonGroup variant="outlined">
+          <Button
+            component={RouterLink}
+            to={"./edit"}
+            startIcon={<EditIcon />}
+          >
+            Edit
+          </Button>
+          <Button
+            component={RouterLink}
+            to={"../new"}
+            startIcon={<AddBoxIcon />}
+          >
+            New
+          </Button>
+        </ButtonGroup>
+      </Box>
       <Typography variant="h4" sx={{ mb: 2 }}>
         Rental Agreement - #{rentalAgreement.id}
       </Typography>
@@ -65,7 +94,7 @@ const Show = () => {
       <UnitForm unit={rentalAgreement.unit} readOnly={true} hidePrice />
       <Divider>Customer</Divider>
       <CustomerForm customer={rentalAgreement.customer} readOnly={true} />
-    </Paper>
+    </Box>
   );
 };
 
