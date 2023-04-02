@@ -11,6 +11,37 @@ const presentAmount = (amount) => {
   return amount < 0 ? `(${formattedAmount})` : formattedAmount;
 };
 
+const titleize = (word) => {
+  if (word == "pre_payment") {
+    return "Prepayment";
+  }
+  if (word == "prorate") {
+    return "Prorate";
+  }
+  return word;
+};
+
+const sourceDescription = ({ source_type, source }) => {
+  if (source_type == "AccountAdjustment") {
+    if (source.type_of == "discount") {
+      return `Discount - ${titleize(source.reason)}`;
+    }
+
+    if (source.type_of == "fee") {
+      return `Fee - ${titleize(source.reason)}`;
+    }
+    return "Account Adjustment";
+  }
+
+  if (source_type == "RentalAgreementPayment") {
+    return "Payment";
+  }
+
+  if (source_type == "RentalAgreement") {
+    return "Monthly Charge";
+  }
+};
+
 const PaymentTableRow = ({ row }) => {
   return (
     <TableRow
@@ -20,7 +51,7 @@ const PaymentTableRow = ({ row }) => {
       key={row.id}
     >
       <TableCell>{dayjs(row.date).format("YYYY/MM/DD")}</TableCell>
-      <TableCell>{row.source_type}</TableCell>
+      <TableCell>{sourceDescription(row)}</TableCell>
       <TableCell align="right">{centsToDollars(row.amount_in_cents)}</TableCell>
       <TableCell align="right">{presentAmount(row.balance_in_cents)}</TableCell>
     </TableRow>
