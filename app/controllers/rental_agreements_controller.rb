@@ -61,6 +61,22 @@ class RentalAgreementsController < ApplicationController
   private
 
   def rental_agreement_params
-    params.require(:rental_agreement).permit(:start_date, :end_date, :next_due_date, :price, :unit_id, :customer_id, customer: [:first_name, :last_name, :email, :gate_code, :phone_number, :company])
+    params.require(:rental_agreement).permit(
+      :frequency, 
+      :start_date,
+      :end_date,
+      :next_due_date,
+      :price,
+      :unit_id,
+      :customer_id,
+      customer: [
+        :first_name,
+        :last_name,
+        :email,
+        :gate_code,
+        :phone_number,
+        :company
+      ]
+    )
   end
 end

@@ -8,7 +8,8 @@ import {
   Grid,
   InputAdornment,
   InputLabel,
-  OutlinedInput,
+  MenuItem,
+  Select,
   Switch,
   TextField,
   Typography,
@@ -123,19 +124,26 @@ const RentalAgreementFields = ({ rentalAgreement, onChange, readOnly }) => {
         />
       </Grid>
       <Grid item xs={12} md={6}>
-        <TextField
-          type="number"
-          value={price}
-          onChange={(event) => {
-            setPrice(event.target.value);
-            onChange({ ...rentalAgreement, price: event.target.value });
-          }}
-          readOnly={readOnly}
-          sx={{ width: 1 }}
-          InputProps={{
-            startAdornment: <InputAdornment position="start">$</InputAdornment>,
-          }}
-        />
+        <FormControl sx={{ width: 1 }}>
+          <InputLabel id="frequency-label">Frequency In Months</InputLabel>
+          <Select
+            labelId="frequency-label"
+            label="Frequency In Months"
+            value={rentalAgreement.frequency_in_months || "1"}
+            onChange={(event) => {
+              onChange({
+                ...rentalAgreement,
+                frequency_in_months: event.target.value,
+              });
+            }}
+            readOnly={readOnly}
+          >
+            <MenuItem value="1">Monthly</MenuItem>
+            <MenuItem value="3">Quarterly</MenuItem>
+            <MenuItem value="6">Semiannual</MenuItem>
+            <MenuItem value="12">Yearly</MenuItem>
+          </Select>
+        </FormControl>
       </Grid>
       <Grid item xs={12} md={6}>
         <DatePicker
@@ -148,6 +156,21 @@ const RentalAgreementFields = ({ rentalAgreement, onChange, readOnly }) => {
             : null}
           onChange={(newValue) => {
             onChange({ ...rentalAgreement, next_due_date: newValue });
+          }}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <TextField
+          type="number"
+          value={price}
+          onChange={(event) => {
+            setPrice(event.target.value);
+            onChange({ ...rentalAgreement, price: event.target.value });
+          }}
+          readOnly={readOnly}
+          sx={{ width: 1 }}
+          InputProps={{
+            startAdornment: <InputAdornment position="start">$</InputAdornment>,
           }}
         />
       </Grid>
@@ -191,6 +214,8 @@ const RentalAgreementFields = ({ rentalAgreement, onChange, readOnly }) => {
               unit: newValue,
               price: centsToDollars(newValue.price_in_cents),
             });
+
+            setPrice(centsToDollars(newValue.price_in_cents));
           }}
           sx={{ width: 1 }}
           renderInput={(params) => <TextField {...params} label="Unit" />}

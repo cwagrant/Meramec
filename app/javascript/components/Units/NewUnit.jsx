@@ -22,7 +22,7 @@ const Unit = () => {
     event.preventDefault();
 
     axios
-      .post(paths.API.UNITS(), unit)
+      .post(paths.API.UNITS(), { unit: unit })
       .then((res) => {
         const id = res.data.id;
         navigate(`/properties/${propertyId}/units/${id}`);

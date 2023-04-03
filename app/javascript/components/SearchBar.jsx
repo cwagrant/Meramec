@@ -4,7 +4,7 @@ import AddBoxIcon from "@mui/icons-material/AddBox";
 import { Link as RouterLink } from "react-router-dom";
 import { debounce } from "lodash";
 
-const SearchBar = ({ onChange, newUrl, TextFieldProps }) => {
+const SearchBar = ({ onChange, newUrl, TextFieldProps, hideButton }) => {
   const debouncedChangeHandler = React.useCallback(
     debounce(onChange, 300),
     [],
@@ -30,16 +30,18 @@ const SearchBar = ({ onChange, newUrl, TextFieldProps }) => {
           onChange={debouncedChangeHandler}
           type="text"
         />
-        <Box sx={{ flexShrink: 1, alignSelf: "flex-end", mb: 2 }}>
-          <Button
-            component={RouterLink}
-            to={newUrl}
-            variant="outlined"
-            startIcon={<AddBoxIcon />}
-          >
-            New
-          </Button>
-        </Box>
+        {!hideButton && (
+          <Box sx={{ flexShrink: 1, alignSelf: "flex-end", mb: 2 }}>
+            <Button
+              component={RouterLink}
+              to={newUrl}
+              variant="outlined"
+              startIcon={<AddBoxIcon />}
+            >
+              New
+            </Button>
+          </Box>
+        )}
       </Box>
     </>
   );

@@ -15,7 +15,6 @@ import { default as UnitForm } from "../Units/UnitFields";
 import { centsToDollars } from "../DataFormatHelpers";
 import EditIcon from "@mui/icons-material/Edit";
 import AddBoxIcon from "@mui/icons-material/AddBox";
-import LedgerEntries from "../LedgerEntries/LedgerEntries";
 
 const Show = () => {
   const { rentalAgreement, setRentalAgreement } = useOutletContext();
@@ -95,10 +94,6 @@ const Show = () => {
         <Grid item xs={12}>
           <Divider>Customer</Divider>
           <CustomerForm customer={rentalAgreement.customer} readOnly={true} />
-        </Grid>
-
-        <Grid item xs={12}>
-          <LedgerEntries />
         </Grid>
       </Grid>
     </Box>

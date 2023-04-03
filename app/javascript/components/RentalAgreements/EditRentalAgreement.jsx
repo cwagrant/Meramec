@@ -33,7 +33,7 @@ const Edit = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: "md", p: 2 }}>
+    <Box sx={{ maxWidth: "md", p: 2 }} component="form" onSubmit={handleSubmit}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <RentalAgreementFields
@@ -56,7 +56,9 @@ const Edit = () => {
               type="button"
               onClick={(event) => {
                 event.preventDefault();
-                if (!window.confirm("Are you sure you wish to cancel?")) return;
+                if (!window.confirm("Are you sure you wish to cancel?")) {
+                  return;
+                }
                 navigate("..");
               }}
             >

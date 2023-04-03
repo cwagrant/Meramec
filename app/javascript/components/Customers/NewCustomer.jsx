@@ -23,7 +23,7 @@ const Edit = () => {
     event.preventDefault();
 
     axios
-      .post(paths.API.CUSTOMERS(), customer)
+      .post(paths.API.CUSTOMERS(), { customer: customer })
       .then((res) => {
         const id = res.data.id;
         enqueueSnackbar("Customer created successfully", {

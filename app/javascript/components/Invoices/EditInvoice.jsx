@@ -1,14 +1,14 @@
 import React from "react";
 import { Box, Button } from "@mui/material";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
-import FormFields from "./CustomerFields";
+import FormFields from "./InvoiceFields";
 import useAxios from "../useAxios";
 import { useSnackbar } from "notistack";
 import * as paths from "../PathHelper";
 
 const Edit = () => {
-  const { customerId } = useParams();
-  const { customer, setCustomer } = useOutletContext();
+  const { invoiceId } = useParams();
+  const { invoice, setInvoice } = useOutletContext();
   const { enqueueSnackbar } = useSnackbar();
   const axios = useAxios(enqueueSnackbar);
   const navigate = useNavigate();
@@ -18,25 +18,25 @@ const Edit = () => {
 
     axios
       .put(
-        paths.API.CUSTOMERS(customerId),
-        { customer: customer },
+        paths.API.INVOICES(invoiceId),
+        { invoice: invoice },
       )
       .then((res) => {
         const id = res.data.id;
-        setCustomer(res.data);
-        enqueueSnackbar("Customer updated successfully", {
+        setInvoice(res.data);
+        enqueueSnackbar("Invoice updated successfully", {
           variant: "success",
         });
-        navigate("/customers/" + id);
+        navigate("/invoices/" + id);
       });
   };
 
   return (
     <Box sx={{ maxWidth: "md", p: 2 }} component="form" onSubmit={handleSubmit}>
       <FormFields
-        customer={customer}
+        invoice={invoice}
         onChange={(newValue) => {
-          setCustomer(newValue);
+          setInvoice(newValue);
         }}
       />
 

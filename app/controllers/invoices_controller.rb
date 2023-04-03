@@ -3,17 +3,113 @@ class InvoicesController < ApplicationController
 
   layout 'pdfs'
 
+  def index
+    invoices = Invoice.search(params[:search], models: [Invoice, Customer])
+
+    if params[:not_paid] == "1"
+      invoices = invoices.where.not(state: :paid)
+    end
+
+    if params[:customer_id].present?
+      invoices = invoices.where(customer_id: params[:customer_id])
+    end
+
+    render json: invoices.as_json(include: :customer)
+  end
+
   def show
-    html = render_to_string('invoices/show', layout: 'pdfs')
+    # html = render_to_string('invoices/show', layout: 'pdfs')
+    #
+    # pdf = Grover.new(html).to_pdf
+    #
+    # send_data pdf, filename: 'test.pdf'
+    # # respond_to do |format|
+    # #   format.html
+    # #   # format.pdf do
+    # #   #   render pdf: "show", template: "invoices/show", formats: [:html], layout: 'pdfs'
+    # #   # end
+    # # end
 
-    pdf = Grover.new(html).to_pdf
+    invoice = Invoice.find(params[:id])
 
-    send_data pdf, filename: 'test.pdf'
-    # respond_to do |format|
-    #   format.html
-    #   # format.pdf do
-    #   #   render pdf: "show", template: "invoices/show", formats: [:html], layout: 'pdfs'
-    #   # end
-    # end
+    render json: invoice.as_json(
+      include: {
+        customer: {}, 
+        invoice_items: {
+          include: {
+            item: {
+              methods: :name
+            }
+          }
+        }
+      }
+    )
+
+  end
+
+  def create
+    full_params = invoice_params.to_h
+    full_params.merge!({invoice_items_attributes: full_params.delete(:invoice_items)})
+
+    invoice = Invoice.new(full_params)
+
+    if invoice.save
+      render json: invoice.as_json(
+        include: {
+          customer: {}, 
+          invoice_items: {
+            include: {
+              item: {
+                methods: :name
+              }
+            }
+          }
+        }
+      )
+    else
+      render json: {errors: invoice.errors.full_messages}, status: 500
+    end
+  end
+
+  def update
+    invoice = Invoice.find(params[:id])
+
+    full_params = invoice_params.to_h
+    full_params.merge!({invoice_items_attributes: full_params.delete(:invoice_items)})
+
+    full_params.merge!({invoice_adjustments_attributes: full_params.delete(:invoice_adjustments) || []})
+
+    invoice.update(full_params)
+
+    if invoice.errors.none?
+      render json: invoice.as_json(
+        include: {
+          customer: {}, 
+          invoice_items: {
+            include: {
+              item: {
+                methods: :name
+              }
+            }
+          }
+        }
+      )
+    else
+      render json: {errors: invoice.errors.full_messages}, status: 500
+    end
+  end
+
+  private
+
+  def invoice_params
+    params.require(:invoice).permit(
+      :customer_id,
+      :date,
+      :subtotal_in_cents,
+      :total_in_cents,
+      :paid,
+      :state, 
+      invoice_adjustments: [:id, :_destroy, :price, :type_of, :reason, :reason_description],
+      invoice_items: [:id, :item_id, :item_type, :count])
   end
 end

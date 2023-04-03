@@ -13,7 +13,7 @@ const fetchName = (data, name) => {
 };
 
 const Crumbs = (
-  { property, unit, rentalAgreement, customer, user, payment },
+  { property, unit, rentalAgreement, customer, user, payment, invoice },
 ) => {
   const matches = useMatches();
   const crumbs = matches
@@ -26,6 +26,7 @@ const Crumbs = (
     "{customer}": `${customer?.first_name} ${customer?.last_name}`,
     "{user}": `${user?.email}`,
     "{payment}": `Payment ${payment?.id}`,
+    "{invoice}": `Invoice #${String(invoice?.id).padStart(6, "0")}`,
   };
 
   return (
