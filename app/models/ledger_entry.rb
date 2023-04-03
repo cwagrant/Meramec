@@ -2,7 +2,7 @@ class LedgerEntry < ApplicationRecord
   belongs_to :rental_agreement
   belongs_to :source, polymorphic: true
 
-  before_create :set_ledger_balance
+  around_create :set_ledger_balance
   after_update :update_running_balance
   after_destroy :update_running_balance
 
@@ -10,9 +10,15 @@ class LedgerEntry < ApplicationRecord
 
   def set_ledger_balance
     last_entry = LedgerEntry.where(rental_agreement: rental_agreement).last
-    last_balance = last_entry&.balance_in_cents || 0
 
+    last_balance = last_entry&.balance_in_cents || 0
     self.balance_in_cents = last_balance + amount_in_cents
+
+    yield
+
+    if(last_entry && date < last_entry.date)
+      RunningBalanceUpdate.new(rental_agreement).call
+    end
   end
 
   def update_running_balance
