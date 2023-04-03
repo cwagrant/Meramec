@@ -61,7 +61,7 @@ const RentalAgreements = ({ customer }) => {
       <SearchBar
         onChange={changeHandler}
         TextFieldProps={{ sx: { width: 1 } }}
-        newUrl={"./units/new"}
+        newUrl={"./new"}
       />
       <EnhancedTable
         rows={data}
