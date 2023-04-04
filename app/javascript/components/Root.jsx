@@ -29,6 +29,7 @@ import ApartmentIcon from "@mui/icons-material/Apartment";
 import PeopleIcon from "@mui/icons-material/People";
 import FolderIcon from "@mui/icons-material/Folder";
 import PaidIcon from "@mui/icons-material/Paid";
+import ReceiptIcon from "@mui/icons-material/Receipt";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Link } from "react-router-dom";
 import { SnackbarProvider } from "notistack";
@@ -235,6 +236,12 @@ export default function MiniDrawer() {
                 />
                 <ListLink
                   open={open}
+                  to="/invoices"
+                  name="Invoices"
+                  icon={<ReceiptIcon />}
+                />
+                <ListLink
+                  open={open}
                   to="/payments"
                   name="Payments"
                   icon={<PaidIcon />}
@@ -256,7 +263,7 @@ export default function MiniDrawer() {
                 />
               </List>
             </Drawer>
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <Box component="main" sx={{ flexGrow: 1, p: { xs: 1, sm: 3 } }}>
               <DrawerHeader />
               <Outlet />
             </Box>

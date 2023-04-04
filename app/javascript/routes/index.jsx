@@ -5,6 +5,7 @@ import Units from "../components/Units";
 import Users from "../components/Users";
 import RentalAgreements from "../components/RentalAgreements";
 import Customers from "../components/Customers";
+import Invoices from "../components/Invoices";
 import Payments from "../components/Payments";
 import ErrorBoundary from "../components/ErrorBoundary";
 
@@ -123,6 +124,29 @@ const router = createBrowserRouter(
               path="edit"
               element={<Payments.Edit />}
               errorElement={<ErrorBoundary />}
+              handle={{ crumb: { name: "Edit" } }}
+            />
+          </Route>
+        </Route>
+        <Route
+          path="invoices"
+          element={<Invoices />}
+          handle={{ crumb: { name: "Invoices" } }}
+        >
+          <Route index element={<Invoices.Index />} />
+          <Route
+            path="new"
+            element={<Invoices.New />}
+            handle={{ crumb: { name: "New" } }}
+          />
+          <Route
+            path=":invoiceId"
+            handle={{ crumb: { name: "{invoice}" } }}
+          >
+            <Route index element={<Invoices.Show />} />
+            <Route
+              path="edit"
+              element={<Invoices.Edit />}
               handle={{ crumb: { name: "Edit" } }}
             />
           </Route>

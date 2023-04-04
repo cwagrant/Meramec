@@ -8,7 +8,7 @@ class Customer < ApplicationRecord
   before_validation :set_formal_name
 
   def as_json(args = {})
-    super({include: { rental_agreements: { include: {unit: {}}}}}.merge(args))
+    super({include: { rental_agreements: { include: {unit: {}}, methods: :name }}}.merge(args))
   end
 
   def self.searchable_attributes

@@ -17,7 +17,7 @@ const Property = () => {
     event.preventDefault();
 
     axios
-      .post(ADD_PROPERTY_URL, property)
+      .post(ADD_PROPERTY_URL, { property: property })
       .then((res) => {
         const id = res.data.id;
         enqueueSnackbar("New property created successfully", {

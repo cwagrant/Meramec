@@ -1,46 +1,59 @@
 import React from "react";
 import { Box, Button } from "@mui/material";
-import { useNavigate, useOutletContext, useParams } from "react-router-dom";
-import FormFields from "./CustomerFields";
+import { useNavigate } from "react-router-dom";
+import FormFields from "./InvoiceFields";
 import useAxios from "../useAxios";
 import { useSnackbar } from "notistack";
 import * as paths from "../PathHelper";
 
 const Edit = () => {
-  const { customerId } = useParams();
-  const { customer, setCustomer } = useOutletContext();
   const { enqueueSnackbar } = useSnackbar();
   const axios = useAxios(enqueueSnackbar);
   const navigate = useNavigate();
+  const [invoice, setInvoice] = React.useState({
+    customer: "",
+    date: "",
+    state: "",
+    subtotal_in_cents: "",
+    total_in_cents: "",
+    paid: false,
+    invoice_items: [],
+  });
+
+  React.useEffect(() => {
+    console.log(invoice);
+  }, [invoice]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
     axios
-      .put(
-        paths.API.CUSTOMERS(customerId),
-        { customer: customer },
-      )
+      .post(paths.API.INVOICES(), { invoice: invoice })
       .then((res) => {
         const id = res.data.id;
-        setCustomer(res.data);
-        enqueueSnackbar("Customer updated successfully", {
+        enqueueSnackbar("Invoice created successfully", {
           variant: "success",
         });
-        navigate("/customers/" + id);
+        navigate(`/invoices/${id}`);
       });
   };
 
   return (
-    <Box sx={{ maxWidth: "md", p: 2 }} component="form" onSubmit={handleSubmit}>
+    <Box
+      component="form"
+      id="invoiceForm"
+      onSubmit={handleSubmit}
+      sx={{
+        width: 1,
+        maxWidth: "md",
+      }}
+    >
       <FormFields
-        customer={customer}
-        onChange={(newValue) => {
-          setCustomer(newValue);
-        }}
+        invoice={invoice}
+        onChange={(newValue) => setInvoice(newValue)}
       />
 
-      <Box sx={{ display: "flex", mt: 2, gap: 2 }}>
+      <Box sx={{ display: "flex", m: 1, gap: 2 }}>
         <Button
           variant="outlined"
           type="submit"
@@ -52,9 +65,7 @@ const Edit = () => {
           type="button"
           onClick={(event) => {
             event.preventDefault();
-            if (!window.confirm("Are you sure you wish to cancel?")) {
-              return;
-            }
+            if (!window.confirm("Are you sure you wish to cancel?")) return;
             navigate("..");
           }}
         >

@@ -38,7 +38,7 @@ const sourceDescription = ({ source_type, source }) => {
   }
 
   if (source_type == "RentalAgreement") {
-    return "Monthly Charge";
+    return "Rental Charge";
   }
 };
 

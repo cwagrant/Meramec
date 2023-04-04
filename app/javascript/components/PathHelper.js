@@ -44,6 +44,7 @@ export const API = {
   PAYMENTS: pathHelper("/api/payments"),
   LEDGER: pathHelper("/api/ledger_entries"),
   USERS: pathHelper("/api/users"),
+  INVOICES: pathHelper("/api/invoices"),
   USER: {
     LOGIN: pathHelper("/api/login"),
     LOGOUT: pathHelper("/api/logout"),
