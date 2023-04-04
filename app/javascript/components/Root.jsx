@@ -130,7 +130,10 @@ const ListLink = ({ open, to, name, icon }) => {
         >
           {icon}
         </ListItemIcon>
-        <ListItemText primary={name} sx={{ opacity: open ? 1 : 0 }} />
+        <ListItemText
+          primary={name}
+          sx={{ color: "#fff", opacity: open ? 1 : 0 }}
+        />
       </ListItemButton>
     </ListItem>
   );
