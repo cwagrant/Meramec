@@ -5,7 +5,7 @@ export function capitalizeFirstLetter(word) {
 }
 
 export function centsToDollars(cents) {
-  if (!cents) return "";
+  if (!cents) return "0";
   return parseFloat(cents / 100).toFixed(2);
 }
 

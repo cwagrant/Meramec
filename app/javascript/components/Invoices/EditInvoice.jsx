@@ -15,6 +15,13 @@ const Edit = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    if (
+      !window.confirm(
+        "WARNING! Modifying the Quantity of a purchase will require manually adjusting the Next Due Date on the rental agreement.",
+      )
+    ) {
+      return;
+    }
 
     axios
       .put(
@@ -38,6 +45,7 @@ const Edit = () => {
         onChange={(newValue) => {
           setInvoice(newValue);
         }}
+        lockCustomer
       />
 
       <Box sx={{ display: "flex", mt: 2, gap: 2 }}>

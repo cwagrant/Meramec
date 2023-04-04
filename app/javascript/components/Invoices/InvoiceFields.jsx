@@ -38,7 +38,7 @@ const StyledInput = styled(TextField)(({ theme }) => ({
   maxWidth: theme.breakpoints.sm,
 }));
 
-const InvoiceFields = ({ invoice, onChange, readOnly }) => {
+const InvoiceFields = ({ invoice, onChange, readOnly, lockCustomer }) => {
   const axios = useAxios();
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [adjustment, setAdjustment] = React.useState({
@@ -129,6 +129,19 @@ const InvoiceFields = ({ invoice, onChange, readOnly }) => {
     );
   };
 
+  const sortedAgreements = () => {
+    if (!invoice || !invoice.invoice_items) return [];
+
+    return invoice.invoice_items.sort(
+      (a, b) => {
+        console.log(a, b);
+        if (a.item.name == b.item.name) return 0;
+
+        return a.item.name < b.item.name ? -1 : 1;
+      },
+    );
+  };
+
   const deleteAdjustment = (id) => {
     if (!window.confirm("Are you sure?")) return;
 
@@ -205,6 +218,7 @@ const InvoiceFields = ({ invoice, onChange, readOnly }) => {
             readOnly={readOnly}
           >
             <MenuItem value="draft">Draft</MenuItem>
+            <MenuItem value="pending">Pending</MenuItem>
             <MenuItem value="sent">Sent</MenuItem>
             <MenuItem value="paid">Paid</MenuItem>
           </Select>
@@ -212,9 +226,9 @@ const InvoiceFields = ({ invoice, onChange, readOnly }) => {
       </Grid>
       <Grid item xs={12}>
         <SelectCustomer
+          readOnly={readOnly || lockCustomer}
           customer={invoice.customer}
           onChange={(newValue) => {
-            console.log(newValue);
             changeCustomer(newValue);
           }}
         />
@@ -231,7 +245,7 @@ const InvoiceFields = ({ invoice, onChange, readOnly }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {invoice.invoice_items.map((row) => (
+              {sortedAgreements().map((row) => (
                 <RentalAgreementInvoiceRow
                   key={row.item.id}
                   row={row}
@@ -258,7 +272,8 @@ const InvoiceFields = ({ invoice, onChange, readOnly }) => {
         </Grid>
       </Grid>
       <Grid item xs={12}>
-        <Button onClick={() => setDialogOpen(true)}>Add Adjustment</Button>
+        {!readOnly &&
+          <Button onClick={() => setDialogOpen(true)}>Add Adjustment</Button>}
         <Dialog
           fullWidth={true}
           maxWidth={"sm"}

@@ -76,10 +76,10 @@ class RentalAgreement < ApplicationRecord
     last_invoice.date > (date - frequency_in_months.to_i.months)
   end
 
-  def push_due_date!
+  def push_due_date!(purchase_count = 1)
     return if next_due_date.blank?
 
-    update(next_due_date: next_due_date + frequency_in_months.to_i.months)
+    update(next_due_date: next_due_date + (purchase_count * frequency_in_months.to_i.months))
   end
 
   private

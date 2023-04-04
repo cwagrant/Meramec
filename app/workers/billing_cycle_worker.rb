@@ -20,7 +20,7 @@ class BillingCycleWorker
     customers.each do |customer|
       begin
         ActiveRecord::Base.transaction do
-          invoice = customer.invoices.new(date: invoice_date)
+          invoice = customer.invoices.new(date: invoice_date, state: 'pending')
           invoice.generate_for_date(next_due_on)
 
           invoice.save!
