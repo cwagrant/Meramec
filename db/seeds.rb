@@ -92,46 +92,6 @@ unless Rails.env.production?
         end_date: dates[:close]
       )
     }
-
-    Customer.all.each do |customer|
-      next if customer.rental_agreements.none?
-
-      earliest = customer.rental_agreements.map(&:start_date).min
-      end_dates = customer.rental_agreements.map(&:end_date)
-      latest = end_dates.include?(nil) ? Date.today : end_dates.max
-
-      arel_table = RentalAgreement.arel_table
-
-      next_date = earliest
-      while(next_date < latest) do
-        customer.rental_agreements.each { |ra| ra.owes!(next_date) }
-        query = arel_table[:end_date].eq(nil).or(arel_table[:end_date].lteq(next_date))
-        rental_agreements = customer.rental_agreements.where(start_date: earliest..next_date).where(query)
-
-        raps = customer.rental_agreements.map do |ra|
-          discount_price = 500 * SecureRandom.rand(0..1)
-
-          {
-            rental_agreement_id: ra.id,
-            amount_in_cents: ra.price_in_cents - discount_price,
-            account_adjustments_attributes: [{
-              rental_agreement_id: ra.id,
-              type_of: 'discount',
-              reason: 'pre_payment',
-              price_in_cents: discount_price
-            }]
-          }
-        end
-
-        Payment.create({
-          customer_id: customer.id,
-          date: next_date,
-          rental_agreement_payments_attributes: raps
-        })
-
-        next_date = next_date + 1.month
-      end
-    end
   end
 end
 

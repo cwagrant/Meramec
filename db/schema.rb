@@ -91,8 +91,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_04_013308) do
     t.string "source_type"
     t.integer "source_id"
     t.integer "amount_in_cents", default: 0
-    t.datetime "created_at", default: "2023-04-02 01:17:51", null: false
-    t.datetime "updated_at", default: "2023-04-02 01:17:51", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.date "date"
     t.integer "balance_in_cents", default: 0
     t.index ["rental_agreement_id"], name: "index_ledger_entries_on_rental_agreement_id"

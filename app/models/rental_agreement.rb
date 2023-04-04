@@ -7,8 +7,8 @@ class RentalAgreement < ApplicationRecord
   belongs_to :customer
 
   has_many :ledger_entries
-  has_many :rental_agreement_payments
-  has_and_belongs_to_many :invoices
+  has_many :invoice_items, as: :item
+  has_many :invoices, through: :invoice_items
 
   accepts_nested_attributes_for :unit, :customer
 
