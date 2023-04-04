@@ -51,8 +51,6 @@ const InvoiceFields = ({ invoice, onChange, readOnly }) => {
     created_at: Date.now(),
   });
 
-  React.useEffect(() => console.log(adjustment), [adjustment]);
-
   const resetAdjustment = () =>
     setAdjustment({
       id: "",
@@ -171,8 +169,6 @@ const InvoiceFields = ({ invoice, onChange, readOnly }) => {
       total_in_cents: subtotal + adjustments,
     });
   }, [invoice?.invoice_items, invoice?.invoice_adjustments]);
-
-  React.useEffect(() => console.log(invoice), [invoice]);
 
   if (!invoice) return;
 
@@ -391,6 +387,7 @@ const InvoiceFields = ({ invoice, onChange, readOnly }) => {
               <TableBody>
                 {sortedAdjustments().map((adj) => (
                   <InvoiceAdjustmentTableRow
+                    readOnly={readOnly}
                     key={adj.id}
                     row={adj}
                     onDelete={deleteAdjustment}

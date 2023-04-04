@@ -85,11 +85,14 @@ unless Rails.env.production?
 
       dates = getDates
 
+      next_due_date = (Time.now - 3.months).beginning_of_month.to_date if dates[:close].blank?
+
       ra = RentalAgreement.create(
         unit: unit,
         customer: Customer.all.sample,
         start_date: dates[:open],
-        end_date: dates[:close]
+        end_date: dates[:close],
+        next_due_date: next_due_date
       )
     }
   end

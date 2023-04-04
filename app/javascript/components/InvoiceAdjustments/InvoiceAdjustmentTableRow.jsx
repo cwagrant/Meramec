@@ -1,8 +1,9 @@
 import React from "react";
-import { Box, IconButton, TableCell, TableRow, TextField } from "@mui/material";
+import { Box, IconButton, TableCell, TableRow } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { centsToDollars } from "../DataFormatHelpers";
 
-const InvoiceTableRow = ({ row, onDelete }) => {
+const InvoiceTableRow = ({ row, readOnly, onDelete }) => {
   const reasonDescription = () => {
     if (row.reason == "other") {
       return `${row.type_of} - ${row.reason_description}`;
@@ -16,19 +17,21 @@ const InvoiceTableRow = ({ row, onDelete }) => {
       sx={{ cursor: "pointer" }}
     >
       <TableCell>
-        <Box>
-          <IconButton
-            color="error"
-            onClick={() => {
-              onDelete(row.id);
-            }}
-          >
-            <DeleteIcon />
-          </IconButton>
-        </Box>
+        {!readOnly && (
+          <Box>
+            <IconButton
+              color="error"
+              onClick={() => {
+                onDelete(row.id);
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Box>
+        )}
       </TableCell>
       <TableCell>{reasonDescription()}</TableCell>
-      <TableCell align="right">${row.price}</TableCell>
+      <TableCell align="right">${centsToDollars(row.price_in_cents)}</TableCell>
     </TableRow>
   );
 };

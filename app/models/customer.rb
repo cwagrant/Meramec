@@ -4,6 +4,7 @@ class Customer < ApplicationRecord
   has_many :payments, dependent: :restrict_with_error
   has_many :rental_agreements, dependent: :restrict_with_error
   has_many :units, through: :rental_agreements
+  has_many :invoices
 
   before_validation :set_formal_name
 

@@ -30,7 +30,6 @@ const Payments = () => {
         params: { search: query },
       })
       .then((res) => {
-        console.log(res.data);
         setData(res.data);
       });
   };

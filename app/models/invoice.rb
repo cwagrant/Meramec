@@ -4,6 +4,7 @@ class Invoice < ApplicationRecord
   belongs_to :payment, optional: true
   has_many :invoice_items
   has_many :invoice_adjustments
+  has_many :rental_agreements, through: :invoice_items, source: :item, source_type: "RentalAgreement"
 
   attr_accessor :price
 
@@ -20,11 +21,11 @@ class Invoice < ApplicationRecord
   end
 
   def empty_item?(item_attr)
-    item_attr['item_count'].blank? || item_attr['item_count'].zero?
+    item_attr['item_count'].blank? || item_attr['item_count'].try(:zero?)
   end
 
   def empty_adjustment?(item_attr)
-    item_attr['price'].blank? && item_attr['price'].zero?
+    item_attr['price'].blank? && item_attr['price'].try(:zero?)
   end
 
   def clear_incorrect_items
@@ -46,35 +47,10 @@ class Invoice < ApplicationRecord
   end
 
   def generate_for_date(date)
-    # TODO this needs to handle end dates too
-    #
-    #
-    # Probably want to include the next_due_date in the list of rental_agreements such that
-    # we only get those w/ a next_due_date <= date and then we push out the next_due_date
-    # by frequency. That will make it so that we should never get it multiple times.
-    #
-    # As a note the shovel operator will fire immediately on saved objects so when we do this
-    # we'll want to avoid calling Invoice.create, instead we'll do an Invoice.new and if
-    # rental agreements is empty after that then we can discard the Invoice rather than save.
-    # However when we do create the Invoice then at that moment we need to update the
-    # rental agreements next_due_dates.
-    #
-    # Likely this version will become the base that 'generate' will call and we'll just
-    # auto pass in Date.today.
-    #
-    # Additional TODO: We need to create the CRUD for this in the UI. Probably something
-    # on the customer page (or the Invoices index) that lets us create a new Invoice. If we
-    # do it from an existing page we can probably pass in the customer info. But likely we'll
-    # just get all the rental_agreements for the customer and create a line for each of them
-    # on the page and then we'll have the total and subtotal areas.
-    #
-    # Then payments can be revamped to focus on marking an invoice as paid and possibly even
-    # tracking attachments and such (as I know that was a request).
-
     running_total = 0
-    customer.rental_agreements.where('start_date <= ?', date.to_date).each do |agreement|
+    customer.rental_agreements.payment_due_on(date).each do |agreement|
       running_total = running_total + agreement.price_in_cents
-      self.invoice_items << agreement
+      self.rental_agreements << agreement
     end
 
     self.date = date

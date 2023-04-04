@@ -35,6 +35,7 @@ class InvoicesController < ApplicationController
     render json: invoice.as_json(
       include: {
         customer: {}, 
+        invoice_adjustments:{},
         invoice_items: {
           include: {
             item: {
@@ -42,7 +43,6 @@ class InvoicesController < ApplicationController
             }
           }
         },
-        invoice_adjustments:{}
       }
     )
 
@@ -60,6 +60,7 @@ class InvoicesController < ApplicationController
       render json: invoice.as_json(
         include: {
           customer: {}, 
+          invoice_adjustments: {},
           invoice_items: {
             include: {
               item: {
@@ -88,6 +89,7 @@ class InvoicesController < ApplicationController
       render json: invoice.as_json(
         include: {
           customer: {}, 
+          invoice_adjustments: {},
           invoice_items: {
             include: {
               item: {
@@ -112,7 +114,7 @@ class InvoicesController < ApplicationController
       :total_in_cents,
       :paid,
       :state, 
-      invoice_adjustments: [:id, :_destroy, :price, :type_of, :reason, :reason_description],
-      invoice_items: [:id, :item_id, :item_type, :count])
+      invoice_adjustments: [:id, :_destroy, :price, :price_in_cents, :type_of, :reason, :reason_description],
+      invoice_items: [:id, :item_id, :item_type, :item_count])
   end
 end

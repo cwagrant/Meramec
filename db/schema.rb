@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_04_013308) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_04_162715) do
   create_table "account_adjustments", force: :cascade do |t|
     t.integer "rental_agreement_id"
     t.string "source_type"
@@ -55,7 +55,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_04_013308) do
     t.string "type_of"
     t.string "reason"
     t.string "reason_description"
-    t.string "price_in_cents"
+    t.integer "price_in_cents", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["invoice_id"], name: "index_invoice_adjustments_on_invoice_id"

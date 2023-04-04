@@ -61,19 +61,6 @@ const PaymentFields = ({ payment, onChange, readOnly, lockCustomer }) => {
     }
   }, [payment?.price_in_cents]);
 
-  // React.useEffect(() => {
-  //   let customerId = payment?.customer_id || payment?.customer?.id;
-  //   if (customerId) {
-  //     axios
-  //       .get(paths.API.CUSTOMERS(customerId))
-  //       .then((res) => {
-  //         if (!onChange) return;
-  //         onChange({ ...payment, customer: res.data });
-  //       })
-  //       .catch((error) => console.log(error));
-  //   }
-  // }, [payment.customer_id]);
-
   React.useEffect(() => {
     if (!payment?.invoices || !onChange) return;
 
@@ -180,33 +167,36 @@ const PaymentFields = ({ payment, onChange, readOnly, lockCustomer }) => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {data &&
-                        data.map((invoice) => {
-                          return (
-                            <TableRow
-                              key={invoice.id}
-                              onClick={() => {
-                                let invoices = payment?.invoices
-                                  ? [...payment.invoices]
-                                  : [];
+                      {data
+                        ? (
+                          data.map((invoice) => {
+                            return (
+                              <TableRow
+                                key={invoice.id}
+                                onClick={() => {
+                                  let invoices = payment?.invoices
+                                    ? [...payment.invoices]
+                                    : [];
 
-                                onChange({
-                                  ...payment,
-                                  invoices: [...invoices, invoice],
-                                });
-                              }}
-                              sx={{ cursor: "pointer" }}
-                            >
-                              <TableCell>{invoice.date}</TableCell>
-                              <TableCell align="center">
-                                {String(invoice.id).padStart(6, "0")}
-                              </TableCell>
-                              <TableCell align="right">
-                                {centsToDollars(invoice.total_in_cents)}
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
+                                  onChange({
+                                    ...payment,
+                                    invoices: [...invoices, invoice],
+                                  });
+                                }}
+                                sx={{ cursor: "pointer" }}
+                              >
+                                <TableCell>{invoice.date}</TableCell>
+                                <TableCell align="center">
+                                  {String(invoice.id).padStart(6, "0")}
+                                </TableCell>
+                                <TableCell align="right">
+                                  {centsToDollars(invoice.total_in_cents)}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })
+                        )
+                        : null}
                     </TableBody>
                   </Table>
                 </Paper>

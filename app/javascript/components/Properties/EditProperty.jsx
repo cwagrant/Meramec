@@ -12,8 +12,6 @@ const Edit = () => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const axios = useAxios(enqueueSnackbar);
-  console.log(property, setProperty);
-  console.log(useOutletContext());
 
   const handleSubmit = (event) => {
     event.preventDefault();

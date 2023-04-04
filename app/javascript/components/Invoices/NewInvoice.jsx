@@ -20,10 +20,6 @@ const Edit = () => {
     invoice_items: [],
   });
 
-  React.useEffect(() => {
-    console.log(invoice);
-  }, [invoice]);
-
   const handleSubmit = (event) => {
     event.preventDefault();
 
