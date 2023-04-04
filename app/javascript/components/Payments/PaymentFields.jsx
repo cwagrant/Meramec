@@ -157,8 +157,7 @@ const PaymentFields = ({ payment, onChange, readOnly, lockCustomer }) => {
             label="Check #"
             value={payment.check_number || ""}
             onChange={(event) => {
-              setPrice(event.target.value);
-              onChange({ ...payment, price: event.target.value });
+              onChange({ ...payment, check_number: event.target.value });
             }}
             readOnly={readOnly}
             sx={{ width: 1 }}

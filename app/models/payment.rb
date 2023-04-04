@@ -3,7 +3,6 @@ class Payment < ApplicationRecord
   belongs_to :customer
 
   has_many :invoices
-  accepts_nested_attributes_for :rental_agreement_payments
   accepts_nested_attributes_for :invoices, update_only: true
 
   validates :date, presence: true

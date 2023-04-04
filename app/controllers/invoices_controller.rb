@@ -41,7 +41,8 @@ class InvoicesController < ApplicationController
               methods: :name
             }
           }
-        }
+        },
+        invoice_adjustments:{}
       }
     )
 
@@ -50,6 +51,8 @@ class InvoicesController < ApplicationController
   def create
     full_params = invoice_params.to_h
     full_params.merge!({invoice_items_attributes: full_params.delete(:invoice_items)})
+
+    full_params.merge!({invoice_adjustments_attributes: full_params.delete(:invoice_adjustments) || []})
 
     invoice = Invoice.new(full_params)
 

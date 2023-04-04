@@ -9,9 +9,17 @@ class PaymentsController < ApplicationController
 
   def create
     full_params = payment_params.to_h
-    full_params.merge!({invoices_attributes: full_params.delete(:invoices)})
+    invoices = full_params.delete(:invoices)
 
     payment = Payment.new(full_params)
+
+    if payment.errors.none?
+      invoices.each do |invoice|
+        invoice_id = invoice.dig(:id)
+        next if invoice_id.blank?
+        payment.invoices << Invoice.find(invoice_id)
+      end
+    end
 
     if payment.save
       render json: payment.as_json(include: [:customer, :invoices])
