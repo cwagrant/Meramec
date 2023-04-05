@@ -134,7 +134,6 @@ const InvoiceFields = ({ invoice, onChange, readOnly, lockCustomer }) => {
 
     return invoice.invoice_items.sort(
       (a, b) => {
-        console.log(a, b);
         if (a.item.name == b.item.name) return 0;
 
         return a.item.name < b.item.name ? -1 : 1;
@@ -220,7 +219,16 @@ const InvoiceFields = ({ invoice, onChange, readOnly, lockCustomer }) => {
             <MenuItem value="draft">Draft</MenuItem>
             <MenuItem value="pending">Pending</MenuItem>
             <MenuItem value="sent">Sent</MenuItem>
-            <MenuItem value="paid">Paid</MenuItem>
+            <MenuItem
+              value="paid"
+              onClick={() => {
+                alert(
+                  "Warning! Marking an invoice as paid will prevent you from recording a payment for it.",
+                );
+              }}
+            >
+              Paid
+            </MenuItem>
           </Select>
         </FormControl>
       </Grid>

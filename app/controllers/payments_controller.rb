@@ -4,25 +4,16 @@ class PaymentsController < ApplicationController
   end
 
   def show
-    render json: Payment.find(params[:id]).as_json(include: [:customer, {invoices: {include: :customer}}])
+    render json: Payment.find(params[:id]).as_json
   end
 
   def create
     full_params = payment_params.to_h
-    invoices = full_params.delete(:invoices)
 
     payment = Payment.new(full_params)
 
-    if payment.errors.none?
-      invoices.each do |invoice|
-        invoice_id = invoice.dig(:id)
-        next if invoice_id.blank?
-        payment.invoices << Invoice.find(invoice_id)
-      end
-    end
-
     if payment.save
-      render json: payment.as_json(include: [:customer, :invoices])
+      render json: payment.as_json
     else
       render json: {errors: payment.errors.full_messages}, status: 500
     end
@@ -33,20 +24,10 @@ class PaymentsController < ApplicationController
 
     full_params = payment_params.to_h
 
-    invoices = full_params.delete(:invoices)
-
     payment.update(full_params)
 
     if payment.errors.none?
-      invoices.each do |invoice|
-        invoice_id = invoice.dig(:id)
-        next if invoice_id.blank?
-        payment.invoices << Invoice.find(invoice_id)
-      end
-    end
-
-    if payment.errors.none?
-      render json: payment.as_json(include: [:customer, :invoices])
+      render json: payment.as_json
 
     else
       render json: {errors: payment.errors.full_messages}, status: 500
@@ -66,6 +47,16 @@ class PaymentsController < ApplicationController
   private
 
   def payment_params
-    params.require(:payment).permit(:customer_id, :price_in_cents, :date, :payment_type, :check_number, invoices: [:id])
+    params.require(:payment).permit(
+      :customer_id,
+      :paid_in_cents,
+      :fees_in_cents,
+      :discounts_in_cents,
+      :subtotal_in_cents,
+      :total_in_cents,
+      :date,
+      :payment_type,
+      :check_number,
+      invoice_ids: [])
   end
 end

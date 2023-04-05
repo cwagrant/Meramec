@@ -1,10 +1,9 @@
 import React from "react";
 import { DatePicker } from "@mui/x-date-pickers";
 import {
-  Box,
+  Checkbox,
   FormControl,
   Grid,
-  InputAdornment,
   InputLabel,
   MenuItem,
   Paper,
@@ -26,51 +25,124 @@ import SelectCustomer from "../Customers/SelectCustomer";
 
 const PaymentFields = ({ payment, onChange, readOnly, lockCustomer }) => {
   const axios = useAxios();
-  const [price, setPrice] = React.useState("");
-  const [data, setData] = React.useState("");
-  const [total, setTotal] = React.useState("");
+  const [paid, setPaid] = React.useState("");
 
-  const getCustomerInvoices = (customerId) => {
+  React.useEffect(() => console.log(payment), [payment]);
+
+  const selectCustomerHandler = (customer) => {
+    if (!customer) {
+      onChange({
+        ...payment,
+        customer: null,
+        customer_id: null,
+        subtotal_in_cents: 0,
+        fees_in_cents: 0,
+        discounts_in_cents: 0,
+        total_in_cents: 0,
+        invoices: [],
+      });
+      return;
+    }
+
     axios
       .get(paths.API.INVOICES(), {
-        params: { customer_id: customerId, not_paid: 1 },
+        params: {
+          customer_id: customer.id,
+          payment_id: payment?.id,
+          not_paid: 1,
+        },
       })
       .then((res) => {
-        setData(res.data);
+        let invoices = res.data;
+
+        for (let invoice of invoices) {
+          invoice.include_in_payment = false;
+        }
+
+        onChange({
+          ...payment,
+          customer: customer,
+          customer_id: customer?.id,
+          subtotal_in_cents: 0,
+          fees_in_cents: 0,
+          discounts_in_cents: 0,
+          total_in_cents: 0,
+          invoices: invoices || [],
+        });
       });
   };
 
-  const removeInvoice = (id) => {
-    if (!onChange) return;
+  const invoiceClickHandler = (invoice) => {
+    if (readOnly) return;
 
-    let remainingInvoices = payment.invoices.filter((
-      adjustment,
-    ) => adjustment.id != id);
+    let newPayment = { ...payment };
+    newPayment = toggleIncludeInvoice(newPayment, invoice);
+    newPayment = recalculateTotals(newPayment);
 
-    onChange({
-      ...payment,
-      invoices: [
-        ...remainingInvoices,
-      ],
-    });
+    onChange({ ...newPayment });
   };
 
-  React.useEffect(() => {
-    if (payment?.price_in_cents) {
-      setPrice(centsToDollars(payment.price_in_cents));
+  const toggleIncludeInvoice = (payment, invoice) => {
+    if (!payment?.invoice_ids) {
+      console.log("notfound");
+      payment.invoice_ids = [invoice.id];
+      return payment;
     }
-  }, [payment?.price_in_cents]);
+    let index = payment.invoice_ids.indexOf(invoice.id);
 
-  React.useEffect(() => {
+    if (index === -1) {
+      payment.invoice_ids.push(invoice.id);
+    } else {
+      payment.invoice_ids = payment.invoice_ids.filter((a) => a !== invoice.id);
+    }
+
+    return payment;
+  };
+
+  const filteredInvoices = (payment) => {
+    return payment.invoices.filter((a) =>
+      payment.invoice_ids.indexOf(a.id) !== -1
+    );
+  };
+
+  const recalculateTotals = (payment) => {
     if (!payment?.invoices || !onChange) return;
 
-    let total = payment.invoices.reduce(
+    let discounts = 0;
+    let fees = 0;
+
+    let invoices = filteredInvoices(payment);
+
+    let adjustments = invoices.map((invoice) => invoice.invoice_adjustments);
+
+    adjustments = adjustments.flat();
+
+    for (let adjustment of adjustments) {
+      if (adjustment.type_of == "fee") {
+        fees = fees + adjustment.price_in_cents;
+      } else {
+        discounts = discounts + adjustment.price_in_cents;
+      }
+    }
+
+    let subtotal = invoices.reduce(
+      (acc, invoice) => acc + invoice.subtotal_in_cents,
+      0,
+    );
+
+    let total = invoices.reduce(
       (acc, invoice) => acc + invoice.total_in_cents,
       0,
     );
 
-    onChange({ ...payment, price_in_cents: total });
-  }, [payment?.invoices]);
+    return {
+      ...payment,
+      discounts_in_cents: discounts,
+      fees_in_cents: fees,
+      subtotal_in_cents: subtotal,
+      total_in_cents: total,
+    };
+  };
 
   if (!payment) return;
 
@@ -103,17 +175,8 @@ const PaymentFields = ({ payment, onChange, readOnly, lockCustomer }) => {
             readOnly={readOnly}
             customer={payment.customer}
             onChange={(newValue) => {
-              if (newValue) {
-                getCustomerInvoices(newValue.id);
-              } else {
-                setData([]);
-              }
-              onChange({
-                ...payment,
-                customer: newValue,
-                customer_id: newValue?.id,
-                invoices: [],
-              });
+              selectCustomerHandler(newValue);
+
               document.activeElement.blur();
             }}
           />
@@ -153,80 +216,32 @@ const PaymentFields = ({ payment, onChange, readOnly, lockCustomer }) => {
             }}
           />
         </Grid>
-        {!readOnly &&
-          (
-            <>
-              <Grid item xs={12}>
-                <Paper>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Invoice Date</TableCell>
-                        <TableCell align="center">Invoice #</TableCell>
-                        <TableCell align="right">Total</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {data
-                        ? (
-                          data.map((invoice) => {
-                            return (
-                              <TableRow
-                                key={invoice.id}
-                                onClick={() => {
-                                  let invoices = payment?.invoices
-                                    ? [...payment.invoices]
-                                    : [];
-
-                                  onChange({
-                                    ...payment,
-                                    invoices: [...invoices, invoice],
-                                  });
-                                }}
-                                sx={{ cursor: "pointer" }}
-                              >
-                                <TableCell>{invoice.date}</TableCell>
-                                <TableCell align="center">
-                                  {String(invoice.id).padStart(6, "0")}
-                                </TableCell>
-                                <TableCell align="right">
-                                  {centsToDollars(invoice.total_in_cents)}
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })
-                        )
-                        : null}
-                    </TableBody>
-                  </Table>
-                </Paper>
-              </Grid>
-              <Grid item xs={12} sx={{ textAlign: "center" }}>
-                <Typography>
-                  Click invoices in the box above to add them.
-                </Typography>
-              </Grid>
-            </>
-          )}
         <Grid item xs={12}>
           <Table>
             <TableHead>
               <TableRow>
+                <TableCell />
                 <TableCell>Invoice Date</TableCell>
                 <TableCell>Invoice #</TableCell>
                 <TableCell align="right">Total</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {payment.invoices &&
-                payment.invoices.map((invoice) => {
+              {payment?.invoices
+                ? payment.invoices.map((invoice) => {
                   return (
                     <TableRow
+                      hover
                       key={invoice.id}
-                      onClick={() => {
-                        removeInvoice(invoice.id);
-                      }}
+                      onClick={(event) => invoiceClickHandler(invoice)}
                     >
+                      <TableCell>
+                        <Checkbox
+                          color="primary"
+                          checked={payment.invoice_ids?.indexOf(invoice.id) !==
+                            -1}
+                        />
+                      </TableCell>
                       <TableCell>{invoice.date}</TableCell>
                       <TableCell>
                         {String(invoice.id).padStart(6, "0")}
@@ -236,7 +251,8 @@ const PaymentFields = ({ payment, onChange, readOnly, lockCustomer }) => {
                       </TableCell>
                     </TableRow>
                   );
-                })}
+                })
+                : null}
             </TableBody>
           </Table>
         </Grid>
@@ -244,11 +260,38 @@ const PaymentFields = ({ payment, onChange, readOnly, lockCustomer }) => {
         <Grid item xs={12} md={3}>
           <Grid container spacing={2}>
             <Grid item xs={6}>
+              <Typography variant="h6">Subtotal</Typography>
+            </Grid>
+            <Grid item xs={6} sx={{ textAlign: "right" }}>
+              <Typography variant="h6">
+                ${centsToDollars(payment.subtotal_in_cents || 0)}
+              </Typography>
+            </Grid>
+
+            <Grid item xs={6}>
+              <Typography variant="h6">Fees</Typography>
+            </Grid>
+            <Grid item xs={6} sx={{ textAlign: "right" }}>
+              <Typography variant="h6">
+                ${centsToDollars(payment.fees_in_cents || 0)}
+              </Typography>
+            </Grid>
+
+            <Grid item xs={6}>
+              <Typography variant="h6">Discounts</Typography>
+            </Grid>
+            <Grid item xs={6} sx={{ textAlign: "right" }}>
+              <Typography variant="h6">
+                ${centsToDollars(payment.discounts_in_cents || 0)}
+              </Typography>
+            </Grid>
+
+            <Grid item xs={6}>
               <Typography variant="h6">Total</Typography>
             </Grid>
             <Grid item xs={6} sx={{ textAlign: "right" }}>
               <Typography variant="h6">
-                ${centsToDollars(payment.price_in_cents || 0)}
+                ${centsToDollars(payment.total_in_cents || 0)}
               </Typography>
             </Grid>
           </Grid>

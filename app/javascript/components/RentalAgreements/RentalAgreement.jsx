@@ -5,8 +5,12 @@ import {
   Button,
   ButtonGroup,
   Divider,
+  FormControl,
   Grid,
   InputAdornment,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
   Typography,
 } from "@mui/material";
@@ -64,6 +68,36 @@ const Show = () => {
           />
         </Grid>
         <Grid item xs={12} md={6}>
+          <FormControl sx={{ width: 1 }}>
+            <InputLabel id="frequency-label">Frequency In Months</InputLabel>
+            <Select
+              labelId="frequency-label"
+              label="Frequency In Months"
+              value={rentalAgreement.frequency_in_months || "1"}
+              onChange={(event) => {
+                onChange({
+                  ...rentalAgreement,
+                  frequency_in_months: event.target.value,
+                });
+              }}
+              readOnly={true}
+            >
+              <MenuItem value="1">Monthly</MenuItem>
+              <MenuItem value="3">Quarterly</MenuItem>
+              <MenuItem value="6">Semiannual</MenuItem>
+              <MenuItem value="12">Yearly</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <TextField
+            label="Next Due Date"
+            value={rentalAgreement.next_due_date || "Missing"}
+            readOnly={true}
+            sx={{ width: 1 }}
+          />
+        </Grid>
+        <Grid item xs={12}>
           <TextField
             label="Amount"
             value={centsToDollars(rentalAgreement.price_in_cents) ||
@@ -75,14 +109,6 @@ const Show = () => {
               ),
               readOnly: true,
             }}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextField
-            label="Next Due Date"
-            value={rentalAgreement.next_due_date || "Missing"}
-            readOnly={true}
-            sx={{ width: 1 }}
           />
         </Grid>
 

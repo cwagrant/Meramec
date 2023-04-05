@@ -7,14 +7,16 @@ class InvoicesController < ApplicationController
     invoices = Invoice.search(params[:search], models: [Invoice, Customer])
 
     if params[:not_paid] == "1"
-      invoices = invoices.where.not(state: :paid)
+      ids = [nil]
+      ids << params[:payment_id] if params[:payment_id].present?
+      invoices = invoices.where(payment_id: ids)
     end
 
     if params[:customer_id].present?
       invoices = invoices.where(customer_id: params[:customer_id])
     end
 
-    render json: invoices.as_json(include: :customer)
+    render json: invoices.as_json(include: [:customer, :invoice_adjustments, invoice_items: { include: :item}])
   end
 
   def show
@@ -101,6 +103,16 @@ class InvoicesController < ApplicationController
       )
     else
       render json: {errors: invoice.errors.full_messages}, status: 500
+    end
+  end
+
+  def destroy
+    invoice = Invoice.find(params[:id])
+
+    if invoice.destroy
+      render json: {}, status: :ok
+    else
+      render json: { errors: invoice.errors.full_messages}, status: 500
     end
   end
 

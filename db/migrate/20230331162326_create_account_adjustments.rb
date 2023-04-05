@@ -2,7 +2,6 @@ class CreateAccountAdjustments < ActiveRecord::Migration[7.0]
   def change
     create_table :account_adjustments do |t|
       t.integer :rental_agreement_id
-      # this could be a RentalAgreementPayment or something else
       t.references :source, polymorphic: true
       t.string :type_of
       t.string :reason

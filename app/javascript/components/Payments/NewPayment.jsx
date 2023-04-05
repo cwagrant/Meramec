@@ -13,7 +13,10 @@ const New = () => {
   const [payment, setPayment] = React.useState({
     date: null,
     customer: null,
-    rental_agreement_payments: [],
+    discounts_in_cents: 0,
+    fees_in_cents: 0,
+    subtotal_in_cents: 0,
+    total_in_cents: 0,
   });
 
   const handleSubmit = (event) => {

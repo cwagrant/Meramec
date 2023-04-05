@@ -22,4 +22,14 @@ test:
 
 production:
   <<: *default
-  database: data/meramec_production.sqlite3
+
+production:
+  <<: *default
+  adapter: postgresql
+  encoding: unicode
+  database: ENV.fetch("DATABASE_NAME") { "production.sqlite3" }
+  pool: 5
+  username: ENV.fetch("DATABASE_USERNAME") { "root" }
+  password: ENV.fetch("DATABASE_PASSWORD") { "" }
+  host: ENV.fetch("DATABASE_HOST") { "localhost" }
+  port: ENV.fetch("DATABASE_PORT") { 5432 }

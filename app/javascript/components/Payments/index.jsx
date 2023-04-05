@@ -23,9 +23,18 @@ const Payments = ({ children }) => {
       axios
         .get(paths.API.PAYMENTS(paymentId))
         .then((res) => {
-          setPayment(res.data);
+          let payment = res.data;
+
+          for (let invoice of payment?.invoices) {
+            invoice.include_in_payment = true;
+          }
+
+          payment.invoice_ids = payment?.invoices.map((invoice) => invoice.id);
+
+          setPayment(payment);
         })
         .catch((error) => {
+          console.log(error);
           enqueueSnackbar(`Unable to load payment with id ${paymentId}`, {
             variant: "error",
           });

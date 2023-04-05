@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import FormFields from "./InvoiceFields";
 import useAxios from "../useAxios";
@@ -44,6 +44,12 @@ const Edit = () => {
         maxWidth: "md",
       }}
     >
+      <Paper sx={{ my: 2, p: 2 }}>
+        <Typography>
+          Note: Manually generated invoices do not modify the Next Due Date for
+          any attached rental agreements.
+        </Typography>
+      </Paper>
       <FormFields
         invoice={invoice}
         onChange={(newValue) => setInvoice(newValue)}

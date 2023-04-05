@@ -10,21 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_04_162715) do
-  create_table "account_adjustments", force: :cascade do |t|
-    t.integer "rental_agreement_id"
-    t.string "source_type"
-    t.integer "source_id"
-    t.string "type_of"
-    t.string "reason"
-    t.string "reason_description"
-    t.integer "price_in_cents", default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.date "date"
-    t.index ["source_type", "source_id"], name: "index_account_adjustments_on_source"
-  end
-
+ActiveRecord::Schema[7.0].define(version: 2023_04_05_165601) do
   create_table "addresses", force: :cascade do |t|
     t.text "address_1"
     t.text "address_2"
@@ -86,28 +72,19 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_04_162715) do
     t.index ["payment_id"], name: "index_invoices_on_payment_id"
   end
 
-  create_table "ledger_entries", force: :cascade do |t|
-    t.integer "rental_agreement_id"
-    t.string "source_type"
-    t.integer "source_id"
-    t.integer "amount_in_cents", default: 0
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.date "date"
-    t.integer "balance_in_cents", default: 0
-    t.index ["rental_agreement_id"], name: "index_ledger_entries_on_rental_agreement_id"
-    t.index ["source_type", "source_id"], name: "index_ledger_entries_on_source"
-  end
-
   create_table "payments", force: :cascade do |t|
     t.integer "customer_id"
     t.integer "attachment_id"
     t.date "date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "price_in_cents", default: 0, null: false
+    t.integer "paid_in_cents", default: 0, null: false
     t.string "payment_type"
     t.integer "check_number"
+    t.integer "discounts_in_cents", default: 0
+    t.integer "fees_in_cents", default: 0
+    t.integer "subtotal_in_cents", default: 0
+    t.integer "total_in_cents", default: 0
     t.index ["customer_id"], name: "index_payments_on_customer_id"
   end
 
@@ -117,35 +94,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_04_162715) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["address_id"], name: "index_properties_on_address_id"
-  end
-
-  create_table "rental_agreement_payments", force: :cascade do |t|
-    t.integer "rental_agreement_id"
-    t.integer "payment_id"
-    t.integer "amount_in_cents", default: 0
-    t.text "note", default: ""
-    t.index ["payment_id"], name: "index_rental_agreement_payments_on_payment_id"
-    t.index ["rental_agreement_id"], name: "index_rental_agreement_payments_on_rental_agreement_id"
-  end
-
-  create_table "rental_agreement_term_values", force: :cascade do |t|
-    t.integer "rental_agreement_term_id"
-    t.string "key"
-    t.text "value"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["rental_agreement_term_id"], name: "index_rental_agreement_term_values_on_rental_agreement_term_id"
-  end
-
-  create_table "rental_agreement_terms", force: :cascade do |t|
-    t.integer "rental_agreement_id"
-    t.integer "term_id"
-    t.date "starts_at"
-    t.date "ends_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["rental_agreement_id"], name: "index_rental_agreement_terms_on_rental_agreement_id"
-    t.index ["term_id"], name: "index_rental_agreement_terms_on_term_id"
   end
 
   create_table "rental_agreements", force: :cascade do |t|
@@ -158,14 +106,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_04_162715) do
     t.integer "frequency_in_months", default: 1
     t.index ["customer_id"], name: "index_rental_agreements_on_customer_id"
     t.index ["unit_id"], name: "index_rental_agreements_on_unit_id"
-  end
-
-  create_table "terms", force: :cascade do |t|
-    t.string "name"
-    t.text "description"
-    t.integer "term_type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "units", force: :cascade do |t|
@@ -200,13 +140,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_04_162715) do
   add_foreign_key "invoice_items", "invoices"
   add_foreign_key "invoices", "customers"
   add_foreign_key "invoices", "payments"
-  add_foreign_key "ledger_entries", "rental_agreements"
   add_foreign_key "payments", "customers"
   add_foreign_key "properties", "addresses"
-  add_foreign_key "rental_agreement_payments", "rental_agreements"
-  add_foreign_key "rental_agreement_term_values", "rental_agreement_terms"
-  add_foreign_key "rental_agreement_terms", "rental_agreements"
-  add_foreign_key "rental_agreement_terms", "terms"
   add_foreign_key "rental_agreements", "customers"
   add_foreign_key "rental_agreements", "units"
   add_foreign_key "units", "properties"
