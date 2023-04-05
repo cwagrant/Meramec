@@ -25,9 +25,6 @@ import SelectCustomer from "../Customers/SelectCustomer";
 
 const PaymentFields = ({ payment, onChange, readOnly, lockCustomer }) => {
   const axios = useAxios();
-  const [paid, setPaid] = React.useState("");
-
-  React.useEffect(() => console.log(payment), [payment]);
 
   const selectCustomerHandler = (customer) => {
     if (!customer) {
@@ -40,6 +37,7 @@ const PaymentFields = ({ payment, onChange, readOnly, lockCustomer }) => {
         discounts_in_cents: 0,
         total_in_cents: 0,
         invoices: [],
+        invoice_ids: [],
       });
       return;
     }
@@ -55,10 +53,6 @@ const PaymentFields = ({ payment, onChange, readOnly, lockCustomer }) => {
       .then((res) => {
         let invoices = res.data;
 
-        for (let invoice of invoices) {
-          invoice.include_in_payment = false;
-        }
-
         onChange({
           ...payment,
           customer: customer,
@@ -68,6 +62,7 @@ const PaymentFields = ({ payment, onChange, readOnly, lockCustomer }) => {
           discounts_in_cents: 0,
           total_in_cents: 0,
           invoices: invoices || [],
+          invoice_ids: [],
         });
       });
   };
@@ -181,12 +176,12 @@ const PaymentFields = ({ payment, onChange, readOnly, lockCustomer }) => {
             }}
           />
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={6} md={4}>
           <FormControl sx={{ width: 1 }}>
-            <InputLabel id="payment-type-label">Status</InputLabel>
+            <InputLabel id="payment-type-label">Payment Type</InputLabel>
             <Select
               labelId="payment-type-label"
-              label="Status"
+              label="Payment Type"
               value={payment.payment_type || "cash"}
               onChange={(event) => {
                 onChange({
@@ -202,7 +197,25 @@ const PaymentFields = ({ payment, onChange, readOnly, lockCustomer }) => {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={6} md={4}>
+          <TextField
+            required
+            label="Payment Amount"
+            sx={{ width: 1, mt: 2 }}
+            value={payment.price}
+            onChange={(event) => {
+              onChange({
+                ...payment,
+                paid_in_cents: dollarsToCents(event.target.value || 0),
+                price: event.target.value,
+              });
+            }}
+            InputProps={{
+              readOnly: readOnly,
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
           <TextField
             label="Check #"
             value={payment.check_number || ""}
@@ -238,8 +251,10 @@ const PaymentFields = ({ payment, onChange, readOnly, lockCustomer }) => {
                       <TableCell>
                         <Checkbox
                           color="primary"
-                          checked={payment.invoice_ids?.indexOf(invoice.id) !==
-                            -1}
+                          checked={payment.invoice_ids
+                            ? payment.invoice_ids.indexOf(invoice.id) !==
+                              -1
+                            : false}
                         />
                       </TableCell>
                       <TableCell>{invoice.date}</TableCell>

@@ -18,6 +18,10 @@ const RentalAgreements = ({ customer }) => {
   const { enqueueSnackbar } = useSnackbar();
   const axios = useAxios(enqueueSnackbar);
 
+  React.useEffect(() => {
+    queryRentalAgreements();
+  }, [customer]);
+
   const changeHandler = (event) => {
     setQuery(event.target.value);
   };

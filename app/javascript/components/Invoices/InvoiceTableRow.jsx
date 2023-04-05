@@ -2,8 +2,9 @@ import React from "react";
 import { Box, Link, TableCell, TableRow } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
-import LaunchIcon from "@mui/icons-material/Launch";
 import EditIcon from "@mui/icons-material/Edit";
+import PaymentIcon from "@mui/icons-material/Payment";
+import PaidIcon from "@mui/icons-material/Paid";
 
 const InvoiceTableRow = ({ row, onDelete }) => {
   const navigate = useNavigate();
@@ -32,10 +33,11 @@ const InvoiceTableRow = ({ row, onDelete }) => {
             onClick={(event) => {
               event.preventDefault();
               event.stopPropagation();
-              navigate(`/invoices/${row.id}`);
+              let target = row.payment_id ? row.payment_id : "new";
+              navigate(`/payments/${target}`);
             }}
           >
-            <LaunchIcon />
+            {row.payment_id ? <PaidIcon /> : <PaymentIcon />}
           </Link>
           <Link
             onClick={(event) => {
