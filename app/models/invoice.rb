@@ -53,7 +53,6 @@ class Invoice < ApplicationRecord
       self.rental_agreements << agreement
     end
 
-    self.date = date
     self.subtotal_in_cents = running_total
     self.total_in_cents = running_total
   end
