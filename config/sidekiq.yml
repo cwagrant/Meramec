@@ -3,5 +3,5 @@
 :scheduler:
   :schedule:
     billing_cycle:
-      every: "every day at 5 am"
+      cron: '0 5 * * *'
       class: BillingCycleWorker
