@@ -74,3 +74,5 @@ gem "lograge", "~> 0.12.0"
 gem "haml", "~> 6.1"
 
 gem "grover", "~> 1.1"
+
+gem "pg", "~> 1.4"
