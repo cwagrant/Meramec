@@ -5,7 +5,7 @@ class CreateInvoiceAdjustments < ActiveRecord::Migration[7.0]
       t.string :type_of
       t.string :reason
       t.string :reason_description
-      t.string :price_in_cents
+      t.integer :price_in_cents, default: 0
 
       t.timestamps
     end
