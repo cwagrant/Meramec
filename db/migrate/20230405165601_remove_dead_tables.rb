@@ -6,6 +6,5 @@ class RemoveDeadTables < ActiveRecord::Migration[7.0]
     drop_table :rental_agreement_terms
     drop_table :rental_agreement_term_values
     drop_table :terms
-    end
   end
 end

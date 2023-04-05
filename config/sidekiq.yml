@@ -3,5 +3,5 @@
 :scheduler:
   :schedule:
     billing_cycle:
-      every: "day at 5 am"
+      every: "every day at 5 am"
       class: BillingCycleWorker
