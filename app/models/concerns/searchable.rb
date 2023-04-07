@@ -2,6 +2,7 @@ module Searchable
   extend ActiveSupport::Concern
 
   included do
+
     scope :search, ->(search_terms, models: [self]) do
       return self if search_terms.blank?
       models = [models] if !models.is_a?(Array)
@@ -13,7 +14,13 @@ module Searchable
           model.searchable_attributes.map(&:to_s).each do |attr|
             next unless model.column_names.include?(attr)
 
-            acc << arel_table[attr.to_sym()].lower().matches("%#{term}%")
+            column = model.columns.find { |x| x.name == attr }
+
+            if(column.sql_type != "varchar")
+              acc << model.arel_cast_as_text(model, attr).matches("%#{term}%")
+            else
+              acc << arel_table[attr.to_sym()].lower().matches("%#{term}%")
+            end
           end
 
           acc
@@ -49,6 +56,18 @@ module Searchable
   end
 
   class_methods do
+    def arel_cast_as_text(model, column)
+      Arel::Nodes::NamedFunction.new(
+        'CAST',
+        [
+          Arel::Nodes::As.new(
+            model.arel_table[column.to_sym],
+            Arel::Nodes::SqlLiteral.new('text')
+          ),
+        ]
+      )
+    end
+
     def searchable_attributes
       warn("warning: #{self.to_s} should implement a searchable_attributes Class method.")
       []

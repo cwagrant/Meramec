@@ -50,7 +50,7 @@ const RentalAgreementCard = ({ rentalAgreement }) => {
           <RepeatIcon />
         </ListItemIcon>
         <ListItemText
-          primary={rentalAgreement.frequency_in_months}
+          primary={`Every ${rentalAgreement.frequency_in_months} month(s)`}
           secondary="Billing Frequency"
         />
       </ListItem>
