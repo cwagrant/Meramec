@@ -1,10 +1,9 @@
 import React from "react";
-import { Box, Button } from "@mui/material";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
-import FormFields from "./InvoiceFields";
 import useAxios from "../useAxios";
 import { useSnackbar } from "notistack";
 import * as paths from "../PathHelper";
+import InvoiceForm from "./InvoiceForm";
 
 const Edit = () => {
   const { invoiceId } = useParams();
@@ -13,7 +12,7 @@ const Edit = () => {
   const axios = useAxios(enqueueSnackbar);
   const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event, invoice) => {
     event.preventDefault();
 
     axios
@@ -31,39 +30,7 @@ const Edit = () => {
       });
   };
 
-  return (
-    <Box sx={{ maxWidth: "md", p: 2 }} component="form" onSubmit={handleSubmit}>
-      <FormFields
-        invoice={invoice}
-        onChange={(newValue) => {
-          setInvoice(newValue);
-        }}
-        lockCustomer
-      />
-
-      <Box sx={{ display: "flex", mt: 2, gap: 2 }}>
-        <Button
-          variant="outlined"
-          type="submit"
-        >
-          Submit
-        </Button>
-        <Button
-          variant="outlined"
-          type="button"
-          onClick={(event) => {
-            event.preventDefault();
-            if (!window.confirm("Are you sure you wish to cancel?")) {
-              return;
-            }
-            navigate("..");
-          }}
-        >
-          Cancel
-        </Button>
-      </Box>
-    </Box>
-  );
+  return <InvoiceForm invoice={invoice} onSubmit={handleSubmit} mode="edit" />;
 };
 
 export default Edit;

@@ -1,10 +1,13 @@
 import React from "react";
 import { Box, Button, TextField } from "@mui/material";
 import AddBoxIcon from "@mui/icons-material/AddBox";
+import EditIcon from "@mui/icons-material/Edit";
 import { Link as RouterLink } from "react-router-dom";
 import { debounce } from "lodash";
 
-const SearchBar = ({ onChange, newUrl, TextFieldProps, hideButton }) => {
+const SearchBar = (
+  { onChange, newUrl, editUrl, TextFieldProps },
+) => {
   const debouncedChangeHandler = React.useCallback(
     debounce(onChange, 300),
     [],
@@ -30,8 +33,16 @@ const SearchBar = ({ onChange, newUrl, TextFieldProps, hideButton }) => {
           onChange={debouncedChangeHandler}
           type="text"
         />
-        {!hideButton && (
-          <Box sx={{ flexShrink: 1, alignSelf: "flex-end", mb: 2 }}>
+        <Box
+          sx={{
+            flexShrink: 1,
+            alignSelf: "flex-end",
+            display: "flex",
+            mb: 2,
+            gap: 2,
+          }}
+        >
+          {newUrl && (
             <Button
               component={RouterLink}
               to={newUrl}
@@ -40,8 +51,18 @@ const SearchBar = ({ onChange, newUrl, TextFieldProps, hideButton }) => {
             >
               New
             </Button>
-          </Box>
-        )}
+          )}
+          {editUrl && (
+            <Button
+              component={RouterLink}
+              to={editUrl}
+              variant="outlined"
+              startIcon={<EditIcon />}
+            >
+              Edit
+            </Button>
+          )}
+        </Box>
       </Box>
     </>
   );

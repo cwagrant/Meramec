@@ -1,42 +1,35 @@
 import React from "react";
 import { useOutletContext } from "react-router-dom";
-import { Box, Grid, Paper, Stack, Typography } from "@mui/material";
-import { capitalizeFirstLetter, centsToDollars } from "../DataFormatHelpers";
+import { Box, Divider, Grid, Paper, Stack, Typography } from "@mui/material";
+import { centsToDollars } from "../DataFormatHelpers";
+import CircularProgress from "@mui/material/CircularProgress";
+import UnitFields from "./UnitFields";
+import AddressFields from "../Addresses/AddressFields";
 
 const Show = ({ unit }) => {
   const { unit: contextUnit } = useOutletContext();
 
   let useUnit = contextUnit ? contextUnit : unit;
 
+  if (!useUnit) return <CircularProgress />;
+
+  useUnit = {
+    ...useUnit,
+    price: centsToDollars(useUnit.price_in_cents),
+  };
+
   return (
-    <Paper>
-      <Box sx={{ p: 2, display: "flex" }}>
-        <Grid container spacing={2}>
-          <Grid item xs={2}>
-            <Stack spacing={0.5}>
-              <Typography variant="subtitle2">unit name</Typography>
-              <Typography>{useUnit.name}</Typography>
-            </Stack>
-          </Grid>
-          <Grid item xs={2}>
-            <Stack spacing={0.5}>
-              <Typography variant="caption">unit type</Typography>
-              <Typography variant="body1">
-                {capitalizeFirstLetter(useUnit.type_of)}
-              </Typography>
-            </Stack>
-          </Grid>
-          <Grid item xs={2}>
-            <Stack spacing={0.5}>
-              <Typography variant="caption">cost</Typography>
-              <Typography variant="body1">
-                ${centsToDollars(useUnit.price_in_cents)}
-              </Typography>
-            </Stack>
-          </Grid>
+    <Box sx={{ maxWidth: "md" }}>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <UnitFields unit={useUnit} readOnly />
         </Grid>
-      </Box>
-    </Paper>
+        <Grid item xs={12}>
+          <Divider>Address</Divider>
+          <AddressFields address={useUnit.address} />
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 

@@ -18,7 +18,7 @@ const InvoiceTableRow = ({ row, readOnly, onChange }) => {
           type="number"
           value={row.item_count}
           onChange={(event) => {
-            onChange({ ...row, item_count: event.target.value });
+            onChange("item_count", event.target.value);
           }}
           readOnly={readOnly}
           sx={{ width: "50px" }}

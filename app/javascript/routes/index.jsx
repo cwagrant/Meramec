@@ -8,6 +8,8 @@ import Customers from "../components/Customers";
 import Invoices from "../components/Invoices";
 import Payments from "../components/Payments";
 import ErrorBoundary from "../components/ErrorBoundary";
+import * as paths from "../components/PathHelper";
+import useAxios from "../components/useAxios";
 
 import { Login, Logout } from "../components/Login";
 
@@ -17,6 +19,8 @@ import {
   Navigate,
   Route,
 } from "react-router-dom";
+
+const axios = useAxios();
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -155,6 +159,7 @@ const router = createBrowserRouter(
           path="customers"
           element={<Customers />}
           handle={{ crumb: { name: "Customers" } }}
+          errorElement={<ErrorBoundary />}
         >
           <Route index element={<Customers.Index />} />
           <Route
@@ -164,7 +169,20 @@ const router = createBrowserRouter(
           />
           <Route
             path=":customerId"
+            id="customer"
             handle={{ crumb: { name: "{customer}" } }}
+            // loader={async ({ params }) => {
+            //   return await axios
+            //     .get(paths.API.CUSTOMERS(params.customerId))
+            //     .then((res) => {
+            //       return res.data;
+            //     })
+            //     .catch((error) => {
+            //       console.log(error);
+            //
+            //       throw new Response("Not Found", { status: 404 });
+            //     });
+            // }}
           >
             <Route index element={<Customers.Show />} />
             <Route

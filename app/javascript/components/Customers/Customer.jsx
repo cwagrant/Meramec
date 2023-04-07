@@ -1,10 +1,12 @@
 import React from "react";
 import { useOutletContext } from "react-router-dom";
-import { Box, Button, Grid } from "@mui/material";
-import FormFields from "./CustomerFields";
+import { Box, Button, Divider, Grid } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
 import AddBoxIcon from "@mui/icons-material/AddBox";
+
+import FormFields from "./CustomerFields";
+import AddressFields from "../Addresses/AddressFields";
 import RentalAgreements from "../RentalAgreements/RentalAgreements";
 
 const Customer = ({ customer }) => {
@@ -38,6 +40,11 @@ const Customer = ({ customer }) => {
 
       <Grid item xs={12}>
         <FormFields customer={useCustomer} readOnly={true} />
+      </Grid>
+
+      <Grid item xs={12}>
+        <Divider>Address</Divider>
+        <AddressFields address={useCustomer.address} readOnly={true} />
       </Grid>
 
       <Grid item xs={12}>

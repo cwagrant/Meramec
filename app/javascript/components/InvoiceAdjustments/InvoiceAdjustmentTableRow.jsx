@@ -14,7 +14,10 @@ const InvoiceTableRow = ({ row, readOnly, onDelete }) => {
   return (
     <TableRow
       key={row.id}
-      sx={{ cursor: "pointer" }}
+      sx={{
+        cursor: "pointer",
+        display: row?._destroy === 1 ? "none" : "table-row",
+      }}
     >
       <TableCell>
         {!readOnly && (

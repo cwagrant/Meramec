@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Grid, TextField } from "@mui/material";
+import { Grid, TextField } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import MuiPhoneNumber from "material-ui-phone-number";
 
@@ -8,8 +8,18 @@ const StyledInput = styled(TextField)(({ theme }) => ({
   maxWidth: theme.breakpoints.sm,
 }));
 
-const CustomerFields = ({ customer, onChange, readOnly }) => {
+const CustomerFields = ({ customer, dispatch, namespace, readOnly }) => {
   if (!customer) return;
+
+  const ns = (field) => {
+    if (!namespace) return field;
+
+    if (!Array.isArray(namespace)) {
+      return namespace;
+    }
+
+    return [...namespace, field].join(".");
+  };
 
   return (
     <Grid container spacing={2}>
@@ -19,7 +29,7 @@ const CustomerFields = ({ customer, onChange, readOnly }) => {
           placeholder="Company"
           value={customer.company || ""}
           onChange={(event) => {
-            onChange({ ...customer, company: event.target.value });
+            dispatch({ type: ns("company"), value: event.target.value });
           }}
           InputProps={{
             readOnly: readOnly,
@@ -33,7 +43,7 @@ const CustomerFields = ({ customer, onChange, readOnly }) => {
           placeholder="First Name"
           value={customer.first_name}
           onChange={(event) =>
-            onChange({ ...customer, first_name: event.target.value })}
+            dispatch({ type: ns("first_name"), value: event.target.value })}
           InputProps={{
             readOnly: readOnly,
           }}
@@ -48,7 +58,7 @@ const CustomerFields = ({ customer, onChange, readOnly }) => {
           placeholder="Last Name"
           value={customer.last_name}
           onChange={(event) =>
-            onChange({ ...customer, last_name: event.target.value })}
+            dispatch({ type: ns("last_name"), value: event.target.value })}
           InputProps={{
             readOnly: readOnly,
           }}
@@ -63,7 +73,7 @@ const CustomerFields = ({ customer, onChange, readOnly }) => {
           placeholder="Gate Code"
           value={customer.gate_code}
           onChange={(event) =>
-            onChange({ ...customer, gate_code: event.target.value })}
+            dispatch({ type: ns("gate_code"), value: event.target.value })}
           InputProps={{
             readOnly: readOnly,
           }}
@@ -77,7 +87,7 @@ const CustomerFields = ({ customer, onChange, readOnly }) => {
           placeholder="Email"
           value={customer.email || ""}
           onChange={(event) =>
-            onChange({ ...customer, email: event.target.value })}
+            dispatch({ type: ns("email"), value: event.target.value })}
           InputProps={{
             readOnly: readOnly,
           }}
@@ -88,6 +98,7 @@ const CustomerFields = ({ customer, onChange, readOnly }) => {
           InputProps={{
             readOnly: readOnly,
           }}
+          label="Phone Number"
           readOnly={readOnly}
           disableDropdown={readOnly}
           name="customer[phone_number]"
@@ -96,7 +107,7 @@ const CustomerFields = ({ customer, onChange, readOnly }) => {
           defaultCountry={"us"}
           value={customer.phone_number || ""}
           onChange={(newValue) =>
-            onChange({ ...customer, phone_number: newValue })}
+            dispatch({ type: ns("phone_number"), value: event.target.value })}
           sx={{
             width: "100%",
           }}

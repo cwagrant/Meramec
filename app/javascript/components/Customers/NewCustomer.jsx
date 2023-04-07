@@ -1,22 +1,33 @@
 import React from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Divider } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import FormFields from "./CustomerFields";
-import useAxios from "../useAxios";
 import { useSnackbar } from "notistack";
-import * as paths from "../PathHelper";
 
-const Edit = () => {
+import FormFields from "./CustomerFields";
+import AddressFields from "../Addresses/AddressFields";
+import useAxios from "../useAxios";
+import * as paths from "../PathHelper";
+import updateCustomer from "../reducer";
+
+const NewCustomer = () => {
   const { enqueueSnackbar } = useSnackbar();
   const axios = useAxios(enqueueSnackbar);
   const navigate = useNavigate();
-  const [customer, setCustomer] = React.useState({
+  const [customer, dispatch] = React.useReducer(updateCustomer, {
     company: "",
     first_name: "",
     last_name: "",
     gate_code: "",
     email: "",
     phone_number: "",
+    address: {
+      address_1: "",
+      address_2: "",
+      city: "",
+      state_code: "",
+      zipcode: "",
+      country_code: "",
+    },
   });
 
   const handleSubmit = (event) => {
@@ -40,16 +51,21 @@ const Edit = () => {
       onSubmit={handleSubmit}
       sx={{
         width: 1,
-        maxWidth: "sm",
-        "& .MuiFormControl-root": { m: 1, maxWidth: "sm" },
+        maxWidth: "md",
       }}
     >
       <FormFields
         customer={customer}
-        onChange={(newValue) => setCustomer(newValue)}
+        dispatch={dispatch}
       />
 
-      <Box sx={{ display: "flex", m: 1, gap: 2 }}>
+      <Divider sx={{ mt: 2 }}>Address</Divider>
+      <AddressFields
+        address={customer.address}
+        dispatch={dispatch}
+      />
+
+      <Box sx={{ display: "flex", mt: 2, gap: 2 }}>
         <Button
           variant="outlined"
           type="submit"
@@ -72,4 +88,4 @@ const Edit = () => {
   );
 };
 
-export default Edit;
+export default NewCustomer;

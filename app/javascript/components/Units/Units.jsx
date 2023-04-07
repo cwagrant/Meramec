@@ -54,6 +54,7 @@ const Units = () => {
         onChange={changeHandler}
         TextFieldProps={{ sx: { width: 1, maxWidth: "lg" } }}
         newUrl={"./units/new"}
+        editUrl={"./edit"}
       />
       <Box sx={{ maxWidth: "lg" }}>
         <EnhancedTable
