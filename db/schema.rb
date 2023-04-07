@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_05_165601) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_06_042359) do
   create_table "addresses", force: :cascade do |t|
     t.text "address_1"
     t.text "address_2"
@@ -113,10 +113,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_05_165601) do
     t.integer "type_of"
     t.integer "price_in_cents"
     t.integer "property_id"
-    t.integer "address_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "occupied", default: false
+    t.integer "address_id"
     t.index ["address_id"], name: "index_units_on_address_id"
     t.index ["property_id"], name: "index_units_on_property_id"
   end
@@ -144,6 +144,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_05_165601) do
   add_foreign_key "properties", "addresses"
   add_foreign_key "rental_agreements", "customers"
   add_foreign_key "rental_agreements", "units"
+  add_foreign_key "units", "addresses"
   add_foreign_key "units", "properties"
-  add_foreign_key "units", "properties", column: "address_id"
 end

@@ -4,11 +4,14 @@ class PropertiesController < ApplicationController
   end
 
   def show
-    render json: Property.find(params[:id])
+    render json: Property.find(params[:id]).as_json(include: :address)
   end
 
   def create
-    property = Property.new(property_params)
+    full_params = property_params
+
+    full_params.merge!({address_attributes: full_params.delete(:address)})
+    property = Property.new(full_params)
 
     if property.save
       render json: property
@@ -20,7 +23,10 @@ class PropertiesController < ApplicationController
   def update
     property = Property.find(params[:id])
 
-    property.update(property_params)
+    full_params = property_params
+
+    full_params.merge!({address_attributes: full_params.delete(:address)})
+    property.update(full_params)
 
     if property.errors.none?
       render json: property
@@ -42,6 +48,16 @@ class PropertiesController < ApplicationController
   private
 
   def property_params
-    params.require(:property).permit(:name)
+    params.require(:property).permit(
+      :name,
+      address: [
+        :id,
+        :address_1,
+        :address_2,
+        :city,
+        :state_code,
+        :zipcode,
+        :country_code
+      ])
   end
 end

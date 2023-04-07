@@ -1,7 +1,10 @@
 class Unit < ApplicationRecord
   include Searchable
   belongs_to :property
+  belongs_to :address
   has_many :rental_agreements, dependent: :restrict_with_error
+
+  accepts_nested_attributes_for :address, reject_if: :address_empty?
 
   enum type_of: [ :apartment, :storage, :parking ]
 
@@ -15,7 +18,15 @@ class Unit < ApplicationRecord
     %w(name type_of)
   end
 
+  def as_json(args = {})
+    super({include: :address}.merge(args))
+  end
+
   private
+
+  def address_empty?(attr)
+    attr['address_1'].blank?
+  end
 
   def set_price_in_cents
     return if price.blank?

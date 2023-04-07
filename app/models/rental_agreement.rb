@@ -6,6 +6,7 @@ class RentalAgreement < ApplicationRecord
   belongs_to :unit
   belongs_to :customer
 
+  has_one :property, through: :unit
   has_many :ledger_entries
   has_many :invoice_items, as: :item
   has_many :invoices, through: :invoice_items
@@ -69,7 +70,17 @@ class RentalAgreement < ApplicationRecord
   end
 
   def as_json(args)
-    super({include: { unit: { include: :property}, customer: {}}}.merge(args))
+    super({
+      include: { 
+        customer: {},
+        property: {
+          include: [:address]
+        },
+        unit: {
+          include: [:address]
+        }
+      }
+    }.merge(args))
   end
 
   def has_invoice_since?(date)

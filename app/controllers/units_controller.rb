@@ -9,11 +9,13 @@ class UnitsController < ApplicationController
   end
 
   def show
-    render json: Unit.find(params[:id])
+    render json: Unit.find(params[:id]).as_json
   end
 
   def create
-    unit = Unit.new(unit_params)
+    full_params = unit_params
+    full_params.merge!({address_attributes: full_params.delete(:address)})
+    unit = Unit.new(full_params)
 
     if unit.save
       render json: unit
@@ -23,9 +25,12 @@ class UnitsController < ApplicationController
   end
 
   def update
+    full_params = unit_params
+    full_params.merge!({address_attributes: full_params.delete(:address)})
+
     unit = Unit.find(params[:id])
 
-    unit.update(unit_params)
+    unit.update(full_params)
 
     if unit.errors.none?
       render json: unit
@@ -47,6 +52,18 @@ class UnitsController < ApplicationController
   private
 
   def unit_params
-    params.require(:unit).permit(:price, :type_of, :name, :property_id, :price)
+    params.require(:unit).permit(
+      :price_in_cents,
+      :type_of,
+      :name,
+      :property_id,
+      address:[
+        :address_1,
+        :address_2,
+        :city,
+        :state_code,
+        :zipcode,
+        :country_code
+      ])
   end
 end

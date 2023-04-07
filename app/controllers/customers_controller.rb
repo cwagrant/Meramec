@@ -8,22 +8,27 @@ class CustomersController < ApplicationController
   end
 
   def create
-    customer = Customer.new(customer_params)
+    full_params = customer_params
+    full_params.merge!({address_attributes: full_params.delete(:address)})
+
+    customer = Customer.new(full_params)
 
     if customer.save
-      render json: customer
+      render json: customer.as_json
     else
       render json: {errors: customer.errors.full_messages}, status: 500
     end
   end
 
   def update
+    full_params = customer_params
+    full_params.merge!({address_attributes: full_params.delete(:address)})
     customer = Customer.find(params[:id])
 
-    customer.update(customer_params)
+    customer.update(full_params)
 
     if customer.errors.none?
-      render json: customer
+      render json: customer.as_json
     else
       render json: {errors: customer.errors.full_messages}, status: 500
     end
@@ -42,6 +47,21 @@ class CustomersController < ApplicationController
   private
 
   def customer_params
-    params.require(:customer).permit(:first_name, :last_name, :gate_code, :email, :company, :phone_number)
+    params.require(:customer).permit(
+      :first_name,
+      :last_name,
+      :gate_code,
+      :email,
+      :company,
+      :phone_number,
+      address: [
+        :id,
+        :address_1,
+        :address_2,
+        :city,
+        :state_code,
+        :zipcode,
+        :country_code
+      ])
   end
 end

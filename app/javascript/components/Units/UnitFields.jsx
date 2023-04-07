@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  Box,
   FormControl,
   Grid,
   InputAdornment,
@@ -9,17 +8,9 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import { centsToDollars } from "../DataFormatHelpers";
+import { centsToDollars, dollarsToCents } from "../DataFormatHelpers";
 
-const FormFields = ({ unit, onChange, hidePrice, readOnly }) => {
-  const [price, setPrice] = React.useState("");
-
-  React.useEffect(() => {
-    if (unit?.price_in_cents) {
-      setPrice(centsToDollars(unit.price_in_cents));
-    }
-  }, [unit?.price_in_cents]);
-
+const FormFields = ({ unit, dispatch, hidePrice, readOnly }) => {
   if (!unit) return <h4>Loading...</h4>;
 
   return (
@@ -28,14 +19,12 @@ const FormFields = ({ unit, onChange, hidePrice, readOnly }) => {
         <Grid item xs={12} md={6}>
           <TextField
             required
-            id="unit_name"
             label="Name"
-            name="unit[name]"
             placeholder="Name"
             sx={{ width: 1 }}
             value={unit.name || ""}
             onChange={(event) => {
-              onChange({ ...unit, name: event.target.value });
+              dispatch({ type: "name", value: event.target.value });
             }}
             InputProps={{
               readOnly: readOnly,
@@ -52,7 +41,7 @@ const FormFields = ({ unit, onChange, hidePrice, readOnly }) => {
               name="unit[type_of]"
               value={unit.type_of || ""}
               onChange={(event) => {
-                onChange({ ...unit, type_of: event.target.value });
+                dispatch({ type: "type_of", value: event.target.value });
               }}
               readOnly={readOnly}
             >
@@ -71,14 +60,18 @@ const FormFields = ({ unit, onChange, hidePrice, readOnly }) => {
             <Grid item xs={12}>
               <TextField
                 type="number"
-                value={price}
+                value={unit.price || ""}
                 onChange={(event) => {
-                  setPrice(event.target.value);
-                  onChange({ ...unit, price: event.target.value });
+                  dispatch({ type: "price", value: event.target.value });
+                  dispatch({
+                    type: "price_in_cents",
+                    value: dollarsToCents(event.target.value),
+                  });
                 }}
                 readOnly={readOnly}
                 sx={{ width: 1 }}
                 InputProps={{
+                  readOnly: readOnly,
                   startAdornment: (
                     <InputAdornment position="start">$</InputAdornment>
                   ),

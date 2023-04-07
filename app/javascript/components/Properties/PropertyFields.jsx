@@ -1,23 +1,25 @@
 import React from "react";
-import { Box, TextField } from "@mui/material";
+import { Grid, TextField } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
 
-const PropertyFields = ({ property, onChange }) => {
-  if (!property) return <h4>Loading...</h4>;
+const PropertyFields = ({ property, dispatch }) => {
+  if (!property) return <CircularProgress />;
+
   return (
-    <Box sx={{ display: "flex" }}>
-      <TextField
-        required
-        id="property_name"
-        label="Name"
-        name="property[name]"
-        placeholder="Name"
-        sx={{ width: 1 }}
-        value={property.name}
-        onChange={(event) => {
-          onChange({ ...property, name: event.target.value });
-        }}
-      />
-    </Box>
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <TextField
+          required
+          label="Name"
+          placeholder="Name"
+          sx={{ width: 1 }}
+          value={property.name}
+          onChange={(event) => {
+            dispatch({ type: "name", value: event.target.value });
+          }}
+        />
+      </Grid>
+    </Grid>
   );
 };
 

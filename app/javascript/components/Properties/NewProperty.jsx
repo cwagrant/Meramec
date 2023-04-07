@@ -1,14 +1,21 @@
 import React from "react";
 import { Box, Button } from "@mui/material";
-import PropertyFields from "./PropertyFields";
-import { useNavigate } from "react-router-dom";
-import useAxios from "../useAxios";
 import { useSnackbar } from "notistack";
+import { useNavigate } from "react-router-dom";
+
+import useAxios from "../useAxios";
+import PropertyFields from "./PropertyFields";
+import simpleReducer from "../reducer";
+import AddressFields from "../Addresses/AddressFields";
+import { Address } from "../Models";
 
 const ADD_PROPERTY_URL = "/api/properties";
 
 const Property = () => {
-  const [property, setProperty] = React.useState({ name: "" });
+  const [property, dispatch] = React.useReducer(simpleReducer, {
+    name: "",
+    address: { ...Address },
+  });
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const axios = useAxios(enqueueSnackbar);
@@ -40,7 +47,12 @@ const Property = () => {
     >
       <PropertyFields
         property={property}
-        onChange={(newValue) => setProperty(newValue)}
+        dispatch={dispatch}
+      />
+
+      <AddressFields
+        address={property.address}
+        dispatch={dispatch}
       />
 
       <Box sx={{ display: "flex", m: 1, gap: 2 }}>

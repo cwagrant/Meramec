@@ -8,8 +8,14 @@ class Customer < ApplicationRecord
 
   before_validation :set_formal_name
 
+  accepts_nested_attributes_for :address, reject_if: :address_empty?
+
+  def address_empty?(address)
+    address["address_1"].blank?
+  end
+
   def as_json(args = {})
-    super({include: { rental_agreements: { include: {unit: {}}, methods: :name }}}.merge(args))
+    super({include: { address: [], rental_agreements: { include: {unit: {}}, methods: :name }}}.merge(args))
   end
 
   def self.searchable_attributes

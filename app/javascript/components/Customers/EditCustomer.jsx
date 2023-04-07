@@ -1,17 +1,26 @@
 import React from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Divider } from "@mui/material";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+import { useSnackbar } from "notistack";
+
 import FormFields from "./CustomerFields";
 import useAxios from "../useAxios";
-import { useSnackbar } from "notistack";
 import * as paths from "../PathHelper";
+import updateCustomer from "../reducer";
+import AddressFields from "../Addresses/AddressFields";
+import { Address, Customer } from "../Models";
 
-const Edit = () => {
+const EditCustomer = () => {
   const { customerId } = useParams();
-  const { customer, setCustomer } = useOutletContext();
+  const { customer: sourceCustomer, setCustomer } = useOutletContext();
   const { enqueueSnackbar } = useSnackbar();
   const axios = useAxios(enqueueSnackbar);
   const navigate = useNavigate();
+
+  const [customer, dispatch] = React.useReducer(updateCustomer, {
+    ...Customer,
+    address: { ...Address },
+  });
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -31,13 +40,24 @@ const Edit = () => {
       });
   };
 
+  React.useEffect(() => {
+    if (sourceCustomer) {
+      dispatch({ type: "initialize", value: sourceCustomer });
+    }
+  }, [sourceCustomer]);
+
+  if (!customer) return;
+
   return (
     <Box sx={{ maxWidth: "md", p: 2 }} component="form" onSubmit={handleSubmit}>
       <FormFields
         customer={customer}
-        onChange={(newValue) => {
-          setCustomer(newValue);
-        }}
+        dispatch={dispatch}
+      />
+      <Divider sx={{ mt: 2 }}>Address</Divider>
+      <AddressFields
+        address={customer.address}
+        dispatch={dispatch}
       />
 
       <Box sx={{ display: "flex", mt: 2, gap: 2 }}>
@@ -65,4 +85,4 @@ const Edit = () => {
   );
 };
 
-export default Edit;
+export default EditCustomer;

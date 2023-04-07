@@ -1,17 +1,27 @@
 import React from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Divider } from "@mui/material";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+import { useSnackbar } from "notistack";
+import { isEmpty } from "lodash";
+
 import UnitFields from "./UnitFields";
 import useAxios from "../useAxios";
-import { useSnackbar } from "notistack";
 import * as paths from "../PathHelper";
+import simpleReducer from "../reducer";
+import AddressFields from "../Addresses/AddressFields";
+import { Address, Unit } from "../Models";
+import { centsToDollars } from "../DataFormatHelpers";
 
-const Unit = () => {
+const EditUnit = () => {
   const { propertyId, unitId } = useParams();
-  const { unit, setUnit } = useOutletContext();
+  const { unit: contextUnit, setUnit } = useOutletContext();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const axios = useAxios(enqueueSnackbar);
+  const [unit, dispatch] = React.useReducer(simpleReducer, {
+    ...Unit,
+    address: { ...Address },
+  });
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -25,7 +35,16 @@ const Unit = () => {
       });
   };
 
-  if (!unit) return <h4>Loading...</h4>;
+  React.useEffect(() => {
+    if (isEmpty(contextUnit)) return;
+
+    let addPrice = {
+      ...contextUnit,
+      price: centsToDollars(contextUnit.price_in_cents),
+    };
+
+    dispatch({ type: "initialize", value: addPrice });
+  }, [contextUnit]);
 
   return (
     <Box
@@ -40,9 +59,15 @@ const Unit = () => {
         name="unit[property_id]"
         value={propertyId}
       />
-      <UnitFields unit={unit} onChange={(newValue) => setUnit(newValue)} />
+      <UnitFields unit={unit} dispatch={dispatch} />
 
-      <Box sx={{ display: "flex", m: 1, gap: 2 }}>
+      <Divider sx={{ my: 2 }}>Address</Divider>
+      <AddressFields
+        address={unit.address}
+        dispatch={dispatch}
+      />
+
+      <Box sx={{ display: "flex", my: 2, gap: 2 }}>
         <Button
           variant="outlined"
           type="submit"
@@ -65,4 +90,4 @@ const Unit = () => {
   );
 };
 
-export default Unit;
+export default EditUnit;
