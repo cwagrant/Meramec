@@ -11,7 +11,8 @@
       = image_tag("https://i.imgur.com/DdjAWlt.png", width: '250px;')
       = image_url("storage.png")
       = image_path("storage.png")
-      = image_tag(image_url("storage.png"), width: '250px;')
+      = image_tag("http://meramec#{image_path("storage.png")}", width: '250px;')
+      = image_tag("http://meramec/#{image_path("storage.png")}", width: '250px;')
 
   #invoice-meta.d-flex.justify-content-between.mb-3
 
