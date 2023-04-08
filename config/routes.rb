@@ -28,7 +28,6 @@ Rails.application.routes.draw do
     resources :invoices, except: [:new, :edit] do
       member do 
         get :print
-        get :print_test
       end
     end
   end

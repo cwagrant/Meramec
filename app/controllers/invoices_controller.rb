@@ -124,11 +124,6 @@ class InvoicesController < ApplicationController
     send_data pdf, filename: filename
   end
 
-  def print_test
-    @invoice = Invoice.find(params[:id])
-    render "print"
-  end
-
   private
 
   def invoice_params
