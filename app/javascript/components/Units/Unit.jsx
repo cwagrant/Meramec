@@ -1,32 +1,45 @@
 import React from "react";
-import { useOutletContext } from "react-router-dom";
-import { Box, Divider, Grid, Paper, Stack, Typography } from "@mui/material";
-import { centsToDollars } from "../DataFormatHelpers";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import { Box, Grid, Paper } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
-import UnitFields from "./UnitFields";
-import AddressFields from "../Addresses/AddressFields";
 
-const Show = ({ unit }) => {
-  const { unit: contextUnit } = useOutletContext();
+import UnitCard from "./UnitCard";
+import ControlButtons from "../ControlButtons";
+import useAxios from "../useAxios";
+import * as paths from "../PathHelper";
 
-  let useUnit = contextUnit ? contextUnit : unit;
+const Show = () => {
+  const { unit } = useOutletContext();
+  const navigate = useNavigate();
+  const axios = useAxios();
 
-  if (!useUnit) return <CircularProgress />;
-
-  useUnit = {
-    ...useUnit,
-    price: centsToDollars(useUnit.price_in_cents),
+  const deleteUnit = (id) => {
+    if (
+      !window.confirm("Are you sure you wish to delete this Unit?")
+    ) return;
+    axios
+      .delete(paths.API.UNITS(id))
+      .then((res) => {
+        navigate("..");
+      });
   };
+
+  if (!unit) return <CircularProgress />;
 
   return (
     <Box sx={{ maxWidth: "md" }}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <UnitFields unit={useUnit} readOnly />
+          <ControlButtons
+            newUrl="../new"
+            editUrl={`./edit`}
+            deleteCallback={() => deleteUnit(unit.id)}
+          />
         </Grid>
         <Grid item xs={12}>
-          <Divider>Address</Divider>
-          <AddressFields address={useUnit.address} />
+          <Paper>
+            <UnitCard unit={unit} />
+          </Paper>
         </Grid>
       </Grid>
     </Box>

@@ -34,6 +34,9 @@ const Customers = () => {
   };
 
   const deleteCustomer = (id) => {
+    if (
+      !window.confirm("Are you sure you wish to delete this Customer?")
+    ) return;
     axios
       .delete(paths.API.CUSTOMERS(id))
       .then((res) => {

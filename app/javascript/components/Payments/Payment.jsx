@@ -1,53 +1,125 @@
 import React from "react";
-import { useOutletContext } from "react-router-dom";
-import { Box, Button, ButtonGroup } from "@mui/material";
-import PaymentFields from "./PaymentFields";
-import { Link as RouterLink } from "react-router-dom";
-import EditIcon from "@mui/icons-material/Edit";
-import AddBoxIcon from "@mui/icons-material/AddBox";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import { Box, Grid, Paper, Typography } from "@mui/material";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 
-const Payment = ({ payment }) => {
-  const { payment: contextPayment } = useOutletContext();
-  let usePayment = payment ? payment : contextPayment;
+import PaymentCard from "./PaymentCard";
+import ControlButtons from "../ControlButtons";
+import useAxios from "../useAxios";
+import * as paths from "../PathHelper";
+import { centsToDollars } from "../DataFormatHelpers";
 
-  if (!usePayment) return "payment not found...";
+const Payment = () => {
+  const { payment } = useOutletContext();
+  const navigate = useNavigate();
+  const axios = useAxios();
+
+  if (!payment) return "payment not found...";
+
+  const deletePayment = (id) => {
+    if (
+      !window.confirm("Are you sure you wish to delete this Payment?")
+    ) return;
+    axios
+      .delete(paths.API.PAYMENTS(id))
+      .then((res) => {
+        if (res) {
+          navigate("/payments");
+        }
+      });
+  };
 
   return (
     <>
-      <Box
-        sx={{
-          display: "flex",
-          maxWidth: "md",
-          justifyContent: "flex-end",
-          m: 1,
-          gap: 1,
-        }}
-      >
-        <ButtonGroup variant="outlined">
-          <Button
-            component={RouterLink}
-            to={"./edit"}
-            startIcon={<EditIcon />}
-          >
-            Edit
-          </Button>
-          <Button
-            component={RouterLink}
-            to={"/payments/new"}
-            startIcon={<AddBoxIcon />}
-          >
-            New
-          </Button>
-        </ButtonGroup>
-      </Box>
-      <Box
-        sx={{
-          width: 1,
-          maxWidth: "md",
-          "& .MuiFormControl-root": { m: 1, maxWidth: "md" },
-        }}
-      >
-        <PaymentFields payment={usePayment} readOnly={true} />
+      <Box sx={{ maxWidth: "md" }}>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <ControlButtons
+              newUrl="../new"
+              editUrl={`./edit`}
+              deleteCallback={() => deletePayment(payment.id)}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Paper>
+              <PaymentCard payment={payment} />
+            </Paper>
+          </Grid>
+          <Grid item xs={12}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Invoice Date</TableCell>
+                  <TableCell>Invoice #</TableCell>
+                  <TableCell align="right">Total</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {payment?.invoices
+                  ? payment.invoices.map((invoice) => {
+                    return (
+                      <TableRow
+                        key={invoice.id}
+                      >
+                        <TableCell>{invoice.date}</TableCell>
+                        <TableCell>
+                          {String(invoice.id).padStart(6, "0")}
+                        </TableCell>
+                        <TableCell align="right">
+                          {centsToDollars(invoice.total_in_cents)}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
+                  : null}
+              </TableBody>
+            </Table>
+          </Grid>
+          <Grid item xs={0} md={9} />
+          <Grid item container spacing={2} xs={12} md={3}>
+            <Grid item xs={6}>
+              <Typography variant="h6">Subtotal</Typography>
+            </Grid>
+            <Grid item xs={6} sx={{ textAlign: "right" }}>
+              <Typography variant="h6">
+                ${centsToDollars(payment.subtotal_in_cents || 0)}
+              </Typography>
+            </Grid>
+
+            <Grid item xs={6}>
+              <Typography variant="h6">Fees</Typography>
+            </Grid>
+            <Grid item xs={6} sx={{ textAlign: "right" }}>
+              <Typography variant="h6">
+                ${centsToDollars(payment.fees_in_cents || 0)}
+              </Typography>
+            </Grid>
+
+            <Grid item xs={6}>
+              <Typography variant="h6">Discounts</Typography>
+            </Grid>
+            <Grid item xs={6} sx={{ textAlign: "right" }}>
+              <Typography variant="h6">
+                ${centsToDollars(payment.discounts_in_cents || 0)}
+              </Typography>
+            </Grid>
+
+            <Grid item xs={6}>
+              <Typography variant="h6">Total</Typography>
+            </Grid>
+            <Grid item xs={6} sx={{ textAlign: "right" }}>
+              <Typography variant="h6">
+                ${centsToDollars(payment.total_in_cents || 0)}
+              </Typography>
+            </Grid>
+          </Grid>
+        </Grid>
       </Box>
     </>
   );

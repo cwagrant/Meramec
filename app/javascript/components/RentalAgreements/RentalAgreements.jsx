@@ -1,6 +1,5 @@
 import React from "react";
 import { useCallback, useEffect, useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
 import { debounce } from "lodash";
@@ -9,10 +8,9 @@ import EnhancedTable from "../EnhancedTable";
 import RentalAgreementTableRow from "./RentalAgreementTableRow";
 import SearchBar from "../SearchBar";
 
-import { Box, Button, TextField } from "@mui/material";
-import AddBoxIcon from "@mui/icons-material/AddBox";
+import { Box } from "@mui/material";
 
-const RentalAgreements = ({ customer }) => {
+const RentalAgreements = ({ customer, hideSearch }) => {
   const [query, setQuery] = useState("");
   const [data, setData] = useState();
   const { enqueueSnackbar } = useSnackbar();
@@ -45,12 +43,10 @@ const RentalAgreements = ({ customer }) => {
       });
   };
 
-  const debouncedChangeHandler = useCallback(
-    debounce(changeHandler, 300),
-    [],
-  );
-
   const deleteAgreement = (id) => {
+    if (
+      !window.confirm("Are you sure you wish to delete this Rental Agreement?")
+    ) return;
     axios
       .delete(paths.API.RENTAL_AGREEMENTS(id))
       .then((res) => {
@@ -62,11 +58,14 @@ const RentalAgreements = ({ customer }) => {
 
   return (
     <Box sx={{ maxWidth: "lg" }}>
-      <SearchBar
-        onChange={changeHandler}
-        TextFieldProps={{ sx: { width: 1 } }}
-        newUrl={"./new"}
-      />
+      {!hideSearch &&
+        (
+          <SearchBar
+            onChange={changeHandler}
+            TextFieldProps={{ sx: { width: 1 } }}
+            newUrl={"./new"}
+          />
+        )}
       <EnhancedTable
         rows={data}
         DefaultOrder="asc"

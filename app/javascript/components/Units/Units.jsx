@@ -25,6 +25,9 @@ const Units = () => {
   }, [query]);
 
   const deleteUnit = (id) => {
+    if (
+      !window.confirm("Are you sure you wish to delete this Unit?")
+    ) return;
     axios
       .delete(paths.API.UNITS(id))
       .then((res) => {

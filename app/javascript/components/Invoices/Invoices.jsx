@@ -34,6 +34,9 @@ const Invoices = () => {
   };
 
   const deleteInvoice = (id) => {
+    if (
+      !window.confirm("Are you sure you wish to delete this Invoice?")
+    ) return;
     axios
       .delete(paths.API.INVOICES(id))
       .then((res) => {

@@ -1,54 +1,51 @@
 import React from "react";
-import { useOutletContext } from "react-router-dom";
-import { Box, Button, Divider, Grid } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
-import EditIcon from "@mui/icons-material/Edit";
-import AddBoxIcon from "@mui/icons-material/AddBox";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import { Grid, Paper } from "@mui/material";
 
-import FormFields from "./CustomerFields";
-import AddressFields from "../Addresses/AddressFields";
 import RentalAgreements from "../RentalAgreements/RentalAgreements";
+import CustomerCard from "../Customers/CustomerCard";
+import ControlButtons from "../ControlButtons";
+import useAxios from "../useAxios";
+import * as paths from "../PathHelper";
 
-const Customer = ({ customer }) => {
-  const { customer: contextCustomer } = useOutletContext();
-  let useCustomer = customer ? customer : contextCustomer;
+const Customer = () => {
+  const { customer } = useOutletContext();
+  const navigate = useNavigate();
+  const axios = useAxios();
 
-  if (!useCustomer) return "Customer not found...";
+  if (!customer) return "Customer not found...";
+
+  const deleteCustomer = (id) => {
+    if (
+      !window.confirm("Are you sure you wish to delete this Customer?")
+    ) return;
+    axios
+      .delete(paths.API.CUSTOMERS(id))
+      .then((res) => {
+        if (res) {
+          navigate("/customers");
+        }
+      });
+  };
 
   return (
     <Grid container spacing={2} sx={{ maxWidth: "md" }}>
       <Grid item xs={12}>
-        <Box sx={{ display: "flex", justifyContent: "flex-end", m: 1, gap: 1 }}>
-          <Button
-            component={RouterLink}
-            to={"./edit"}
-            variant="outlined"
-            startIcon={<EditIcon />}
-          >
-            Edit
-          </Button>
-          <Button
-            component={RouterLink}
-            to={"/customers/new"}
-            variant="outlined"
-            startIcon={<AddBoxIcon />}
-          >
-            New
-          </Button>
-        </Box>
+        <ControlButtons
+          newUrl="../new"
+          editUrl={`./edit`}
+          deleteCallback={() => deleteCustomer(customer.id)}
+        />
       </Grid>
 
       <Grid item xs={12}>
-        <FormFields customer={useCustomer} readOnly={true} />
+        <Paper>
+          <CustomerCard customer={customer} />
+        </Paper>
       </Grid>
 
       <Grid item xs={12}>
-        <Divider>Address</Divider>
-        <AddressFields address={useCustomer.address} readOnly={true} />
-      </Grid>
-
-      <Grid item xs={12}>
-        <RentalAgreements customer={useCustomer} />
+        <RentalAgreements customer={customer} hideSearch />
       </Grid>
     </Grid>
   );

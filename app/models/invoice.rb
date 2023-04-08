@@ -16,7 +16,9 @@ class Invoice < ApplicationRecord
 
   def update_state_on_payment
     if will_save_change_to_payment_id?
-      self.state = "paid"
+      if payment_id.present?
+        self.state = "paid"
+      end
     end
   end
 

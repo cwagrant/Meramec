@@ -35,6 +35,9 @@ const Payments = () => {
   };
 
   const deletePayment = (id) => {
+    if (
+      !window.confirm("Are you sure you wish to delete this Payment?")
+    ) return;
     axios
       .delete(paths.API.PAYMENTS(id))
       .then((res) => {

@@ -39,7 +39,7 @@ const CustomerCard = ({ customer }) => {
           <PersonIcon />
         </ListItemIcon>
         <ListItemText
-          primary={customer.formal_name}
+          primary={`${customer.first_name} ${customer.last_name}`}
           secondary="Name"
         />
       </ListItem>

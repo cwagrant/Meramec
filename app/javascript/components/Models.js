@@ -16,17 +16,6 @@ const Customer = {
   company: "",
 };
 
-const Payment = {
-  date: "",
-  paid_in_cents: 0,
-  payment_type: "",
-  check_number: "",
-  discounts_in_cents: 0,
-  fees_in_cents: 0,
-  subtotal_in_cents: 0,
-  total_in_cents: 0,
-};
-
 const Property = {
   name: "",
 };
@@ -66,6 +55,18 @@ const InvoiceAdjustment = {
   reason_description: "",
   price_in_cents: 0,
   price: "",
+};
+
+const Payment = {
+  customer_id: null,
+  paid_in_cents: 0,
+  payment_type: "cash",
+  check_number: "",
+  discounts_in_cents: 0,
+  fees_in_cents: 0,
+  subtotal_in_cents: 0,
+  total_in_cents: 0,
+  invoice_ids: [],
 };
 
 export {

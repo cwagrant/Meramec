@@ -26,6 +26,9 @@ const Properties = () => {
   }, [query]);
 
   const deleteProperty = (id) => {
+    if (
+      !window.confirm("Are you sure you wish to delete this Rental Agreement?")
+    ) return;
     axios
       .delete(`api/properties/${id}`)
       .then((res) => {

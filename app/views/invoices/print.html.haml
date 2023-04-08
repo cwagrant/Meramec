@@ -1,0 +1,129 @@
+%main.flex-shrink-0
+  #title.d-flex.justify-content-between.mb-3
+    %h3 Jay and May Properties
+    %h3 Invoice
+
+  #id-block.d-flex.justify-content-between.mb-3
+    #address
+      %p.mb-0 12219 Tesson Ferry Rd
+      %p Saint Louis, MO 63128
+    #logo
+      = image_tag("storage.png", width: '250px;')
+
+  #invoice-meta.d-flex.justify-content-between.mb-3
+    - address = @invoice.customer.address
+    #customer-address
+      %h4 Bill To
+      %p.mb-0
+        #{@invoice.customer.first_name} #{@invoice.customer.last_name}
+      %p.mb-0
+        #{address.address_1}
+      - if address.address_2.present?
+        %p.mb-0
+          #{address.address_2}
+      %p.mb-0
+        #{address.city}, #{address.state_code} #{address.zipcode}
+    #meta
+      %table
+        %tbody
+          %tr
+            %th{style: "width: 15em;"} Invoice #
+            %td.text-end= @invoice.id.to_s.rjust(6, "0")
+          %tr
+            %th Invoice Date
+            %td.text-end= @invoice.date
+          - if @invoice.payment
+            %tr
+              %th Paid On
+              %td.text-end 
+                = @invoice.payment.date
+
+  #invoice-data
+    %table.w-100.table
+      %thead
+        %tr
+          %th Qty
+          %th Description
+          %th Unit
+          %th Amount
+      %tbody
+        - @invoice.invoice_items.each do |invoice_item|
+          - agreement = invoice_item.item
+          %tr
+            %td
+              = invoice_item.item_count
+            %td
+              #{agreement.frequency_in_months} #{"month".pluralize(agreement.frequency_in_months)} rent
+            %td
+              = agreement.unit.name
+            %td
+              = "%.2f" % (agreement.price_in_cents / 100.0 )
+
+%footer.footer.mt-auto.mb-5.py-3
+  #invoice-summary.d-flex.justify-content-end
+    %table.w-50.table
+      %tbody
+        %tr
+          %th Subtotal
+          %td.text-end
+            = "%.2f" % (@invoice.subtotal_in_cents / 100.0)
+        - if @invoice.invoice_adjustments.where(type_of: "discount").any?
+          %tr
+            %th Discounts
+            %td
+        - @invoice.invoice_adjustments.where(type_of: "discount").each do |adjustment|
+          %tr
+            %td
+              %span.ms-4
+                #{adjustment.reason.titleize}
+                - if adjustment.reason == "other"
+                  =" - #{adjustment.reason.description}"
+            %td.text-end
+              = "%.2f" % (adjustment.price_in_cents / 100.0)
+        - if @invoice.invoice_adjustments.where(type_of: "fee").any?
+          %tr
+            %th Fees
+            %td
+        - @invoice.invoice_adjustments.where(type_of: "fee").each do |adjustment|
+          %tr
+            %td.text-end
+              %span.ms-4
+                #{adjustment.reason.titleize}
+                - if adjustment.reason == "other"
+                  =" - #{adjustment.reason.description}"
+            %td.text-end
+              = "%.2f" % (adjustment.price_in_cents / 100.0)
+        %tr
+          %th.h3 Total
+          %td.h3.text-end
+            = "%.2f" % (@invoice.total_in_cents / 100.0)
+  .row
+    .col-9.fs-6
+      %p.fs-6
+        Payments can be made via cash, check, or money order. Checks and money orders
+        can be made payable to either
+        %strong Jay & May Properties
+        or 
+        %strong Cijo Mathews.
+      %p
+        Payments can also be delivered to the property manager on site typically every 
+        Thursday between the hours of 8:00am - 4:30pm. Please contact the property manager 
+        at (314) 448 - 3726 to schedule. All current payment arrangements do not need to be 
+        changed and if any additional measures need to be made, please contact us.
+
+    .col-3.fs-6
+      %p.mb-1.fw-bold
+        Any payments can be mailed or delivered to:
+      %p.mb-0
+        Cijo Mathews
+      %p.mb-0
+        4301 Seibert Ave
+      %p
+        Saint Louis, MO 63123
+  .row
+    .col-12
+      For any questions, concerns, or changes, please contact us via text or call at (314) 448 - 3726 or email us at
+      jayandmayproperties@gmail.com.
+%div{style: 'break-after: page;'}
+
+

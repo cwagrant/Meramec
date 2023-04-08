@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Button } from "@mui/material";
-import PaymentFields from "./PaymentFields";
+import PaymentForm from "./PaymentForm";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
 import { useNavigate } from "react-router-dom";
@@ -42,12 +42,7 @@ const New = () => {
         "& .MuiFormControl-root": { m: 1, maxWidth: "md" },
       }}
     >
-      <PaymentFields
-        payment={payment}
-        onChange={(newValue) => {
-          setPayment(newValue);
-        }}
-      />
+      <PaymentForm />
 
       <Box sx={{ display: "flex", m: 1, gap: 2 }}>
         <Button
