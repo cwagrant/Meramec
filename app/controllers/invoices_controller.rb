@@ -1,5 +1,5 @@
 class InvoicesController < ApplicationController
-  # skip_before_action :authenticate_user!, only: [:print]
+  skip_before_action :authenticate_user!, only: [:print_test]
 
   layout 'pdfs'
 
@@ -119,11 +119,14 @@ class InvoicesController < ApplicationController
   def print
     @invoice = Invoice.find(params[:id])
     html = render_to_string('invoices/print', layout: 'pdfs')
-
     pdf = Grover.new(html).to_pdf
-
     filename = "#{Date.today.strftime("%Y-%m-%d")} #{@invoice.customer.first_name}-#{@invoice.customer.last_name}.pdf"
     send_data pdf, filename: filename
+  end
+
+  def print_test
+    @invoice = Invoice.find(params[:id])
+    render "print"
   end
 
   private
