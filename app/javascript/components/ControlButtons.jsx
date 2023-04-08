@@ -6,30 +6,66 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PrintIcon from "@mui/icons-material/Print";
 import useAxios from "./useAxios";
-import * as paths from "./PathHelper";
+import axios from "axios";
 
 const ControlButtons = ({ newUrl, editUrl, printUrl, deleteCallback }) => {
-  const axios = useAxios();
-  const authorizePrint = () => {
-    axios.get(printUrl, { responseType: "blob" })
+  const myAxios = useAxios();
+  // const authorizePrintOld = () => {
+  //   axios.get(printUrl, { responseType: "blob" })
+  //     .then((res) => {
+  //       console.log(res);
+  //       const href = URL.createObjectURL(res.data);
+  //       const link = document.createElement("a");
+  //       const fileName =
+  //         res?.headers["content-disposition"].split("filename=")[1].split(
+  //           ";",
+  //         )[0];
+  //
+  //       console.log(fileName);
+  //       link.href = href;
+  //       link.setAttribute("download", fileName || Date.now());
+  //       document.body.appendChild(link);
+  //       link.click();
+  //
+  //       document.body.removeChild(link);
+  //       URL.revokeObjectURL(href);
+  //     });
+  // };
+
+  const getPrint = () => {
+    myAxios.get(printUrl)
       .then((res) => {
-        console.log(res);
-        const href = URL.createObjectURL(res.data);
-        const link = document.createElement("a");
-        const fileName =
-          res?.headers["content-disposition"].split("filename=")[1].split(
-            ";",
-          )[0];
-
-        console.log(fileName);
-        link.href = href;
-        link.setAttribute("download", fileName || Date.now());
-        document.body.appendChild(link);
-        link.click();
-
-        document.body.removeChild(link);
-        URL.revokeObjectURL(href);
+        const { html, key } = res.data;
+        getPrint2(html, key);
       });
+  };
+  const getPrint2 = (myHTML, key) => {
+    if (!myHTML) return;
+    axios.post(
+      `https://chrome.browserless.io/pdf?token=${key}`,
+      { "html": myHTML, options: { scale: "0.75" } },
+      {
+        headers: {
+          "Cache-Control": "no-cache",
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, PUT, POST, DELETE, OPTIONS",
+          "Access-Control-Allow-Headers": "Origin, Accept, Content-Type",
+        },
+        responseType: "blob",
+      },
+    ).then((res) => {
+      const href = URL.createObjectURL(res.data);
+      const link = document.createElement("a");
+
+      link.href = href;
+      link.setAttribute("download", Date.now());
+      document.body.appendChild(link);
+      link.click();
+
+      document.body.removeChild(link);
+      URL.revokeObjectURL(href);
+    });
   };
 
   return (
@@ -65,7 +101,7 @@ const ControlButtons = ({ newUrl, editUrl, printUrl, deleteCallback }) => {
         <Button
           variant="outlined"
           onClick={() => {
-            authorizePrint();
+            getPrint();
           }}
           startIcon={<PrintIcon />}
         >

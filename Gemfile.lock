@@ -120,6 +120,10 @@ GEM
       tzinfo
     faker (3.1.0)
       i18n (>= 1.8.11, < 2)
+    faraday (2.7.4)
+      faraday-net_http (>= 2.0, < 3.1)
+      ruby2_keywords (>= 0.0.4)
+    faraday-net_http (3.0.2)
     fast_jsonapi (1.5)
       activesupport (>= 4.2)
     fugit (1.8.1)
@@ -268,6 +272,7 @@ GEM
       rspec-support (~> 3.11)
     rspec-support (3.12.0)
     ruby-rc4 (0.1.5)
+    ruby2_keywords (0.0.5)
     rubyzip (2.3.2)
     rufus-scheduler (3.8.2)
       fugit (~> 1.1, >= 1.1.6)
@@ -347,6 +352,7 @@ DEPENDENCIES
   devise
   devise-jwt (~> 0.10.0)
   faker (~> 3.1)
+  faraday (~> 2.7)
   fast_jsonapi (~> 1.5)
   grover (~> 1.1)
   haml (~> 6.1)

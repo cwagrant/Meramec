@@ -117,11 +117,17 @@ class InvoicesController < ApplicationController
   end
 
   def print
-    @invoice = Invoice.find(params[:id])
     html = render_to_string('invoices/print', layout: 'pdfs')
-    pdf = Grover.new(html).to_pdf
+    url = "https://chrome.browserless.io/pdf?token=#{Rails.application.credentails.browserless_io}"
+    response = Faraday.post(url, { html: url , options: { scale: "0.75" } })
+
+    @invoice = Invoice.find(params[:id])
+    # html = render_to_string('invoices/print', layout: 'pdfs')
+
+    # render json: {html: html, key: Rails.application.credentials.browserless_io}
+    # pdf = Grover.new(html).to_pdf
     filename = "#{Date.today.strftime("%Y-%m-%d")} #{@invoice.customer.first_name}-#{@invoice.customer.last_name}.pdf"
-    send_data pdf, filename: filename
+    send_data response.body, filename: filename
   end
 
   private

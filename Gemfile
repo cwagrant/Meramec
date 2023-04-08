@@ -76,3 +76,5 @@ gem "haml", "~> 6.1"
 gem "grover", "~> 1.1"
 
 gem "pg", "~> 1.4"
+
+gem "faraday", "~> 2.7"
