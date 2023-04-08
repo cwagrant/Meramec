@@ -1,6 +1,4 @@
 .git
 .dockerignore
 .env
-meramec/node_modules/
-meramec/vendor/bundle/
 meramec/tmp/
