@@ -1,7 +1,7 @@
 import React from "react";
 import { DatePicker } from "@mui/x-date-pickers";
 import { useSnackbar } from "notistack";
-import { compact } from "lodash";
+import { compact, flattenDeep } from "lodash";
 import {
   Box,
   Button,
@@ -43,9 +43,20 @@ const PaymentForm = (
     onSubmit(event, payment);
   };
 
+  const findParamCustomer = (customer) => {
+    dispatch({
+      type: "initialize",
+      value: {
+        customer_id: customer?.id,
+        customer: customer,
+      },
+    });
+  };
+
   React.useEffect(() => {
     if (loadedPayment) return;
     dispatch({ type: "invoice_ids", value: [] });
+    dispatch({ type: "invoices", value: [] });
 
     if (!payment.customer) return;
 
@@ -59,8 +70,6 @@ const PaymentForm = (
       })
       .then((res) => {
         let invoices = res.data || [];
-
-        console.log("invoices", invoices);
 
         dispatch({
           type: "initialize",
@@ -102,6 +111,7 @@ const PaymentForm = (
     );
     let adjustments = invoices.map((invoice) => invoice.invoice_adjustments);
     adjustments = compact(adjustments);
+    adjustments = flattenDeep(adjustments);
 
     for (let adjustment of adjustments) {
       if (adjustment.type_of == "fee") {
@@ -170,6 +180,7 @@ const PaymentForm = (
         </Grid>
         <Grid item xs={12} md={6}>
           <SelectCustomer
+            onLoad={findParamCustomer}
             readOnly={mode == "edit"}
             customer={payment.customer}
             onChange={(newValue) => {

@@ -33,7 +33,9 @@ const InvoiceTableRow = ({ row, onDelete }) => {
             onClick={(event) => {
               event.preventDefault();
               event.stopPropagation();
-              let target = row.payment_id ? row.payment_id : "new";
+              let target = row.payment_id
+                ? row.payment_id
+                : `new?customer=${row.customer.id}`;
               navigate(`/payments/${target}`);
             }}
           >

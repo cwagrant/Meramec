@@ -1,9 +1,13 @@
 import React from "react";
 import { Autocomplete, ListItem, TextField, Typography } from "@mui/material";
+import { useSearchParams } from "react-router-dom";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
 
-const SelectCustomer = ({ customer, onChange, allowNew, readOnly, sx }) => {
+const SelectCustomer = (
+  { customer, onChange, onLoad, readOnly, sx },
+) => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [options, setOptions] = React.useState([]);
   const [data, setData] = React.useState();
   const axios = useAxios();
@@ -18,12 +22,13 @@ const SelectCustomer = ({ customer, onChange, allowNew, readOnly, sx }) => {
   }, []);
 
   React.useEffect(() => {
-    if (data && customer) {
-      const optionCustomer = options.find((element) =>
-        element.id == customer.id
-      );
+    let startId = parseInt(searchParams.get("customer"));
+
+    if (data && startId) {
+      const optionCustomer = options.find((element) => element.id == startId);
+      onLoad(optionCustomer);
     }
-  }, [options]);
+  }, [options, searchParams]);
 
   React.useEffect(() => {
     const customers = data?.slice().sort((a, b) => {
@@ -33,7 +38,6 @@ const SelectCustomer = ({ customer, onChange, allowNew, readOnly, sx }) => {
 
       return a.formal_name < b.formal_name ? -1 : 1;
     });
-
     setOptions(customers || []);
   }, [data]);
 

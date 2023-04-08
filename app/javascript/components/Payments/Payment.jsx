@@ -44,6 +44,7 @@ const Payment = () => {
               newUrl="../new"
               editUrl={`./edit`}
               deleteCallback={() => deletePayment(payment.id)}
+              printUrl={`${paths.API.PAYMENTS(payment.id)}/print`}
             />
           </Grid>
           <Grid item xs={12}>

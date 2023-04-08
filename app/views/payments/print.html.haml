@@ -1,0 +1,101 @@
+%main.flex-shrink-0
+  = render partial: "shared/pdf_header"
+
+  #-meta.d-flex.justify-content-between.mb-3
+
+    #customer-address
+      %h4 Customer
+      %p.mb-0
+        #{@customer.first_name} #{@customer.last_name}
+      - if @address.present?
+        %p.mb-0
+          #{@address.address_1}
+        - if @address.address_2.present?
+          %p.mb-0
+            #{@address.address_2}
+        %p.mb-0
+          #{@address.city}, #{@address.state_code} #{@address.zipcode}
+    #meta
+      %table
+        %tbody
+          %tr
+            %th{style: "width: 15em;"} Receipt #
+            %td.text-end= @payment.id.to_s.rjust(6, "0")
+          %tr
+            %th  Date
+            %td.text-end= @payment.date
+
+  #-data
+    %table.w-100.table
+      %thead
+        %tr
+          %th Invoice Date
+          %th Invoice #
+          %th Description
+          %th Amount
+      %tbody
+        - @payment.invoices.each do |invoice|
+          %tr
+            %td
+              = invoice.date
+            %td
+              = invoice.id.to_s.rjust(6, "0")
+            %td
+              = invoice.invoice_items.flat_map(&:item).map(&:unit).map(&:name).join(", ")
+            %td
+              = "%.2f" % (invoice.total_in_cents / 100.0 )
+
+%footer.footer.mt-auto.mb-5.py-3
+  #-summary.d-flex.justify-content-end
+    %table.w-50.table
+      %tbody
+        %tr
+          %th.h5 Subtotal
+          %td.h5.text-end
+            = "%.2f" % (@payment.subtotal_in_cents / 100.0)
+
+        - if @discounts.present?
+          %tr
+            %th Discounts
+            %td= @discounts
+
+        - @discounts.each do |adjustment|
+          %tr
+            %td
+              %span.ms-4
+                #{adjustment.reason.titleize}
+                - if adjustment.reason == "other"
+                  =" - #{adjustment.reason.description}"
+            %td.text-end
+              = "%.2f" % (adjustment.price_in_cents / 100.0)
+
+        - if @fees.present?
+          %tr
+            %th Fees
+            %td= @fees
+
+        - @fees.each do |adjustment|
+          %tr
+            %td.text-end
+              %span.ms-4
+                #{adjustment.reason.titleize}
+                - if adjustment.reason == "other"
+                  =" - #{adjustment.reason.description}"
+            %td.text-end
+              = "%.2f" % (adjustment.price_in_cents / 100.0)
+        %tr
+          %th.h5 Total
+          %td.h5.text-end
+            = "%.2f" % (@payment.total_in_cents / 100.0)
+        %tr
+          %th.h2 Paid
+          %td.h2.text-end
+            = "%.2f" % (@payment.paid_in_cents / 100.0)
+  .row
+    .col-12
+      %hr
+      For any questions, concerns, or changes, please contact us via text or call at 
+      (314) 448 - 3726 or email us at jayandmayproperties@gmail.com.
+%div{style: 'break-after: page;'}
+
+

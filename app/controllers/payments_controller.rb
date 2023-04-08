@@ -1,4 +1,6 @@
 class PaymentsController < ApplicationController
+  skip_before_action :authenticate_user!, only: [:print]
+
   def index
     render json: Payment.includes(:customer).search(params[:search], models: [Payment, Customer]).as_json
   end
@@ -42,6 +44,20 @@ class PaymentsController < ApplicationController
     else
       render json: { errors: payment.errors.full_messages}, status: 500
     end
+  end
+
+  def print
+    @payment = Payment.find(params[:id])
+    @customer = @payment.customer
+    @address = @payment.customer.address
+    adjustments = @payment.invoices.flat_map(&:invoice_adjustments)
+    @discounts = adjustments.find_all { |a| a.type_of == "discounts" }
+    @fees = adjustments.find_all { |a| a.type_of == "fees" }
+    @print_type = 'Receipt'
+    html = render_to_string('payments/print', layout: 'pdfs')
+    pdf = Grover.new(html).to_pdf
+    filename = "#{Date.today.strftime("%Y-%m-%d")} #{@customer.first_name}-#{@customer.last_name}.pdf"
+    send_data pdf, filename: filename
   end
 
   private

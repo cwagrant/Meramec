@@ -1,10 +1,9 @@
 import React from "react";
-import { Box, Button } from "@mui/material";
 import PaymentForm from "./PaymentForm";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
-import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
+import { useNavigate } from "react-router-dom";
 
 const New = () => {
   const navigate = useNavigate();
@@ -31,40 +30,7 @@ const New = () => {
       });
   };
 
-  return (
-    <Box
-      id="paymentForm"
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{
-        width: 1,
-        maxWidth: "md",
-        "& .MuiFormControl-root": { m: 1, maxWidth: "md" },
-      }}
-    >
-      <PaymentForm />
-
-      <Box sx={{ display: "flex", m: 1, gap: 2 }}>
-        <Button
-          variant="outlined"
-          type="submit"
-        >
-          Submit
-        </Button>
-        <Button
-          variant="outlined"
-          type="button"
-          onClick={(event) => {
-            event.preventDefault();
-            if (!window.confirm("Are you sure you wish to cancel?")) return;
-            navigate("..");
-          }}
-        >
-          Cancel
-        </Button>
-      </Box>
-    </Box>
-  );
+  return <PaymentForm />;
 };
 
 export default New;

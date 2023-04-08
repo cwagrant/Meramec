@@ -1,9 +1,13 @@
 import { merge, set } from "lodash";
 
 export default function reducer(state, action) {
+  // console.log("oldState", state, action);
   if (action.type == "initialize") {
     // this takes the default state passed in to the reducer
     // and merges in a state over top of it.
+    let newState = { ...state };
+    merge(newState, action.value);
+    // console.log("newState", newState);
     return merge({ ...state }, action.value);
   }
 
@@ -11,7 +15,6 @@ export default function reducer(state, action) {
     return action.value;
   }
 
-  console.log("oldState", state, action);
   let newState = { ...state };
 
   // We use the lodash method set so that we have a lot of
@@ -19,7 +22,7 @@ export default function reducer(state, action) {
   //
   // e.g. address.address_1, invoice_items[0].price_in_cents
   set(newState, action.type, action.value);
-  console.log("newState", newState);
+  // console.log("newState", newState);
 
   return newState;
 }

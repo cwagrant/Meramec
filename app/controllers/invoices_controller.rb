@@ -20,18 +20,6 @@ class InvoicesController < ApplicationController
   end
 
   def show
-    # html = render_to_string('invoices/show', layout: 'pdfs')
-    #
-    # pdf = Grover.new(html).to_pdf
-    #
-    # send_data pdf, filename: 'test.pdf'
-    # # respond_to do |format|
-    # #   format.html
-    # #   # format.pdf do
-    # #   #   render pdf: "show", template: "invoices/show", formats: [:html], layout: 'pdfs'
-    # #   # end
-    # # end
-
     invoice = Invoice.find(params[:id])
 
     render json: invoice.as_json(
@@ -118,6 +106,7 @@ class InvoicesController < ApplicationController
 
   def print
     @invoice = Invoice.find(params[:id])
+    @pdf_type = 'Invoice'
     html = render_to_string('invoices/print', layout: 'pdfs')
     pdf = Grover.new(html).to_pdf
     filename = "#{Date.today.strftime("%Y-%m-%d")} #{@invoice.customer.first_name}-#{@invoice.customer.last_name}.pdf"
