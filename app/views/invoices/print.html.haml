@@ -11,18 +11,20 @@
       = image_tag("storage.png", width: '250px;')
 
   #invoice-meta.d-flex.justify-content-between.mb-3
+
     - address = @invoice.customer.address
     #customer-address
       %h4 Bill To
       %p.mb-0
         #{@invoice.customer.first_name} #{@invoice.customer.last_name}
-      %p.mb-0
-        #{address.address_1}
-      - if address.address_2.present?
+      - if @address.present?
         %p.mb-0
-          #{address.address_2}
-      %p.mb-0
-        #{address.city}, #{address.state_code} #{address.zipcode}
+          #{address.address_1}
+        - if address.address_2.present?
+          %p.mb-0
+            #{address.address_2}
+        %p.mb-0
+          #{address.city}, #{address.state_code} #{address.zipcode}
     #meta
       %table
         %tbody
