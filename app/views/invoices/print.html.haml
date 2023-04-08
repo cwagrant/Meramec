@@ -9,7 +9,9 @@
       %p Saint Louis, MO 63128
     #logo
       = image_tag("https://i.imgur.com/DdjAWlt.png", width: '250px;')
-      -# = image_tag(image_url("storage.png"), width: '250px;')
+      = image_url("storage.png")
+      = image_path("storage.png")
+      = image_tag(image_url("storage.png"), width: '250px;')
 
   #invoice-meta.d-flex.justify-content-between.mb-3
 
