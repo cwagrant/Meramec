@@ -113,6 +113,15 @@ class InvoicesController < ApplicationController
     send_data pdf, filename: filename
   end
 
+  def print_test
+    @invoice = Invoice.find(params[:id])
+    @pdf_type = 'Invoice'
+    html = render_to_string('invoices/print', layout: 'pdfs')
+    pdf = Grover.new(html).to_pdf
+    filename = "#{Date.today.strftime("%Y-%m-%d")} #{@invoice.customer.first_name}-#{@invoice.customer.last_name}.pdf"
+    send_data pdf, filename: filename
+  end
+
   private
 
   def invoice_params
