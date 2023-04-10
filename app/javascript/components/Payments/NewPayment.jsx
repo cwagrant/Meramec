@@ -18,7 +18,7 @@ const New = () => {
     total_in_cents: 0,
   });
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event, payment) => {
     event.preventDefault();
 
     axios
@@ -30,7 +30,7 @@ const New = () => {
       });
   };
 
-  return <PaymentForm />;
+  return <PaymentForm onSubmit={handleSubmit} />;
 };
 
 export default New;
