@@ -1,7 +1,7 @@
 class Unit < ApplicationRecord
   include Searchable
   belongs_to :property
-  belongs_to :address
+  belongs_to :address, optional: true
   has_many :rental_agreements, dependent: :restrict_with_error
 
   accepts_nested_attributes_for :address, reject_if: :address_empty?
