@@ -14,7 +14,11 @@ class UnitsController < ApplicationController
 
   def create
     full_params = unit_params
-    full_params.merge!({address_attributes: full_params.delete(:address)})
+
+    if(full_params.key?(:address))
+      full_params.merge!({address_attributes: full_params.delete(:address)})
+    end
+
     unit = Unit.new(full_params)
 
     if unit.save
@@ -26,7 +30,10 @@ class UnitsController < ApplicationController
 
   def update
     full_params = unit_params
-    full_params.merge!({address_attributes: full_params.delete(:address)})
+
+    if(full_params.key?(:address))
+      full_params.merge!({address_attributes: full_params.delete(:address)})
+    end
 
     unit = Unit.find(params[:id])
 
@@ -43,7 +50,7 @@ class UnitsController < ApplicationController
     unit = Unit.find(params[:id])
 
     if unit.destroy
-      render status: :ok
+      render json: {},  status: :ok
     else
       render json: { errors: unit.errors.full_messages}, status: 500
     end

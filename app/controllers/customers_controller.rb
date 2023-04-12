@@ -9,7 +9,10 @@ class CustomersController < ApplicationController
 
   def create
     full_params = customer_params
-    full_params.merge!({address_attributes: full_params.delete(:address)})
+    
+    if(full_params.key?(:address))
+      full_params.merge!({address_attributes: full_params.delete(:address) || {}})
+    end
 
     customer = Customer.new(full_params)
 
@@ -22,7 +25,11 @@ class CustomersController < ApplicationController
 
   def update
     full_params = customer_params
-    full_params.merge!({address_attributes: full_params.delete(:address)})
+    
+    if(full_params.key?(:address))
+      full_params.merge!({address_attributes: full_params.delete(:address) || {}})
+    end
+
     customer = Customer.find(params[:id])
 
     customer.update(full_params)

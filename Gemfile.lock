@@ -118,6 +118,11 @@ GEM
     erubi (1.12.0)
     et-orbi (1.2.7)
       tzinfo
+    factory_bot (6.2.1)
+      activesupport (>= 5.0.0)
+    factory_bot_rails (6.2.0)
+      factory_bot (~> 6.2.0)
+      railties (>= 5.0.0)
     faker (3.1.0)
       i18n (>= 1.8.11, < 2)
     fast_jsonapi (1.5)
@@ -346,6 +351,7 @@ DEPENDENCIES
   debug
   devise
   devise-jwt (~> 0.10.0)
+  factory_bot_rails
   faker (~> 3.1)
   fast_jsonapi (~> 1.5)
   grover (~> 1.1)

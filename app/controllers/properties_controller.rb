@@ -10,7 +10,10 @@ class PropertiesController < ApplicationController
   def create
     full_params = property_params
 
-    full_params.merge!({address_attributes: full_params.delete(:address)})
+    if(full_params.key?(:address))
+      full_params.merge!({address_attributes: full_params.delete(:address) || {}})
+    end
+
     property = Property.new(full_params)
 
     if property.save
@@ -22,10 +25,12 @@ class PropertiesController < ApplicationController
 
   def update
     property = Property.find(params[:id])
-
     full_params = property_params
 
-    full_params.merge!({address_attributes: full_params.delete(:address)})
+    if(full_params.key?(:address))
+      full_params.merge!({address_attributes: full_params.delete(:address) || {}})
+    end
+
     property.update(full_params)
 
     if property.errors.none?
@@ -57,7 +62,8 @@ class PropertiesController < ApplicationController
         :city,
         :state_code,
         :zipcode,
-        :country_code
+        :country_code,
+        :_destroy
       ])
   end
 end

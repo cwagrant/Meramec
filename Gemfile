@@ -62,6 +62,10 @@ group :test do
   gem "webdrivers"
 end
 
+group :development, :test do
+  gem 'factory_bot_rails'
+end
+
 gem "cssbundling-rails", "~> 1.1"
 gem "jsbundling-rails", "~> 1.1"
 gem "rack-cors", "~> 1.1", :groups => [:development, :test]
