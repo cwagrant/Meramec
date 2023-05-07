@@ -45,7 +45,7 @@ RSpec.configure do |config|
   # You can uncomment this line to turn off ActiveRecord support entirely.
   # config.use_active_record = false
   config.before(:suite) do
-    Rails.application.load_seed
+    # Rails.application.load_seed
   end
 
   # RSpec Rails can automatically mix in different behaviours to your tests

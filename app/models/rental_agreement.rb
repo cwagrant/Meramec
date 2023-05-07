@@ -49,6 +49,21 @@ class RentalAgreement < ApplicationRecord
     update(next_due_date: next_due_date + (purchase_count * frequency_in_months.to_i.months))
   end
 
+  def after_create_invoice_item(count)
+    new_due_date = next_due_date
+    add_months = frequency_in_months * count
+    
+    if new_due_date.is_a?(Date) && add_months.is_a?(Integer)
+      update(next_due_date: (new_due_date + add_months.months))
+    end
+  end
+
+  def after_update_invoice_item(count, old_count)
+    new_count = count - old_count
+
+    after_create_invoice_item(new_count)
+  end
+
   private
 
   def update_unit_occupancy
