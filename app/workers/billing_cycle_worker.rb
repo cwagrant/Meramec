@@ -20,9 +20,9 @@ class BillingCycleWorker
 
           invoice.save!
 
-          invoice.rental_agreements.each do |agreement|
-            agreement.push_due_date!
-          end
+          # invoice.rental_agreements.each do |agreement|
+          #   agreement.push_due_date!
+          # end
         end
       rescue StandardError=> e
         logger.error e.message

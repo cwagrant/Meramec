@@ -105,8 +105,9 @@ const NewInvoice = ({ invoice: loadedInvoice, onSubmit, mode }) => {
         <Grid item xs={12}>
           <Paper sx={{ my: 2, p: 2 }}>
             <Typography>
-              Note: Manually generated invoices do not modify the Next Due Date
-              for any attached rental agreements.
+              Note: Updating an invoice will modify the Rental Agreements Next
+              Due Date. You will need to manually adjust the date if you are
+              back-dating entries and do not wish for the date to change.
             </Typography>
           </Paper>
         </Grid>

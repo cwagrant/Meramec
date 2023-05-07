@@ -2,7 +2,7 @@ class Invoice < ApplicationRecord
   include Searchable
   belongs_to :customer
   belongs_to :payment, optional: true
-  has_many :invoice_items, dependent: :destroy
+  has_many :invoice_items, dependent: :destroy, inverse_of: :invoice
   has_many :invoice_adjustments, dependent: :destroy
   has_many :rental_agreements, through: :invoice_items, source: :item, source_type: "RentalAgreement"
 

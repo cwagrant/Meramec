@@ -68,11 +68,10 @@ class InvoicesController < ApplicationController
     invoice = Invoice.find(params[:id])
 
     full_params = invoice_params.to_h
-    full_params.merge!({invoice_items_attributes: full_params.delete(:invoice_items)})
-
     full_params.merge!({invoice_adjustments_attributes: full_params.delete(:invoice_adjustments) || []})
+    full_params.merge!({invoice_items_attributes: full_params.delete(:invoice_items) || []})
 
-    invoice.update(full_params)
+    invoice.update!(full_params)
 
     if invoice.errors.none?
       render json: invoice.as_json(
