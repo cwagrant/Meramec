@@ -9,11 +9,15 @@ import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
 import SearchBar from "../SearchBar";
 
-const Invoices = () => {
+const Invoices = ({ customer, hideSearch, tableProps }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [query, setQuery] = useState("");
   const axios = useAxios(enqueueSnackbar);
   const [data, setData] = React.useState();
+
+  React.useEffect(() => {
+    queryInvoices();
+  }, [customer]);
 
   const changeHandler = (event) => {
     setQuery(event.target.value);
@@ -24,9 +28,17 @@ const Invoices = () => {
   }, [query]);
 
   const queryInvoices = () => {
+    params = {
+      search: query,
+    };
+
+    if (customer) {
+      params = { ...params, customer_id: customer.id };
+    }
+
     axios
       .get(paths.API.INVOICES(), {
-        params: { search: query },
+        params: params,
       })
       .then((res) => {
         setData(res.data);
@@ -48,11 +60,14 @@ const Invoices = () => {
 
   return (
     <Box sx={{ maxWidth: "lg" }}>
-      <SearchBar
-        onChange={changeHandler}
-        TextFieldProps={{ sx: { width: 1 } }}
-        newUrl={"./new"}
-      />
+      {!hideSearch &&
+        (
+          <SearchBar
+            onChange={changeHandler}
+            TextFieldProps={{ sx: { width: 1 } }}
+            newUrl={"./new"}
+          />
+        )}
       <EnhancedTable
         rows={data}
         DefaultOrder="asc"
@@ -66,6 +81,7 @@ const Invoices = () => {
         ]}
         TableRow={InvoiceTableRow}
         onDelete={deleteInvoice}
+        {...tableProps}
       />
     </Box>
   );
