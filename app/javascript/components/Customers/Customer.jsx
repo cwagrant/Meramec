@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { Grid, Paper } from "@mui/material";
 
-import EnhancedTable from "../EnhancedTable";
+import PaginatedTable from "../PaginatedTable";
 import LedgerTableRow from "../Ledgers/LedgerTableRow";
 import RentalAgreements from "../RentalAgreements/RentalAgreements";
 import CustomerCard from "../Customers/CustomerCard";
@@ -40,6 +40,7 @@ const Customer = () => {
         id: payment.id,
         date: payment.date,
         price_in_cents: payment.paid_in_cents,
+        created_at: payment.created_at,
       });
     }
 
@@ -49,11 +50,18 @@ const Customer = () => {
         id: invoice.id,
         date: invoice.date,
         price_in_cents: invoice.total_in_cents,
+        created_at: invoice.created_at,
       });
     }
 
     temp = temp.sort((a, b) => {
-      if (a.date == b.date) return 0;
+      if (a.date == b.date) {
+        if (a.created_at == b.created_at) {
+          return 0;
+        } else {
+          return a.created_at > b.created_at ? 1 : -1;
+        }
+      }
       return a.date > b.date ? 1 : -1;
     });
 
@@ -71,6 +79,8 @@ const Customer = () => {
         total: running_total,
       });
     }
+
+    ledger.reverse();
 
     setData(ledger);
   }, [customer]);
@@ -98,10 +108,8 @@ const Customer = () => {
       </Grid>
 
       <Grid item xs={12}>
-        <EnhancedTable
+        <PaginatedTable
           rows={data}
-          DefaultOrder="desc"
-          DefaultOrderBy="date"
           TableHeaders={[
             { id: "date", numeric: false, label: "Date" },
             { id: "price_in_cents", numeric: false, label: "Amount" },

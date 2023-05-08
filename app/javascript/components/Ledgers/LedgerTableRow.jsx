@@ -18,7 +18,7 @@ const LedgerTableRow = ({ row }) => {
     >
       <TableCell>{row.date}</TableCell>
       <TableCell>
-        {row.ledgerType == "invoice" ? "-" : ""}
+        {row.ledgerType == "invoice" && row.price_in_cents > 0 ? "-" : ""}
         $
         {centsToDollars(row.price_in_cents)}
       </TableCell>
