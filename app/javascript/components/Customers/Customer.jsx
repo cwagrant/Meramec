@@ -2,6 +2,8 @@ import React from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { Grid, Paper } from "@mui/material";
 
+import EnhancedTable from "../EnhancedTable";
+import LedgerTableRow from "../Ledgers/LedgerTableRow";
 import RentalAgreements from "../RentalAgreements/RentalAgreements";
 import CustomerCard from "../Customers/CustomerCard";
 import ControlButtons from "../ControlButtons";
@@ -12,8 +14,7 @@ const Customer = () => {
   const { customer } = useOutletContext();
   const navigate = useNavigate();
   const axios = useAxios();
-
-  if (!customer) return "Customer not found...";
+  const [data, setData] = React.useState();
 
   const deleteCustomer = (id) => {
     if (
@@ -27,6 +28,54 @@ const Customer = () => {
         }
       });
   };
+
+  React.useEffect(() => {
+    const payments = customer?.payments || [];
+    const invoices = customer?.invoices || [];
+    let temp = [];
+
+    for (const payment of payments) {
+      temp.push({
+        ledgerType: "payment",
+        id: payment.id,
+        date: payment.date,
+        price_in_cents: payment.paid_in_cents,
+      });
+    }
+
+    for (const invoice of invoices) {
+      temp.push({
+        ledgerType: "invoice",
+        id: invoice.id,
+        date: invoice.date,
+        price_in_cents: invoice.total_in_cents,
+      });
+    }
+
+    temp = temp.sort((a, b) => {
+      if (a.date == b.date) return 0;
+      return a.date > b.date ? 1 : -1;
+    });
+
+    let ledger = [];
+    let running_total = 0;
+    for (row of temp) {
+      if (row.ledgerType == "payment") {
+        running_total = running_total + row.price_in_cents;
+      } else {
+        running_total = running_total - row.price_in_cents;
+      }
+
+      ledger.push({
+        ...row,
+        total: running_total,
+      });
+    }
+
+    setData(ledger);
+  }, [customer]);
+
+  if (!customer) return "Customer not found...";
 
   return (
     <Grid container spacing={2} sx={{ maxWidth: "md" }}>
@@ -46,6 +95,21 @@ const Customer = () => {
 
       <Grid item xs={12}>
         <RentalAgreements customer={customer} hideSearch />
+      </Grid>
+
+      <Grid item xs={12}>
+        <EnhancedTable
+          rows={data}
+          DefaultOrder="desc"
+          DefaultOrderBy="date"
+          TableHeaders={[
+            { id: "date", numeric: false, label: "Date" },
+            { id: "price_in_cents", numeric: false, label: "Amount" },
+            { id: "total", numeric: false, label: "Total" },
+            { id: null },
+          ]}
+          TableRow={LedgerTableRow}
+        />
       </Grid>
     </Grid>
   );

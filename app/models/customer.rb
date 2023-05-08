@@ -15,7 +15,7 @@ class Customer < ApplicationRecord
   end
 
   def as_json(args = {})
-    super({include: { address: [], rental_agreements: { include: {unit: {}}, methods: :name }}}.merge(args))
+    super({include: { address: [], invoices: [], payments: [], rental_agreements: { include: {unit: {}}, methods: :name }}}.merge(args))
   end
 
   def self.searchable_attributes
