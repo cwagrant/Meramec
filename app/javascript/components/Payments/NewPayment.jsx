@@ -3,10 +3,11 @@ import PaymentForm from "./PaymentForm";
 import useAxios from "../useAxios";
 import * as paths from "../PathHelper";
 import { useSnackbar } from "notistack";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const New = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { enqueueSnackbar } = useSnackbar();
   const axios = useAxios(enqueueSnackbar);
   const [payment, setPayment] = React.useState({
@@ -26,7 +27,11 @@ const New = () => {
       .then((res) => {
         const id = res.data.id;
         enqueueSnackbar("Payment saved successfully", { variant: "success" });
-        navigate(`/payments`);
+        if (location.key == "default") {
+          navigate("..");
+        } else {
+          navigate(-1);
+        }
       });
   };
 

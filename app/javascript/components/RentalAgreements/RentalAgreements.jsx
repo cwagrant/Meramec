@@ -70,6 +70,7 @@ const RentalAgreements = ({ customer, hideSearch }) => {
         rows={data}
         DefaultOrder="asc"
         DefaultOrderBy="customer.formal_name"
+        TableKey="RentalAgreements"
         TableHeaders={[
           { id: "unit.name", numeric: false, label: "Unit" },
           { id: "customer.formal_name", numeric: false, label: "Customer" },

@@ -6,9 +6,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PrintIcon from "@mui/icons-material/Print";
 import useAxios from "./useAxios";
-import * as paths from "./PathHelper";
 
-const ControlButtons = ({ newUrl, editUrl, printUrl, deleteCallback }) => {
+const ControlButtons = (
+  { newUrl, editUrl, printUrl, deleteCallback, prefixButton },
+) => {
   const axios = useAxios();
   const authorizePrint = () => {
     axios.get(printUrl, { responseType: "blob" })
@@ -41,6 +42,7 @@ const ControlButtons = ({ newUrl, editUrl, printUrl, deleteCallback }) => {
         gap: 2,
       }}
     >
+      {prefixButton}
       {newUrl && (
         <Button
           component={RouterLink}

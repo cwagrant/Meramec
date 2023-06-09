@@ -59,6 +59,7 @@ const Payments = () => {
           rows={data}
           DefaultOrder="desc"
           DefaultOrderBy="date"
+          TableKey="Payments"
           TableHeaders={[
             { id: "date", numeric: false, label: "Date" },
             { id: "customer.formal_name", numeric: false, label: "Name" },

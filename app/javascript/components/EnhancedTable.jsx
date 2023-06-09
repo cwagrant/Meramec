@@ -16,6 +16,9 @@ import {
 import { visuallyHidden } from "@mui/utils";
 import CircularProgress from "@mui/material/CircularProgress";
 import { get } from "lodash";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 function descendingComparator(a, b, orderBy) {
   bOrder = get(b, orderBy) || "";
@@ -106,16 +109,20 @@ export default function EnhancedTable(props) {
     TableRow: ProvidedTableRow,
     onDelete,
     TableProps,
+    TableKey,
   } = props;
 
   React.useEffect(() => {
     if (!rows) return;
 
-    setOrder(DefaultOrder);
-    setOrderBy(DefaultOrderBy);
+    let order = cookies.get(`TK${TableKey}DefaultOrder`) || DefaultOrder;
+    let orderBy = cookies.get(`TK${TableKey}DefaultOrderBy`) || DefaultOrderBy;
+
+    setOrder(order);
+    setOrderBy(orderBy);
 
     let rowsOnMount = rows.sort(
-      getComparator(DefaultOrder, DefaultOrderBy),
+      getComparator(order, orderBy),
     );
 
     rowsOnMount = rowsOnMount.slice(
@@ -132,6 +139,12 @@ export default function EnhancedTable(props) {
       const toggledOrder = isAsc ? "desc" : "asc";
       setOrder(toggledOrder);
       setOrderBy(newOrderBy);
+      cookies.set(`TK${TableKey}DefaultOrder`, toggledOrder, {
+        sameSite: "strict",
+      });
+      cookies.set(`TK${TableKey}DefaultOrderBy`, newOrderBy, {
+        sameSite: "strict",
+      });
 
       const sortedRows = rows.sort(
         getComparator(toggledOrder, newOrderBy),

@@ -72,6 +72,7 @@ const Invoices = ({ customer, hideSearch, tableProps }) => {
         rows={data}
         DefaultOrder="asc"
         DefaultOrderBy="customer.formal_name"
+        TableKey="Invoices"
         TableHeaders={[
           { id: "date", numeric: false, label: "Date" },
           { id: "customer.formal_name", numeric: false, label: "Name" },

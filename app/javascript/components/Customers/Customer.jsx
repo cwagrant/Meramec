@@ -1,6 +1,11 @@
 import React from "react";
-import { useNavigate, useOutletContext } from "react-router-dom";
-import { Grid, Paper } from "@mui/material";
+import {
+  Link as RouterLink,
+  useNavigate,
+  useOutletContext,
+} from "react-router-dom";
+import { Button, Grid, Paper } from "@mui/material";
+import PaymentIcon from "@mui/icons-material/Payment";
 
 import PaginatedTable from "../PaginatedTable";
 import LedgerTableRow from "../Ledgers/LedgerTableRow";
@@ -94,6 +99,16 @@ const Customer = () => {
           newUrl="../new"
           editUrl={`./edit`}
           deleteCallback={() => deleteCustomer(customer.id)}
+          prefixButton={
+            <Button
+              component={RouterLink}
+              to={`/payments/new?customer=${customer.id}`}
+              variant="outlined"
+              startIcon={<PaymentIcon />}
+            >
+              Payment
+            </Button>
+          }
         />
       </Grid>
 
@@ -113,7 +128,7 @@ const Customer = () => {
           TableHeaders={[
             { id: "date", numeric: false, label: "Date" },
             { id: "price_in_cents", numeric: false, label: "Amount" },
-            { id: "total", numeric: false, label: "Total" },
+            { id: "balance", numeric: false, label: "Balance" },
             { id: null },
           ]}
           TableRow={LedgerTableRow}

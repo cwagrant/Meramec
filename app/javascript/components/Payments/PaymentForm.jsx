@@ -2,6 +2,7 @@ import React from "react";
 import { DatePicker } from "@mui/x-date-pickers";
 import { useSnackbar } from "notistack";
 import { compact, flattenDeep } from "lodash";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -33,6 +34,8 @@ const PaymentForm = (
 ) => {
   const { enqueueSnackbar } = useSnackbar();
   const axios = useAxios(enqueueSnackbar);
+  const navigate = useNavigate();
+  const location = useLocation();
   const [payment, dispatch] = React.useReducer(simpleReducer, {
     ...Payment,
     customer: null,
@@ -209,6 +212,19 @@ const PaymentForm = (
             </Select>
           </FormControl>
         </Grid>
+        {payment.payment_type == "check" &&
+          (
+            <Grid item xs={12} md={4}>
+              <TextField
+                label="Check #"
+                value={payment.check_number || ""}
+                onChange={(event) => {
+                  dispatch({ type: "check_number", value: event.target.value });
+                }}
+                sx={{ width: 1 }}
+              />
+            </Grid>
+          )}
         <Grid item xs={6} md={payment.payment_type == "check" ? 4 : 6}>
           <TextField
             required
@@ -224,19 +240,6 @@ const PaymentForm = (
             }}
           />
         </Grid>
-        {payment.payment_type == "check" &&
-          (
-            <Grid item xs={12} md={4}>
-              <TextField
-                label="Check #"
-                value={payment.check_number || ""}
-                onChange={(event) => {
-                  dispatch({ type: "check_number", value: event.target.value });
-                }}
-                sx={{ width: 1 }}
-              />
-            </Grid>
-          )}
         <Grid item xs={12}>
           <Table>
             <TableHead>
@@ -335,7 +338,11 @@ const PaymentForm = (
               onClick={(event) => {
                 event.preventDefault();
                 if (!window.confirm("Are you sure you wish to cancel?")) return;
-                navigate("..");
+                if (location.key == "default") {
+                  navigate("..");
+                } else {
+                  navigate(-1);
+                }
               }}
             >
               Cancel

@@ -57,6 +57,7 @@ const Customers = () => {
         rows={data}
         DefaultOrder="asc"
         DefaultOrderBy="formal_name"
+        TableKey="Customers"
         TableHeaders={[
           { id: "formal_name", numeric: false, label: "Name" },
           { id: "company", numeric: false, label: "Company" },

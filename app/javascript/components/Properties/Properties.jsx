@@ -58,6 +58,7 @@ const Properties = () => {
           rows={data}
           DefaultOrder="asc"
           DefaultOrderBy="name"
+          TableKey="Properties"
           TableHeaders={[
             { id: "id", numeric: false, label: "ID" },
             { id: "name", numeric: false, label: "Property" },

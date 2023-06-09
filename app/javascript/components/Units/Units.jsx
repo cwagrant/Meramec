@@ -64,6 +64,7 @@ const Units = () => {
           rows={data}
           DefaultOrder="asc"
           DefaultOrderBy="name"
+          TableKey="Units"
           TableHeaders={[
             { id: "name", numeric: false, label: "Name" },
             { id: "type_of", numeric: false, label: "Type" },
