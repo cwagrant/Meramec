@@ -56,7 +56,9 @@ const NewInvoice = ({ invoice: loadedInvoice, onSubmit, mode }) => {
             item_count: 1,
           };
 
-          invoice_items.push(newInvoiceItem);
+          if (agreement.active) {
+            invoice_items.push(newInvoiceItem);
+          }
         });
 
         dispatch({ type: "invoice_items", value: invoice_items });

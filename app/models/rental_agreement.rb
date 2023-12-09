@@ -43,6 +43,10 @@ class RentalAgreement < ApplicationRecord
     last_invoice.date > (date - frequency_in_months.to_i.months)
   end
 
+  def active
+    end_date.blank? || end_date >= Time.zone.now.to_date
+  end
+
   def push_due_date!(purchase_count = 1)
     return if next_due_date.blank?
 
