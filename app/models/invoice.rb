@@ -23,7 +23,7 @@ class Invoice < ApplicationRecord
   end
 
   def empty_item?(item_attr)
-    item_attr['item_count'].blank? || item_attr['item_count'].try(:zero?)
+    item_attr['item_count'].blank? || item_attr['item_count'].to_i.try(:zero?)
   end
 
   def empty_adjustment?(item_attr)
