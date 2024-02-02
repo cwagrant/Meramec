@@ -29,6 +29,8 @@ const Invoices = ({ children }) => {
           });
           navigate("/invoices");
         });
+    } else {
+      setInvoice(null);
     }
   }, [invoiceId]);
 

@@ -1,14 +1,14 @@
-import { merge, set } from "lodash";
+import { assign, merge, set } from "lodash";
 
 export default function reducer(state, action) {
   // console.log("oldState", state, action);
   if (action.type == "initialize") {
     // this takes the default state passed in to the reducer
     // and merges in a state over top of it.
-    let newState = { ...state };
-    merge(newState, action.value);
+    // let newState = { ...state };
+    // merge(newState, action.value);
     // console.log("newState", newState);
-    return merge({ ...state }, action.value);
+    return assign({ ...state }, action.value);
   }
 
   if (action.type == "reset") {
